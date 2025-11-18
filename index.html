@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CAPTCHA - MATH</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="captcha-box">
+      <div class="head">
+        <h2 id="question">Memuat soal...</h2>
+        <button class="reload-btn" id="reloadBtn" title="Reload CAPTCHA">
+          <i class="fas fa-rotate"></i>
+        </button>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="footer">
+        <button class="btn" id="verifyBtn">
+          <i class="fas fa-check"></i> VERIFY
+        </button>
+      </div>
+      <div class="result" id="result"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

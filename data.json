@@ -1,0 +1,105 @@
+[
+  {
+    "soal": "Hasil akhirnya adalah 24. Manakah operasi yang menghasilkan 24?",
+    "hasil": 24,
+    "jawaban": [
+      "6 × 4",
+      "12 + 12",
+      "30 − 7",
+      "3 × 8",
+      "40 ÷ 2",
+      "48 ÷ 2",
+      "20 + 4",
+      "4 × 5",
+      "100 ÷ 4"
+    ],
+    "benar": ["6 × 4", "12 + 12", "3 × 8", "48 ÷ 2", "20 + 4", "100 ÷ 4"]
+  },
+  {
+    "soal": "Hasil akhirnya adalah 56. Pilih semua yang menghasilkan 56.",
+    "hasil": 56,
+    "jawaban": [
+      "8 × 7",
+      "14 × 4",
+      "70 − 14",
+      "100 − 40",
+      "28 × 2",
+      "49 + 7",
+      "60 − 5",
+      "80 − 25",
+      "112 ÷ 2"
+    ],
+    "benar": ["8 × 7", "14 × 4", "70 − 14", "28 × 2", "49 + 7", "112 ÷ 2"]
+  },
+  {
+    "soal": "Hasil akhirnya adalah -12. Pilih semua operasi yang menghasilkan -12.",
+    "hasil": -12,
+    "jawaban": [
+      "-3 × 4",
+      "6 − 18",
+      "-6 × 2",
+      "-24 ÷ 2",
+      "-20 + 8",
+      "10 − 22",
+      "3 × -4",
+      "-36 ÷ 3",
+      "-50 + 38"
+    ],
+    "benar": ["-3 × 4", "6 − 18", "-6 × 2", "-24 ÷ 2", "3 × -4", "-36 ÷ 3"]
+  },
+  {
+    "soal": "Hasil akhirnya adalah 5√3. Pilih semua ekspresi yang bernilai 5√3.",
+    "hasil": "5√3",
+    "jawaban": [
+      "√75",
+      "5√3",
+      "√300 ÷ 2",
+      "√27",
+      "10√3 ÷ 2",
+      "√147 ÷ √3",
+      "15√3 ÷ 3",
+      "√12 × 2",
+      "√243 ÷ 3"
+    ],
+    "benar": ["√75", "5√3", "√300 ÷ 2", "10√3 ÷ 2", "15√3 ÷ 3", "√243 ÷ 3"]
+  },
+  {
+    "soal": "Hasil akhirnya adalah 2. Pilih semua limit yang bernilai 2.",
+    "hasil": 2,
+    "jawaban": [
+      "limₓ→2 x",
+      "limₓ→1 (x + 1)",
+      "limₓ→0 (x + 2)",
+      "limₓ→2 (3 − x + 1)",
+      "limₓ→2 (x² ÷ x)",
+      "limₓ→4 (√x ÷ √4)",
+      "limₓ→1 (x² + 1 − 0)",
+      "limₓ→1 (3 − x)",
+      "limₓ→3 (x − 1)"
+    ],
+    "benar": [
+      "limₓ→2 x",
+      "limₓ→1 (x + 1)",
+      "limₓ→0 (x + 2)",
+      "limₓ→2 (3 − x + 1)",
+      "limₓ→2 (x² ÷ x)",
+      "limₓ→4 (√x ÷ √4)"
+    ]
+  },
+  {
+    "soal": "Hasil dari turunan sebuah fungsi adalah 6x². Pilih semua fungsi yang memiliki turunan 6x².",
+    "hasil": "6x²",
+    "jawaban": [
+      "2x³",
+      "x³",
+      "3x³",
+      "6x³",
+      "4x³",
+      "(3/2)x⁴",
+      "(6/4)x⁴",
+      "x⁶",
+      "√x"
+    ],
+    "benar": ["2x³", "3x³ - x³", "8x³ - 6x³"]
+  }
+]
