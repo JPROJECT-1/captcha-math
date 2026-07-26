@@ -1,358 +1,240 @@
-/**
- * YCYL MathCAPTCHA API - Pro Version (Auto Scaling & Multi-Language)
- * Hak Cipta (c) 2026 Jasonpw & YCYL STUDIO
- */
-
-class MathCAPTCHA {
-    #settings; #container; #failCount = 0; #isVerified = false; #isBlocked = false;
-    #currentLevel = 1; #currentReqCount = 4; #selected = new Set(); #answerValues = [];
-    #dom = {}; #i18n; #t; #isDark = false; #uid;
-
-    constructor(options) {
-        // Buat ID unik untuk mencegah bentrok jika ada banyak CAPTCHA di satu halaman
-        this.#uid = 'mc_' + Math.random().toString(36).substr(2, 9);
-
-        this.#settings = Object.assign({
-            containerId: null, mode: 'light', level: 'random', language: 'auto-web', maxAttempts: 5,
-            onSuccess: () => {}, onFail: () => {}, onBlocked: () => {}
-        }, options);
-
-        this.#container = document.getElementById(this.#settings.containerId);
-        if (!this.#container) throw new Error(`[MathCAPTCHA] Container #${this.#settings.containerId} tidak ditemukan.`);
-
-        // --- 10 BAHASA ---
-        this.#i18n = {
-            en: { robot: "I'm not a robot", priv: "Privacy", term: "Terms", inst: "Select {count} boxes that represent the values of the variables below:", maxSel: "Maximum {count} selections.", exactSel: "Please select exactly {count} boxes!", verAcc: "Access Verified", incorr: "Incorrect! Attempts left: {left}", blck: "You failed {max} times. Access blocked.", verFailed: "Verification Failed", verified: "Verified", verify: "Verify", failedTxt: "Failed:" },
-            id: { robot: "Saya bukan robot", priv: "Privasi", term: "Ketentuan", inst: "Pilih {count} kotak yang merupakan nilai dari variabel di bawah ini:", maxSel: "Maksimal {count} pilihan.", exactSel: "Harap pilih tepat {count} kotak!", verAcc: "Akses Terverifikasi", incorr: "Salah! Sisa percobaan: {left}", blck: "Anda gagal {max} kali. Akses diblokir.", verFailed: "Verifikasi Gagal", verified: "Terverifikasi", verify: "Verifikasi", failedTxt: "Gagal:" },
-            es: { robot: "No soy un robot", priv: "Privacidad", term: "Términos", inst: "Selecciona {count} casillas que representen los valores de las variables siguientes:", maxSel: "Máximo {count} selecciones.", exactSel: "¡Por favor, selecciona exactamente {count} casillas!", verAcc: "Acceso Verificado", incorr: "¡Incorrecto! Intentos restantes: {left}", blck: "Has fallado {max} veces. Acceso bloqueado.", verFailed: "Verificación Fallida", verified: "Verificado", verify: "Verificar", failedTxt: "Fallido:" },
-            zh: { robot: "我不是机器人", priv: "隐私", term: "条款", inst: "请选择 {count} 个代表以下变量值的框：", maxSel: "最多选择 {count} 个。", exactSel: "请准确选择 {count} 个框！", verAcc: "访问已验证", incorr: "错误！剩余尝试次数：{left}", blck: "您已失败 {max} 次。访问被拒绝。", verFailed: "验证失败", verified: "已验证", verify: "验证", failedTxt: "失败：" },
-            ar: { robot: "أنا لست برنامج روبوت", priv: "الخصوصية", term: "البنود", inst: "حدد {count} مربعات تمثل قيم المتغيرات أدناه:", maxSel: "الحد الأقصى {count} اختيارات.", exactSel: "الرجاء تحديد {count} مربعات بالضبط!", verAcc: "تم التحقق من الوصول", incorr: "غير صحيح! المحاولات المتبقية: {left}", blck: "لقد فشلت {max} مرات. تم حظر الوصول.", verFailed: "فشل التحقق", verified: "تم التحقق", verify: "تحقق", failedTxt: "فشل:" },
-            fr: { robot: "Je ne suis pas un robot", priv: "Confidentialité", term: "Conditions", inst: "Sélectionnez {count} cases qui représentent les valeurs des variables ci-dessous :", maxSel: "Maximum {count} sélections.", exactSel: "Veuillez sélectionner exactement {count} cases !", verAcc: "Accès Vérifié", incorr: "Incorrect ! Tentatives restantes : {left}", blck: "Vous avez échoué {max} fois. Accès bloqué.", verFailed: "Échec de la vérification", verified: "Vérifié", verify: "Vérifier", failedTxt: "Échoué :" },
-            de: { robot: "Ich bin kein Roboter", priv: "Datenschutz", term: "Nutzungsbedingungen", inst: "Wählen Sie {count} Felder aus, die die Werte der folgenden Variablen darstellen:", maxSel: "Maximal {count} Auswahlen.", exactSel: "Bitte wählen Sie genau {count} Felder aus!", verAcc: "Zugriff Verifiziert", incorr: "Falsch! Verbleibende Versuche: {left}", blck: "Sie haben {max} Mal versagt. Zugriff blockiert.", verFailed: "Überprüfung fehlgeschlagen", verified: "Verifiziert", verify: "Überprüfen", failedTxt: "Fehlgeschlagen:" },
-            ja: { robot: "私はロボットではありません", priv: "プライバシー", term: "利用規約", inst: "以下の変数の値を表すボックスを {count} 個選択してください：", maxSel: "最大 {count} 個まで選択可能です。", exactSel: "ちょうど {count} 個のボックスを選択してください！", verAcc: "アクセスが確認されました", incorr: "不正解です！残りの試行回数：{left}", blck: "{max} 回失敗しました。アクセスがブロックされました。", verFailed: "確認に失敗しました", verified: "確認済み", verify: "確認", failedTxt: "失敗：" },
-            ru: { robot: "Я не робот", priv: "Конфиденциальность", term: "Условия", inst: "Выберите {count} поля, которые представляют значения следующих переменных:", maxSel: "Максимум {count} выбора.", exactSel: "Пожалуйста, выберите ровно {count} поля!", verAcc: "Доступ подтвержден", incorr: "Неверно! Осталось попыток: {left}", blck: "Вы ошиблись {max} раз. Доступ заблокирован.", verFailed: "Проверка не пройдена", verified: "Подтверждено", verify: "Подтвердить", failedTxt: "Неудачно:" },
-            hi: { robot: "मैं रोबोट नहीं हूँ", priv: "गोपनीयता", term: "शर्तें", inst: "नीचे दिए गए चरों के मानों को दर्शाने वाले {count} बॉक्स चुनें:", maxSel: "अधिकतम {count} चयन।", exactSel: "कृपया ठीक {count} बॉक्स चुनें!", verAcc: "एक्सेस सत्यापित", incorr: "गलत! शेष प्रयास: {left}", blck: "आप {max} बार विफल रहे। एक्सेस ब्लॉक कर दिया गया है।", verFailed: "सत्यापन विफल", verified: "सत्यापित", verify: "सत्यापित करें", failedTxt: "विफल:" }
-        };
-
-        this.#initLanguage(); this.#initTheme(); this.#renderWidget(); this.#renderModal();
-    }
-
-    #initLanguage() {
-        let langCode = this.#settings.language;
-        if (langCode === 'auto-web') {
-            const htmlLang = document.documentElement.lang.split('-')[0].toLowerCase();
-            langCode = this.#i18n[htmlLang] ? htmlLang : 'en';
-        } else if (langCode === 'auto-user') {
-            const userLang = navigator.language.split('-')[0].toLowerCase();
-            langCode = this.#i18n[userLang] ? userLang : 'en';
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MathCAPTCHA - Interactive Playground</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- KaTeX untuk Render Matematika -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Mengaktifkan toggle dark mode manual
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both', 'spin-slow': 'spin 1.5s linear infinite' },
+                    keyframes: {
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        }
+                    }
+                }
+            }
         }
-        this.#t = this.#i18n[langCode] || this.#i18n['en'];
-    }
+    </script>
+    
+    <!-- Custom CSS untuk MathCAPTCHA -->
+    <style>
+        ::selection { background: #3b82f6; color: white; }
+        .tile-selected { transform: scale(0.92); box-shadow: 0 0 0 4px #3b82f6; background-color: #eff6ff !important; color: #1d4ed8 !important; }
+        .dark .tile-selected { background-color: #1e3a8a !important; color: #bfdbfe !important; }
+        .checkmark { display: none; }
+        .tile-selected .checkmark { display: flex; }
+        .katex { font-size: 1.15em !important; }
+        .rc-anchor-checkbox { width: 28px; height: 28px; background: #fff; border: 2px solid #c1c1c1; border-radius: 2px; transition: all 0.2s ease; }
+        .rc-anchor-checkbox:hover { border-color: #b2b2b2; }
+        .dark .rc-anchor-checkbox { background: #1e293b; border-color: #475569; }
 
-    #initTheme() {
-        if (this.#settings.mode === 'dark' || (this.#settings.mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            this.#isDark = true;
-        }
-    }
+        /* Toggle Switch CSS */
+        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased font-sans transition-colors duration-300 min-h-screen flex flex-col">
 
-    #renderWidget() {
-        const darkClass = this.#isDark ? 'dark' : '';
-        this.#container.innerHTML = `
-            <div class="${darkClass}">
-                <div id="cw-main-${this.#uid}" class="bg-slate-50 dark:bg-slate-800 w-[300px] h-[74px] shadow-sm rounded border border-slate-300 dark:border-slate-600 flex items-center p-3 cursor-pointer select-none hover:shadow-md transition-shadow">
-                    <div id="cw-check-${this.#uid}" class="rc-anchor-checkbox flex items-center justify-center shrink-0"></div>
-                    <span id="cw-label-${this.#uid}" class="ml-3 font-medium text-slate-700 dark:text-slate-200 text-[14px]">${this.#t.robot}</span>
-                    <div class="ml-auto flex flex-col items-center justify-center shrink-0 relative z-10">
-                        <a href="https://github.com/JPROJECT-1/captcha-math" target="_blank" onclick="event.stopPropagation()" class="flex flex-col items-center justify-center hover:opacity-70 transition-opacity" title="GitHub">
-                            <i class="fas fa-shield-halved text-[28px] text-blue-500 mb-0.5"></i>
-                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-tight mt-1 leading-none">MathCAPTCHA</span>
-                        </a>
-                        <span class="text-[8px] text-slate-400 mt-0.5">
-                            <a href="https://jproject-1.github.io/captcha-math/privacy/" target="_blank" onclick="event.stopPropagation()" class="hover:underline hover:text-blue-500">${this.#t.priv}</a> - 
-                            <a href="https://jproject-1.github.io/captcha-math/term/" target="_blank" onclick="event.stopPropagation()" class="hover:underline hover:text-blue-500">${this.#t.term}</a>
-                        </span>
+    <!-- Navbar / Header -->
+    <header class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-shield-halved text-2xl text-blue-600 dark:text-blue-400"></i>
+                <h1 class="text-xl font-bold tracking-tight">MathCAPTCHA <span class="text-sm font-medium text-slate-400 ml-2 hidden sm:inline">Playground & Test</span></h1>
+            </div>
+            
+            <!-- Dark Mode Toggle -->
+            <div class="flex items-center gap-2">
+                <i class="fas fa-sun text-yellow-500 text-sm"></i>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="theme-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out border-slate-300 top-0 left-0" onclick="toggleTheme()"/>
+                    <label for="theme-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200 ease-in-out"></label>
+                </div>
+                <i class="fas fa-moon text-slate-400 dark:text-blue-300 text-sm"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 grid grid-cols-1 md:grid-cols-12 gap-8">
+        
+        <!-- KIRI: Control Panel (Settings) -->
+        <div class="md:col-span-5 space-y-6">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="bg-slate-50 dark:bg-slate-900/50 px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+                    <h2 class="font-semibold text-lg"><i class="fas fa-sliders mr-2 text-blue-500"></i> Konfigurasi API</h2>
+                </div>
+                
+                <div class="p-5 space-y-5">
+                    <!-- Set Level -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tingkat Kesulitan (Level)</label>
+                        <select id="setting-level" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors">
+                            <option value="1">Level 1: Aritmatika Dasar</option>
+                            <option value="2">Level 2: Akar & Pangkat</option>
+                            <option value="3">Level 3: Aljabar Dasar</option>
+                            <option value="4">Level 4: Trigonometri</option>
+                            <option value="5">Level 5: Peluang & Harapan</option>
+                            <option value="6">Level 6: Vektor (Dot Product)</option>
+                            <option value="7">Level 7: Kalkulus (Turunan & Integral)</option>
+                            <option value="random" selected>Acak Semua Level (Random)</option>
+                        </select>
                     </div>
+
+                    <!-- Set Bahasa -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Bahasa UI (Language)</label>
+                        <select id="setting-lang" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors">
+                            <option value="id" selected>🇮🇩 Indonesia (ID)</option>
+                            <option value="en">🇺🇸 English (EN)</option>
+                            <option value="es">🇪🇸 Español (ES)</option>
+                            <option value="fr">🇫🇷 Français (FR)</option>
+                            <option value="de">🇩🇪 Deutsch (DE)</option>
+                            <option value="ru">🇷🇺 Русский (RU)</option>
+                            <option value="ar">🇸🇦 العربية (AR - RTL)</option>
+                            <option value="zh">🇨🇳 中文 (ZH)</option>
+                            <option value="ja">🇯🇵 日本語 (JA)</option>
+                            <option value="hi">🇮🇳 हिन्दी (HI)</option>
+                        </select>
+                    </div>
+
+                    <!-- Set Batas Percobaan -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Batas Gagal (Max Attempts)</label>
+                        <input type="number" id="setting-attempts" value="5" min="1" max="10" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 transition-colors">
+                    </div>
+
+                    <button onclick="applySettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fas fa-rotate"></i> Terapkan & Generate Ulang
+                    </button>
                 </div>
             </div>
-        `;
-        document.getElementById(`cw-main-${this.#uid}`).addEventListener('click', (e) => {
-            if(e.target.tagName !== 'A') this.#openModal();
-        });
-    }
+            
+            <!-- Dokumentasi Mini -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 p-4 rounded-xl text-sm border border-blue-200 dark:border-blue-800/50">
+                <p><i class="fas fa-info-circle mr-1"></i> <b>Dokumentasi:</b> Ubah pengaturan di atas, lalu klik <b>Terapkan</b>. Widget di sebelah kanan akan dimuat ulang sesuai parameter yang Anda berikan. Output hasil verifikasi akan muncul di kotak Terminal hitam.</p>
+            </div>
+        </div>
 
-    #renderModal() {
-        const darkClass = this.#isDark ? 'dark' : '';
-        const modalHTML = `
-            <div id="cm-overlay-${this.#uid}" class="${darkClass} fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300" dir="${['ar'].includes(this.#settings.language) ? 'rtl' : 'ltr'}">
-                <div id="cm-box-${this.#uid}" class="bg-white dark:bg-slate-800 w-full max-w-[400px] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden scale-95 transition-transform duration-300 relative">
-                    <button id="cm-close-${this.#uid}" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-red-100 hover:text-red-600 dark:text-slate-300 z-20 transition-colors"><i class="fas fa-xmark"></i></button>
-                    <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center pr-12">
-                        <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-sm"><i class="fas fa-shield-halved"></i> MathCAPTCHA</div>
-                    </div>
-                    <div class="bg-blue-600 text-white p-5 relative overflow-hidden">
-                        <div class="text-sm text-blue-100 font-medium mb-3" id="cm-instruction-${this.#uid}"></div>
-                        
-                        <!-- Perbaikan Layout Equation Grid -->
-                        <div id="cm-eq-container-${this.#uid}" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px] grid-cols-2" dir="ltr"></div>
-                        
-                        <i class="fas fa-square-root-variable absolute -bottom-4 -right-2 text-8xl text-white opacity-10"></i>
-                    </div>
-                    <div id="cm-alert-${this.#uid}" class="hidden px-4 py-2 text-sm font-semibold text-center transition-all duration-300"></div>
-                    <div class="p-4 bg-white dark:bg-slate-800"><div id="cm-grid-${this.#uid}" class="grid grid-cols-3 gap-2 w-full" dir="ltr"></div></div>
-                    <div class="p-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900 rounded-b-2xl">
-                        <div class="flex gap-2 items-center">
-                            <button id="cm-reload-${this.#uid}" class="w-10 h-10 rounded-full flex justify-center items-center text-slate-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-slate-800 transition-colors"><i class="fas fa-rotate-right text-lg"></i></button>
-                            <div class="text-xs font-semibold text-slate-400 ml-2">${this.#t.failedTxt} <span id="cm-fail-count-${this.#uid}" class="text-red-500 mx-1">0</span>/${this.#settings.maxAttempts}</div>
-                        </div>
-                        <button id="cm-verify-${this.#uid}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg font-bold shadow-md shadow-blue-500/30 transition-transform active:scale-95 flex items-center gap-2">${this.#t.verify}</button>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-900 pb-3 text-center text-[10px] text-slate-400 font-medium tracking-wide border-t border-slate-100/50 dark:border-slate-800/50" dir="ltr">
-                        &copy; 2026 <a href="https://jasonpw.web.id/" target="_blank" class="hover:text-blue-500">Jasonpw</a> &bull; <a href="https://ycylstudio.web.id/" target="_blank" class="text-blue-500 hover:text-blue-400">YCYL STUDIO</a>
-                    </div>
+        <!-- KANAN: Output Playground (Widget & Log) -->
+        <div class="md:col-span-7 space-y-6 flex flex-col">
+            
+            <!-- Container Widget -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 flex flex-col items-center justify-center min-h-[250px] relative overflow-hidden">
+                <div class="absolute top-4 left-4 text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                    <i class="fas fa-eye mr-1"></i> Live Preview
+                </div>
+                
+                <!-- TEMPAT WIDGET DI-INJECT -->
+                <div id="captcha-playground" class="mt-4"></div>
+            </div>
+
+            <!-- Container JSON Log (Terminal) -->
+            <div class="bg-slate-900 rounded-2xl shadow-inner border border-slate-800 flex-grow flex flex-col overflow-hidden">
+                <div class="bg-slate-800 px-4 py-2 border-b border-slate-700 flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="text-slate-400 text-xs font-mono ml-2">Backend JSON Output Log</span>
+                </div>
+                <div id="playground-log" class="p-4 font-mono text-[11px] sm:text-xs text-green-400 overflow-y-auto h-48 sm:h-auto flex-grow break-words">
+                    <span class="text-slate-500">// Log akan muncul di sini saat Anda berinteraksi dengan CAPTCHA...</span>
                 </div>
             </div>
-        `;
-        
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = modalHTML;
-        document.body.appendChild(wrapper.firstElementChild);
 
-        this.#dom = {
-            overlay: document.getElementById(`cm-overlay-${this.#uid}`),
-            box: document.getElementById(`cm-box-${this.#uid}`),
-            closeBtn: document.getElementById(`cm-close-${this.#uid}`),
-            instruction: document.getElementById(`cm-instruction-${this.#uid}`),
-            eqContainer: document.getElementById(`cm-eq-container-${this.#uid}`),
-            alertBox: document.getElementById(`cm-alert-${this.#uid}`),
-            grid: document.getElementById(`cm-grid-${this.#uid}`),
-            reloadBtn: document.getElementById(`cm-reload-${this.#uid}`),
-            failCountEl: document.getElementById(`cm-fail-count-${this.#uid}`),
-            verifyBtn: document.getElementById(`cm-verify-${this.#uid}`),
-            widgetCheck: document.getElementById(`cw-check-${this.#uid}`),
-            widgetLabel: document.getElementById(`cw-label-${this.#uid}`),
-            widgetMain: document.getElementById(`cw-main-${this.#uid}`)
-        };
+        </div>
+    </main>
 
-        this.#dom.closeBtn.onclick = () => this.#triggerFail('closed_by_user');
-        this.#dom.reloadBtn.onclick = () => this.#generateChallenge();
-        this.#dom.verifyBtn.onclick = () => this.#verifyResponse();
-    }
+    <!-- Panggil File API.js -->
+    <script src="https://jproject-1.github.io/captcha-math/api.js"></script>
 
-    #openModal() {
-        if (this.#isVerified || this.#isBlocked) return;
-        this.#dom.widgetCheck.innerHTML = '<i class="fas fa-spinner animate-spin-slow text-blue-500 text-xl"></i>';
-        this.#dom.widgetCheck.style.borderColor = 'transparent';
-        setTimeout(() => {
-            this.#dom.overlay.classList.remove("opacity-0", "pointer-events-none");
-            this.#dom.box.classList.remove("scale-95");
-            this.#dom.box.classList.add("scale-100");
-            this.#generateChallenge();
-        }, 400);
-    }
-
-    #closeModal(status) {
-        this.#dom.overlay.classList.add("opacity-0", "pointer-events-none");
-        this.#dom.box.classList.remove("scale-100");
-        this.#dom.box.classList.add("scale-95");
-
-        if (status === 'success') {
-            this.#isVerified = true;
-            this.#dom.widgetCheck.style.borderColor = 'transparent';
-            this.#dom.widgetCheck.innerHTML = '<i class="fas fa-check text-[#0f9d58] text-[26px]"></i>';
-            this.#dom.widgetLabel.textContent = this.#t.verified;
-            this.#dom.widgetMain.classList.remove("cursor-pointer", "hover:shadow-md");
-        } else if (status === 'blocked' || status === 'failed') {
-            this.#isBlocked = true;
-            this.#dom.widgetCheck.style.borderColor = '#ef4444';
-            this.#dom.widgetCheck.innerHTML = '<i class="fas fa-xmark text-red-500 text-xl"></i>';
-            this.#dom.widgetLabel.textContent = this.#t.verFailed;
-            this.#dom.widgetLabel.classList.add("text-red-600");
-            this.#dom.widgetMain.classList.remove("cursor-pointer", "hover:shadow-md");
-        }
-    }
-
-    #getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-    #shuffle(array) {
-        let arr = [...array];
-        for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
-        return arr;
-    }
-
-    #getEquation(level, varName) {
-        let eq = ''; let V = 0;
-        if (level === 1) {
-            const ops = ['+', '-', '*', '/']; const op = ops[this.#getRandomInt(0, 3)];
-            if (op === '+') { V = this.#getRandomInt(2, 30); let a = this.#getRandomInt(1, V - 1); eq = `${a} + ${V - a} = ${varName}`; } 
-            else if (op === '-') { V = this.#getRandomInt(1, 30); let a = this.#getRandomInt(1, 20); eq = `${V + a} - ${a} = ${varName}`; } 
-            else if (op === '*') { let a = this.#getRandomInt(2, 9); let b = this.#getRandomInt(2, 9); V = a * b; eq = `${a} \\times ${b} = ${varName}`; } 
-            else { V = this.#getRandomInt(2, 12); let b = this.#getRandomInt(2, 9); eq = `${V * b} \\div ${b} = ${varName}`; }
-        } else if (level === 2) {
-            const type = this.#getRandomInt(1, 2);
-            if (type === 1) { V = this.#getRandomInt(2, 10); eq = `\\sqrt{${V * V}} = ${varName}`; } 
-            else { let base = this.#getRandomInt(2, 5); let pow = this.#getRandomInt(2, 3); V = Math.pow(base, pow); eq = `${base}^${pow} = ${varName}`; }
-        } else if (level === 3) {
-            const type = this.#getRandomInt(1, 2);
-            if (type === 1) { V = this.#getRandomInt(2, 15); let a = this.#getRandomInt(2, 5); let b = this.#getRandomInt(1, 10); eq = `${a}${varName} - ${b} = ${a * V - b}`; } 
-            else { V = this.#getRandomInt(2, 8); let r2 = this.#getRandomInt(1, 5); if (V === r2) V++; let sum = V + r2; let prod = V * r2; eq = `${varName}^2 - ${sum}${varName} + ${prod} = 0 \\; (${varName} > ${Math.min(V, r2)})`; }
-        } else if (level === 4) {
-            const type = this.#getRandomInt(1, 3);
-            if (type === 1) { V = this.#getRandomInt(2, 20); eq = `${V * 2} \\sin(30^\\circ) = ${varName}`; } 
-            else if (type === 2) { V = this.#getRandomInt(2, 20); eq = `${V * 2} \\cos(60^\\circ) = ${varName}`; } 
-            else { V = this.#getRandomInt(2, 30); eq = `${V} \\tan(45^\\circ) = ${varName}`; }
-        } else if (level === 5) {
-            const type = this.#getRandomInt(1, 2);
-            if (type === 1) { const combs = [{n:4, r:2, a:6}, {n:5, r:2, a:10}, {n:6, r:2, a:15}]; let c = combs[this.#getRandomInt(0, combs.length - 1)]; V = c.a; eq = `C(${c.n}, ${c.r}) = ${varName}`; } 
-            else { V = this.#getRandomInt(2, 20); eq = `${V * 2} \\times P(\\text{Heads}) = ${varName}`; }
-        } else if (level === 6) {
-            let x1 = this.#getRandomInt(1, 4), y1 = this.#getRandomInt(1, 4), x2 = this.#getRandomInt(1, 4), y2 = this.#getRandomInt(1, 4); V = (x1 * x2) + (y1 * y2); eq = `[${x1}, ${y1}] \\cdot [${x2}, ${y2}] = ${varName}`;
-        } else {
-            const type = this.#getRandomInt(1, 2);
-            if (type === 1) { let a = this.#getRandomInt(1, 5); let b = this.#getRandomInt(1, 10); V = (2 * a) + b; eq = `\\frac{d}{dx}(${a}x^2 + ${b}x) \\big|_{x=1} = ${varName}`; } 
-            else { let a = this.#getRandomInt(1, 10); V = 2 * a; eq = `\\int_0^2 ${a}x \\, dx = ${varName}`; }
-        }
-        return { equationLatex: eq, answer: V };
-    }
-
-    #generateChallenge() {
-        this.#dom.grid.innerHTML = ""; this.#dom.eqContainer.innerHTML = ""; this.#selected.clear();
-        this.#dom.alertBox.classList.add("hidden"); this.#dom.box.classList.remove("animate-shake");
-        this.#dom.verifyBtn.innerHTML = this.#t.verify; this.#dom.grid.style.pointerEvents = "auto";
-        this.#dom.failCountEl.textContent = this.#failCount;
-
-        this.#currentReqCount = Math.random() > 0.5 ? 3 : 4;
-        this.#dom.instruction.innerHTML = this.#t.inst.replace('{count}', `<b class="text-white bg-blue-800 px-1.5 py-0.5 rounded mx-1">${this.#currentReqCount}</b>`);
-        
-        this.#currentLevel = this.#settings.level === 'random' ? this.#getRandomInt(1, 7) : parseInt(this.#settings.level);
-        const variables = this.#currentReqCount === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
-        this.#answerValues = [];
-        
-        variables.forEach((v, index) => {
-            let prob; do { prob = this.#getEquation(this.#currentLevel, v); } while (this.#answerValues.includes(prob.answer)); 
-            this.#answerValues.push(prob.answer);
+    <!-- Logic Playground -->
+    <script>
+        // --- 1. Fungsi Ganti Tema (Dark/Light) ---
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const isDark = document.getElementById('theme-toggle').checked;
             
-            // --- LOGIKA AUTO-SCALING TEKS MATEMATIKA ---
-            
-            // Wrapper untuk membatasi ruang dan mengatur layout
-            let wrapperDiv = document.createElement("div");
-            wrapperDiv.className = "flex justify-center items-center w-full overflow-hidden";
-            
-            // Jika hanya 3 variabel, jadikan elemen C (index ke-2) melebar 2 kolom
-            if (this.#currentReqCount === 3 && index === 2) {
-                wrapperDiv.classList.add("col-span-2");
+            if (isDark) {
+                htmlEl.classList.add('dark');
+            } else {
+                htmlEl.classList.remove('dark');
             }
             
-            // Inner Div tempat KaTeX di-render (dibuat tidak boleh turun baris/wrap)
-            let eqDiv = document.createElement("div");
-            eqDiv.style.whiteSpace = "nowrap"; 
-            eqDiv.style.transition = "transform 0.15s ease-out"; 
-            eqDiv.style.transformOrigin = "center"; 
+            // Re-render widget agar tema CAPTCHA mengikuti tema halaman
+            applySettings();
+        }
+
+        // Cek preferensi user saat pertama kali load
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.getElementById('theme-toggle').checked = true;
+            document.documentElement.classList.add('dark');
+        }
+
+        // --- 2. Fungsi Cetak Log ke Terminal ---
+        function updateLog(title, colorClass, data) {
+            const logEl = document.getElementById('playground-log');
+            const time = new Date().toLocaleTimeString();
             
-            wrapperDiv.appendChild(eqDiv);
-            this.#dom.eqContainer.appendChild(wrapperDiv);
+            logEl.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="font-bold ${colorClass}">${title}</span><br>` + 
+                              JSON.stringify(data, null, 2).replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+            logEl.scrollTop = logEl.scrollHeight; // Auto scroll ke bawah
+        }
+
+        // --- 3. Fungsi Apply Settings & Inisialisasi MathCAPTCHA ---
+        function applySettings() {
+            // Bersihkan Modal Overlay Lama (jika ada sisa di body)
+            document.querySelectorAll('[id^="cm-overlay-"]').forEach(el => el.remove());
+
+            // Ambil nilai dari input form
+            const levelVal = document.getElementById('setting-level').value;
+            const langVal = document.getElementById('setting-lang').value;
+            const attemptVal = parseInt(document.getElementById('setting-attempts').value) || 5;
             
-            // Render rumus matematika
-            katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
+            // Tentukan mode berdasarkan toggle yang aktif
+            const isDark = document.documentElement.classList.contains('dark');
+            const modeVal = isDark ? 'dark' : 'light';
 
-            // Fungsi untuk mengecilkan font (scale) jika panjang melebihi batas wrapper
-            const fitEquation = () => {
-                if(wrapperDiv.clientWidth === 0) return; // Abaikan jika modal belum tampil
+            // Reset Log Output
+            document.getElementById('playground-log').innerHTML = '<span class="text-slate-500">// Parameter berhasil diperbarui. Menunggu interaksi...</span>';
+
+            // PANGGIL API MathCAPTCHA
+            new MathCAPTCHA({
+                containerId: 'captcha-playground',
+                mode: modeVal,
+                level: levelVal === 'random' ? 'random' : parseInt(levelVal),
+                language: langVal,
+                maxAttempts: attemptVal,
                 
-                const availWidth = wrapperDiv.clientWidth;
-                const eqWidth = eqDiv.scrollWidth;
-                
-                if (eqWidth > availWidth) {
-                    const scale = (availWidth - 10) / eqWidth; // -10 untuk jarak aman (padding)
-                    eqDiv.style.transform = `scale(${scale})`;
-                } else {
-                    eqDiv.style.transform = `scale(1)`;
-                }
-            };
-
-            // Jalankan segera dan jalankan lagi setelah animasi popup modal selesai (350ms)
-            requestAnimationFrame(fitEquation);
-            setTimeout(fitEquation, 350); 
-        });
-
-        let gridItems = [...this.#answerValues];
-        while (gridItems.length < 9) {
-            let fakeAnswer = this.#getRandomInt(1, 60); 
-            if (!gridItems.includes(fakeAnswer)) gridItems.push(fakeAnswer);
-        }
-        gridItems = this.#shuffle(gridItems); 
-
-        gridItems.forEach((numberValue) => {
-            const cell = document.createElement("div");
-            cell.className = "h-20 bg-slate-100 dark:bg-slate-700 dark:text-slate-100 rounded-xl flex items-center justify-center text-2xl font-bold text-slate-700 cursor-pointer transition-all duration-200 relative select-none hover:bg-slate-200 dark:hover:bg-slate-600 border-2 border-transparent overflow-hidden shadow-sm";
-            const spanText = document.createElement("span"); spanText.textContent = numberValue;
-            const checkIcon = document.createElement("div");
-            checkIcon.className = "checkmark absolute top-1 right-1 w-6 h-6 bg-blue-600 rounded-full items-center justify-center text-white text-xs shadow-sm";
-            checkIcon.innerHTML = '<i class="fas fa-check"></i>';
-            cell.appendChild(spanText); cell.appendChild(checkIcon);
-            cell.onclick = () => this.#toggleCell(cell, numberValue);
-            this.#dom.grid.appendChild(cell);
-        });
-    }
-
-    #toggleCell(cell, numberValue) {
-        if (this.#selected.has(numberValue)) {
-            this.#selected.delete(numberValue); cell.classList.remove("tile-selected");
-        } else {
-            if (this.#selected.size >= this.#currentReqCount) { this.#showAlert(this.#t.maxSel.replace('{count}', this.#currentReqCount), "error"); return; }
-            this.#selected.add(numberValue); cell.classList.add("tile-selected");
-        }
-        this.#dom.alertBox.classList.add("hidden");
-    }
-
-    #triggerFail(reason) {
-        this.#failCount++; this.#dom.failCountEl.textContent = this.#failCount;
-        const outputJSON = Object.freeze({
-            status: "failed", reason: reason, attemptsUsed: this.#failCount,
-            maxAttempts: this.#settings.maxAttempts, levelPlayed: this.#currentLevel, timestamp: new Date().toISOString()
-        });
-
-        if (this.#failCount >= this.#settings.maxAttempts) {
-            this.#showAlert(this.#t.blck.replace('{max}', this.#settings.maxAttempts), "error");
-            this.#shakeBox(); this.#dom.grid.style.pointerEvents = "none"; this.#dom.verifyBtn.disabled = true;
-            setTimeout(() => this.#closeModal('blocked'), 1200);
-            this.#settings.onBlocked(Object.freeze({ ...outputJSON, status: "blocked" }));
-        } else {
-            this.#showAlert(this.#t.incorr.replace('{left}', this.#settings.maxAttempts - this.#failCount), "error");
-            this.#shakeBox();
-            if(reason !== 'closed_by_user') setTimeout(() => this.#generateChallenge(), 1500);
-            else this.#closeModal('failed');
-            this.#settings.onFail(outputJSON);
-        }
-    }
-
-    #verifyResponse() {
-        if (this.#selected.size !== this.#currentReqCount) {
-            this.#showAlert(this.#t.exactSel.replace('{count}', this.#currentReqCount), "error");
-            this.#shakeBox(); return;
+                // CALLBACK EVENTS
+                onSuccess: (res) => updateLog('[200 OK - VERIFIED]', 'text-blue-400', res),
+                onFail: (res) => updateLog('[403 FORBIDDEN - WRONG ANSWER]', 'text-yellow-400', res),
+                onBlocked: (res) => updateLog('[429 TOO MANY REQUESTS - BLOCKED]', 'text-red-500', res)
+            });
         }
 
-        let isCorrect = true;
-        this.#answerValues.forEach(ans => { if (!this.#selected.has(ans)) isCorrect = false; });
-        
-        if (isCorrect) {
-            this.#showAlert(`<i class="fas fa-shield-check text-lg mr-2"></i> ${this.#t.verAcc}`, "success");
-            this.#dom.grid.style.pointerEvents = "none";
-            setTimeout(() => this.#closeModal('success'), 800);
-            const simulatedToken = btoa(JSON.stringify({ valid: true, timestamp: Date.now(), level: this.#currentLevel }));
-            this.#settings.onSuccess(Object.freeze({
-                status: "success", data: { levelPlayed: this.#currentLevel, attemptsUsed: this.#failCount + 1, timestamp: new Date().toISOString(), token: simulatedToken }
-            }));
-        } else { this.#triggerFail('wrong_answer'); }
-    }
-
-    #shakeBox() {
-        this.#dom.box.classList.remove("animate-shake");
-        void this.#dom.box.offsetWidth; this.#dom.box.classList.add("animate-shake");
-    }
-
-    #showAlert(msg, type) {
-        this.#dom.alertBox.innerHTML = msg;
-        this.#dom.alertBox.className = "px-4 py-2 text-sm font-semibold text-center transition-all duration-300 rounded mx-4 mb-2";
-        if (type === "error") this.#dom.alertBox.classList.add("bg-red-100", "text-red-700", "dark:bg-red-900", "dark:text-red-100");
-        else this.#dom.alertBox.classList.add("bg-green-100", "text-green-700", "dark:bg-green-900", "dark:text-green-100");
-    }
-}
+        // Render pertama kali saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', applySettings);
+    </script>
+</body>
+</html>
