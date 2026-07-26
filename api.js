@@ -1,5 +1,5 @@
 /**
- * YCYL MathCAPTCHA API - Multiple Instance Support
+ * YCYL MathCAPTCHA API - Multiple Instance & Multi-Language Support
  * Hak Cipta (c) 2026 Jasonpw & YCYL STUDIO
  */
 
@@ -20,9 +20,18 @@ class MathCAPTCHA {
         this.#container = document.getElementById(this.#settings.containerId);
         if (!this.#container) throw new Error(`[MathCAPTCHA] Container #${this.#settings.containerId} tidak ditemukan.`);
 
+        // --- PENAMBAHAN 10 BAHASA ---
         this.#i18n = {
             en: { robot: "I'm not a robot", priv: "Privacy", term: "Terms", inst: "Select {count} boxes that represent the values of the variables below:", maxSel: "Maximum {count} selections.", exactSel: "Please select exactly {count} boxes!", verAcc: "Access Verified", incorr: "Incorrect! Attempts left: {left}", blck: "You failed {max} times. Access blocked.", verFailed: "Verification Failed", verified: "Verified", verify: "Verify", failedTxt: "Failed:" },
-            id: { robot: "Saya bukan robot", priv: "Privasi", term: "Ketentuan", inst: "Pilih {count} kotak yang merupakan nilai dari variabel di bawah ini:", maxSel: "Maksimal {count} pilihan.", exactSel: "Harap pilih tepat {count} kotak!", verAcc: "Akses Terverifikasi", incorr: "Salah! Sisa percobaan: {left}", blck: "Anda gagal {max} kali. Akses diblokir.", verFailed: "Verifikasi Gagal", verified: "Terverifikasi", verify: "Verifikasi", failedTxt: "Gagal:" }
+            id: { robot: "Saya bukan robot", priv: "Privasi", term: "Ketentuan", inst: "Pilih {count} kotak yang merupakan nilai dari variabel di bawah ini:", maxSel: "Maksimal {count} pilihan.", exactSel: "Harap pilih tepat {count} kotak!", verAcc: "Akses Terverifikasi", incorr: "Salah! Sisa percobaan: {left}", blck: "Anda gagal {max} kali. Akses diblokir.", verFailed: "Verifikasi Gagal", verified: "Terverifikasi", verify: "Verifikasi", failedTxt: "Gagal:" },
+            es: { robot: "No soy un robot", priv: "Privacidad", term: "Términos", inst: "Selecciona {count} casillas que representen los valores de las variables siguientes:", maxSel: "Máximo {count} selecciones.", exactSel: "¡Por favor, selecciona exactamente {count} casillas!", verAcc: "Acceso Verificado", incorr: "¡Incorrecto! Intentos restantes: {left}", blck: "Has fallado {max} veces. Acceso bloqueado.", verFailed: "Verificación Fallida", verified: "Verificado", verify: "Verificar", failedTxt: "Fallido:" },
+            zh: { robot: "我不是机器人", priv: "隐私", term: "条款", inst: "请选择 {count} 个代表以下变量值的框：", maxSel: "最多选择 {count} 个。", exactSel: "请准确选择 {count} 个框！", verAcc: "访问已验证", incorr: "错误！剩余尝试次数：{left}", blck: "您已失败 {max} 次。访问被拒绝。", verFailed: "验证失败", verified: "已验证", verify: "验证", failedTxt: "失败：" },
+            ar: { robot: "أنا لست برنامج روبوت", priv: "الخصوصية", term: "البنود", inst: "حدد {count} مربعات تمثل قيم المتغيرات أدناه:", maxSel: "الحد الأقصى {count} اختيارات.", exactSel: "الرجاء تحديد {count} مربعات بالضبط!", verAcc: "تم التحقق من الوصول", incorr: "غير صحيح! المحاولات المتبقية: {left}", blck: "لقد فشلت {max} مرات. تم حظر الوصول.", verFailed: "فشل التحقق", verified: "تم التحقق", verify: "تحقق", failedTxt: "فشل:" },
+            fr: { robot: "Je ne suis pas un robot", priv: "Confidentialité", term: "Conditions", inst: "Sélectionnez {count} cases qui représentent les valeurs des variables ci-dessous :", maxSel: "Maximum {count} sélections.", exactSel: "Veuillez sélectionner exactement {count} cases !", verAcc: "Accès Vérifié", incorr: "Incorrect ! Tentatives restantes : {left}", blck: "Vous avez échoué {max} fois. Accès bloqué.", verFailed: "Échec de la vérification", verified: "Vérifié", verify: "Vérifier", failedTxt: "Échoué :" },
+            de: { robot: "Ich bin kein Roboter", priv: "Datenschutz", term: "Nutzungsbedingungen", inst: "Wählen Sie {count} Felder aus, die die Werte der folgenden Variablen darstellen:", maxSel: "Maximal {count} Auswahlen.", exactSel: "Bitte wählen Sie genau {count} Felder aus!", verAcc: "Zugriff Verifiziert", incorr: "Falsch! Verbleibende Versuche: {left}", blck: "Sie haben {max} Mal versagt. Zugriff blockiert.", verFailed: "Überprüfung fehlgeschlagen", verified: "Verifiziert", verify: "Überprüfen", failedTxt: "Fehlgeschlagen:" },
+            ja: { robot: "私はロボットではありません", priv: "プライバシー", term: "利用規約", inst: "以下の変数の値を表すボックスを {count} 個選択してください：", maxSel: "最大 {count} 個まで選択可能です。", exactSel: "ちょうど {count} 個のボックスを選択してください！", verAcc: "アクセスが確認されました", incorr: "不正解です！残りの試行回数：{left}", blck: "{max} 回失敗しました。アクセスがブロックされました。", verFailed: "確認に失敗しました", verified: "確認済み", verify: "確認", failedTxt: "失敗：" },
+            ru: { robot: "Я не робот", priv: "Конфиденциальность", term: "Условия", inst: "Выберите {count} поля, которые представляют значения следующих переменных:", maxSel: "Максимум {count} выбора.", exactSel: "Пожалуйста, выберите ровно {count} поля!", verAcc: "Доступ подтвержден", incorr: "Неверно! Осталось попыток: {left}", blck: "Вы ошиблись {max} раз. Доступ заблокирован.", verFailed: "Проверка не пройдена", verified: "Подтверждено", verify: "Подтвердить", failedTxt: "Неудачно:" },
+            hi: { robot: "मैं रोबोट नहीं हूँ", priv: "गोपनीयता", term: "शर्तें", inst: "नीचे दिए गए चरों के मानों को दर्शाने वाले {count} बॉक्स चुनें:", maxSel: "अधिकतम {count} चयन।", exactSel: "कृपया ठीक {count} बॉक्स चुनें!", verAcc: "एक्सेस सत्यापित", incorr: "गलत! शेष प्रयास: {left}", blck: "आप {max} बार विफल रहे। एक्सेस ब्लॉक कर दिया गया है।", verFailed: "सत्यापन विफल", verified: "सत्यापित", verify: "सत्यापित करें", failedTxt: "विफल:" }
         };
 
         this.#initLanguage(); this.#initTheme(); this.#renderWidget(); this.#renderModal();
@@ -30,8 +39,15 @@ class MathCAPTCHA {
 
     #initLanguage() {
         let langCode = this.#settings.language;
-        if (langCode === 'auto-web') langCode = document.documentElement.lang.startsWith('id') ? 'id' : 'en';
-        else if (langCode === 'auto-user') langCode = navigator.language.startsWith('id') ? 'id' : 'en';
+        if (langCode === 'auto-web') {
+            // Deteksi sederhana dari atribut lang HTML, fallback ke Inggris jika tidak ditemukan di dictionary
+            const htmlLang = document.documentElement.lang.split('-')[0].toLowerCase();
+            langCode = this.#i18n[htmlLang] ? htmlLang : 'en';
+        } else if (langCode === 'auto-user') {
+            // Deteksi bahasa browser pengguna
+            const userLang = navigator.language.split('-')[0].toLowerCase();
+            langCode = this.#i18n[userLang] ? userLang : 'en';
+        }
         this.#t = this.#i18n[langCode] || this.#i18n['en'];
     }
 
@@ -69,7 +85,7 @@ class MathCAPTCHA {
     #renderModal() {
         const darkClass = this.#isDark ? 'dark' : '';
         const modalHTML = `
-            <div id="cm-overlay-${this.#uid}" class="${darkClass} fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <div id="cm-overlay-${this.#uid}" class="${darkClass} fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300" dir="${['ar'].includes(this.#settings.language) ? 'rtl' : 'ltr'}">
                 <div id="cm-box-${this.#uid}" class="bg-white dark:bg-slate-800 w-full max-w-[400px] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden scale-95 transition-transform duration-300 relative">
                     <button id="cm-close-${this.#uid}" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-red-100 hover:text-red-600 dark:text-slate-300 z-20 transition-colors"><i class="fas fa-xmark"></i></button>
                     <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center pr-12">
@@ -77,19 +93,19 @@ class MathCAPTCHA {
                     </div>
                     <div class="bg-blue-600 text-white p-5 relative overflow-hidden">
                         <div class="text-sm text-blue-100 font-medium mb-3" id="cm-instruction-${this.#uid}"></div>
-                        <div id="cm-eq-container-${this.#uid}" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px]"></div>
+                        <div id="cm-eq-container-${this.#uid}" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px]" dir="ltr"></div>
                         <i class="fas fa-square-root-variable absolute -bottom-4 -right-2 text-8xl text-white opacity-10"></i>
                     </div>
                     <div id="cm-alert-${this.#uid}" class="hidden px-4 py-2 text-sm font-semibold text-center transition-all duration-300"></div>
-                    <div class="p-4 bg-white dark:bg-slate-800"><div id="cm-grid-${this.#uid}" class="grid grid-cols-3 gap-2 w-full"></div></div>
+                    <div class="p-4 bg-white dark:bg-slate-800"><div id="cm-grid-${this.#uid}" class="grid grid-cols-3 gap-2 w-full" dir="ltr"></div></div>
                     <div class="p-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900 rounded-b-2xl">
                         <div class="flex gap-2 items-center">
                             <button id="cm-reload-${this.#uid}" class="w-10 h-10 rounded-full flex justify-center items-center text-slate-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-slate-800 transition-colors"><i class="fas fa-rotate-right text-lg"></i></button>
-                            <div class="text-xs font-semibold text-slate-400 ml-2">${this.#t.failedTxt} <span id="cm-fail-count-${this.#uid}" class="text-red-500 ml-1">0</span>/${this.#settings.maxAttempts}</div>
+                            <div class="text-xs font-semibold text-slate-400 ml-2">${this.#t.failedTxt} <span id="cm-fail-count-${this.#uid}" class="text-red-500 mx-1">0</span>/${this.#settings.maxAttempts}</div>
                         </div>
                         <button id="cm-verify-${this.#uid}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg font-bold shadow-md shadow-blue-500/30 transition-transform active:scale-95 flex items-center gap-2">${this.#t.verify}</button>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-900 pb-3 text-center text-[10px] text-slate-400 font-medium tracking-wide border-t border-slate-100/50 dark:border-slate-800/50">
+                    <div class="bg-slate-50 dark:bg-slate-900 pb-3 text-center text-[10px] text-slate-400 font-medium tracking-wide border-t border-slate-100/50 dark:border-slate-800/50" dir="ltr">
                         &copy; 2026 <a href="https://jasonpw.web.id/" target="_blank" class="hover:text-blue-500">Jasonpw</a> &bull; <a href="https://ycylstudio.web.id/" target="_blank" class="text-blue-500 hover:text-blue-400">YCYL STUDIO</a>
                     </div>
                 </div>
@@ -203,7 +219,7 @@ class MathCAPTCHA {
         this.#dom.failCountEl.textContent = this.#failCount;
 
         this.#currentReqCount = Math.random() > 0.5 ? 3 : 4;
-        this.#dom.instruction.innerHTML = this.#t.inst.replace('{count}', `<b class="text-white bg-blue-800 px-1.5 py-0.5 rounded">${this.#currentReqCount}</b>`);
+        this.#dom.instruction.innerHTML = this.#t.inst.replace('{count}', `<b class="text-white bg-blue-800 px-1.5 py-0.5 rounded mx-1">${this.#currentReqCount}</b>`);
         
         this.#currentLevel = this.#settings.level === 'random' ? this.#getRandomInt(1, 7) : parseInt(this.#settings.level);
         const variables = this.#currentReqCount === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
