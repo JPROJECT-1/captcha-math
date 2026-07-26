@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Math CAPTCHA - Implementasi API</title>
+    <title>Math CAPTCHA - Dokumentasi & Implementasi</title>
     
     <!-- Dependencies Wajib API -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -43,15 +43,42 @@
         .dark .rc-anchor-checkbox { background: #1e293b; border-color: #475569; }
     </style>
 </head>
-<body class="bg-slate-200 dark:bg-slate-900 min-h-screen flex flex-col justify-center items-center text-slate-800 dark:text-slate-200 antialiased p-4 transition-colors">
+<body class="bg-slate-200 dark:bg-slate-900 min-h-screen flex flex-col items-center text-slate-800 dark:text-slate-200 antialiased py-10 transition-colors">
 
-    <!-- 1. Siapkan Wadah Kosong untuk Widget -->
-    <div id="captcha-wrapper"></div>
-    
-    <!-- Area Debugger / Log Server -->
-    <div class="mt-8 w-full max-w-md p-4 bg-slate-800 text-green-400 font-mono text-xs rounded-lg shadow-inner break-words">
-        <div class="text-slate-400 mb-2">// Server / Backend JSON Output Log:</div>
-        <div id="log-output">Menunggu respon CAPTCHA...</div>
+    <div class="w-full max-w-3xl space-y-8 px-4">
+        
+        <!-- Header & Dokumentasi Mini -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-300 dark:border-slate-700">
+            <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                <i class="fas fa-shield-halved mr-2"></i> YCYL MathCAPTCHA API
+            </h1>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                Ini adalah contoh implementasi dari class <code>MathCAPTCHA</code>. Anda dapat mengkonfigurasi widget ini melalui parameter JSON saat inisialisasi.
+            </p>
+
+            <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-lg text-sm border border-slate-200 dark:border-slate-700">
+                <h2 class="font-semibold mb-2">Parameter Konfigurasi (Settings):</h2>
+                <ul class="list-disc pl-5 space-y-1 text-slate-700 dark:text-slate-300">
+                    <li><b>containerId</b>: <span class="text-slate-500">(Wajib)</span> ID HTML elemen untuk meletakkan widget.</li>
+                    <li><b>mode</b>: <code>'light'</code>, <code>'dark'</code>, atau <code>'auto'</code> (Mendeteksi tema OS/Browser).</li>
+                    <li><b>level</b>: Tingkat kesulitan soal. <br><code>1</code> (Aritmatika), <code>2</code> (Akar & Pangkat), <code>3</code> (Aljabar), <code>4</code> (Trigonometri), <code>5</code> (Peluang), <code>6</code> (Vektor), <code>7</code> (Kalkulus), atau <code>'random'</code>.</li>
+                    <li><b>language</b>: Bahasa widget. <br><code>'id'</code> (Indonesia), <code>'en'</code> (Inggris), <code>'auto-user'</code> (Bahasa browser pengguna), <code>'auto-web'</code> (Atribut html lang).</li>
+                    <li><b>maxAttempts</b>: Angka maksimal percobaan gagal sebelum akses diblokir (Default: 5).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. Siapkan Wadah Kosong untuk Widget CAPTCHA -->
+        <div class="flex justify-center">
+            <div id="captcha-wrapper"></div>
+        </div>
+        
+        <!-- Area Debugger / Log Server -->
+        <div class="w-full p-4 bg-slate-800 text-green-400 font-mono text-xs rounded-lg shadow-inner break-words">
+            <div class="text-slate-400 mb-2">// Server / Backend JSON Output Log:</div>
+            <div id="log-output">Menunggu interaksi user...</div>
+        </div>
+
     </div>
 
     <!-- 2. Import file API Library -->
@@ -63,31 +90,62 @@
             
             // Inisialisasi API layaknya Pro-Library
             const myCaptcha = new MathCAPTCHA({
-                containerId: 'captcha-wrapper',
-                mode: 'light',           // 'light', 'dark', 'auto' (Mendeteksi tema OS)
-                level: 'random',        // Tingkat kesulitan: 1, 2, 3, 4, 5, 6, 7, atau 'random'
-                language: 'auto-web',   // Bahasa: 'id', 'en', 'auto-user' (browser), 'auto-web' (dari <html lang="">)
-                maxAttempts: 5,         // Batas toleransi gagal
                 
-                // --- KUMPULAN CALLBACK JSON ---
+                // [WAJIB] ID dari container div tempat widget akan disuntikkan
+                containerId: 'captcha-wrapper',
+                
+                // [OPSIONAL] Pengaturan Tampilan & Tingkat Kesulitan
+                mode: 'auto',           // 'light', 'dark', 'auto'
+                level: 'random',        // 1, 2, 3, 4, 5, 6, 7, atau 'random'
+                language: 'auto-web',   // 'id', 'en', 'auto-user', 'auto-web'
+                maxAttempts: 5,         // Batas maksimal gagal sebelum diblokir
+                
+                // ==========================================
+                // EVENT CALLBACKS (Mengembalikan format JSON)
+                // ==========================================
+                
+                // Dijalankan saat user berhasil memverifikasi jawaban dengan benar
                 onSuccess: function(response) {
-                    // PENTING: Kirim response.data.token ke Backend Anda via AJAX/Fetch
+                    /*
+                     * Output JSON (response):
+                     * { status: "success", data: { levelPlayed, attemptsUsed, timestamp, token } }
+                     * PENTING: Kirim token ke Backend (PHP/Node) untuk divalidasi lebih lanjut!
+                     */
                     cetakLog("<span class='text-blue-400'>[200 OK - VERIFIED]</span><br>", response);
                     
-                    // Contoh pengiriman ke backend:
-                    // fetch('https://api.yoursite.com/verify', { method: 'POST', body: JSON.stringify({ token: response.data.token }) })
+                    // Contoh implementasi ke backend:
+                    // document.getElementById('my-submit-button').disabled = false;
+                    // fetch('https://api.yoursite.com/verify', { method: 'POST', body: JSON.stringify(response.data) })
                 },
+                
+                // Dijalankan setiap kali user salah menjawab (masih ada sisa percobaan)
                 onFail: function(response) {
-                    cetakLog("<span class='text-yellow-400'>[403 FORBIDDEN - FAILED]</span><br>", response);
+                    /*
+                     * Output JSON (response):
+                     * { status: "failed", reason: "wrong_answer", attemptsUsed, maxAttempts, ... }
+                     */
+                    cetakLog("<span class='text-yellow-400'>[403 FORBIDDEN - FAILED ATTEMPT]</span><br>", response);
                 },
+                
+                // Dijalankan saat user kehabisan percobaan (gagal >= maxAttempts) atau menutup modal saat gagal
                 onBlocked: function(response) {
+                    /*
+                     * Output JSON (response):
+                     * { status: "blocked", reason: "wrong_answer" | "closed_by_user", attemptsUsed, ... }
+                     */
                     cetakLog("<span class='text-red-400'>[429 TOO MANY REQUESTS - BLOCKED]</span><br>", response);
+                    
+                    // Contoh penanganan:
+                    // alert("Akses Anda telah ditangguhkan karena terlalu banyak aktivitas mencurigakan.");
                 }
             });
 
-            // Fungsi untuk Print ke area Hitam (Debug purpose)
+            // Fungsi Bantuan untuk Print Response ke area Log UI (Untuk keperluan Demo)
             function cetakLog(title, jsonResp) {
-                document.getElementById('log-output').innerHTML = title + JSON.stringify(jsonResp, null, 2).replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+                document.getElementById('log-output').innerHTML = 
+                    title + JSON.stringify(jsonResp, null, 2)
+                    .replace(/\n/g, '<br>')
+                    .replace(/ /g, '&nbsp;');
             }
         });
     </script>
