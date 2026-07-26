@@ -1,5 +1,5 @@
 /**
- * YCYL MathCAPTCHA API - Multiple Instance & Multi-Language Support
+ * YCYL MathCAPTCHA API - Pro Version (Auto Scaling & Multi-Language)
  * Hak Cipta (c) 2026 Jasonpw & YCYL STUDIO
  */
 
@@ -20,7 +20,7 @@ class MathCAPTCHA {
         this.#container = document.getElementById(this.#settings.containerId);
         if (!this.#container) throw new Error(`[MathCAPTCHA] Container #${this.#settings.containerId} tidak ditemukan.`);
 
-        // --- PENAMBAHAN 10 BAHASA ---
+        // --- 10 BAHASA ---
         this.#i18n = {
             en: { robot: "I'm not a robot", priv: "Privacy", term: "Terms", inst: "Select {count} boxes that represent the values of the variables below:", maxSel: "Maximum {count} selections.", exactSel: "Please select exactly {count} boxes!", verAcc: "Access Verified", incorr: "Incorrect! Attempts left: {left}", blck: "You failed {max} times. Access blocked.", verFailed: "Verification Failed", verified: "Verified", verify: "Verify", failedTxt: "Failed:" },
             id: { robot: "Saya bukan robot", priv: "Privasi", term: "Ketentuan", inst: "Pilih {count} kotak yang merupakan nilai dari variabel di bawah ini:", maxSel: "Maksimal {count} pilihan.", exactSel: "Harap pilih tepat {count} kotak!", verAcc: "Akses Terverifikasi", incorr: "Salah! Sisa percobaan: {left}", blck: "Anda gagal {max} kali. Akses diblokir.", verFailed: "Verifikasi Gagal", verified: "Terverifikasi", verify: "Verifikasi", failedTxt: "Gagal:" },
@@ -40,11 +40,9 @@ class MathCAPTCHA {
     #initLanguage() {
         let langCode = this.#settings.language;
         if (langCode === 'auto-web') {
-            // Deteksi sederhana dari atribut lang HTML, fallback ke Inggris jika tidak ditemukan di dictionary
             const htmlLang = document.documentElement.lang.split('-')[0].toLowerCase();
             langCode = this.#i18n[htmlLang] ? htmlLang : 'en';
         } else if (langCode === 'auto-user') {
-            // Deteksi bahasa browser pengguna
             const userLang = navigator.language.split('-')[0].toLowerCase();
             langCode = this.#i18n[userLang] ? userLang : 'en';
         }
@@ -93,7 +91,10 @@ class MathCAPTCHA {
                     </div>
                     <div class="bg-blue-600 text-white p-5 relative overflow-hidden">
                         <div class="text-sm text-blue-100 font-medium mb-3" id="cm-instruction-${this.#uid}"></div>
-                        <div id="cm-eq-container-${this.#uid}" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px]" dir="ltr"></div>
+                        
+                        <!-- Perbaikan Layout Equation Grid -->
+                        <div id="cm-eq-container-${this.#uid}" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px] grid-cols-2" dir="ltr"></div>
+                        
                         <i class="fas fa-square-root-variable absolute -bottom-4 -right-2 text-8xl text-white opacity-10"></i>
                     </div>
                     <div id="cm-alert-${this.#uid}" class="hidden px-4 py-2 text-sm font-semibold text-center transition-all duration-300"></div>
@@ -229,13 +230,48 @@ class MathCAPTCHA {
             let prob; do { prob = this.#getEquation(this.#currentLevel, v); } while (this.#answerValues.includes(prob.answer)); 
             this.#answerValues.push(prob.answer);
             
+            // --- LOGIKA AUTO-SCALING TEKS MATEMATIKA ---
+            
+            // Wrapper untuk membatasi ruang dan mengatur layout
+            let wrapperDiv = document.createElement("div");
+            wrapperDiv.className = "flex justify-center items-center w-full overflow-hidden";
+            
+            // Jika hanya 3 variabel, jadikan elemen C (index ke-2) melebar 2 kolom
+            if (this.#currentReqCount === 3 && index === 2) {
+                wrapperDiv.classList.add("col-span-2");
+            }
+            
+            // Inner Div tempat KaTeX di-render (dibuat tidak boleh turun baris/wrap)
             let eqDiv = document.createElement("div");
-            eqDiv.className = (this.#currentReqCount === 3 && index === 2) ? "flex justify-center items-center col-span-2" : "flex justify-center items-center";
-            this.#dom.eqContainer.appendChild(eqDiv);
+            eqDiv.style.whiteSpace = "nowrap"; 
+            eqDiv.style.transition = "transform 0.15s ease-out"; 
+            eqDiv.style.transformOrigin = "center"; 
+            
+            wrapperDiv.appendChild(eqDiv);
+            this.#dom.eqContainer.appendChild(wrapperDiv);
+            
+            // Render rumus matematika
             katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
-        });
 
-        this.#dom.eqContainer.className = `bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px] ${this.#currentReqCount === 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-2'}`;
+            // Fungsi untuk mengecilkan font (scale) jika panjang melebihi batas wrapper
+            const fitEquation = () => {
+                if(wrapperDiv.clientWidth === 0) return; // Abaikan jika modal belum tampil
+                
+                const availWidth = wrapperDiv.clientWidth;
+                const eqWidth = eqDiv.scrollWidth;
+                
+                if (eqWidth > availWidth) {
+                    const scale = (availWidth - 10) / eqWidth; // -10 untuk jarak aman (padding)
+                    eqDiv.style.transform = `scale(${scale})`;
+                } else {
+                    eqDiv.style.transform = `scale(1)`;
+                }
+            };
+
+            // Jalankan segera dan jalankan lagi setelah animasi popup modal selesai (350ms)
+            requestAnimationFrame(fitEquation);
+            setTimeout(fitEquation, 350); 
+        });
 
         let gridItems = [...this.#answerValues];
         while (gridItems.length < 9) {
