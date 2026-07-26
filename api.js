@@ -1,64 +1,37 @@
 /**
- * YCYL MathCAPTCHA API
+ * YCYL MathCAPTCHA API - Multiple Instance Support
  * Hak Cipta (c) 2026 Jasonpw & YCYL STUDIO
- * 
- * Menggunakan ES6 Private Fields (#) agar state, jawaban, 
- * dan counter tidak bisa dimanipulasi melalui browser console.
  */
 
 class MathCAPTCHA {
-    // --- PRIVATE FIELDS (Tidak bisa diakses dari luar class) ---
-    #settings;
-    #container;
-    #failCount = 0;
-    #isVerified = false;
-    #isBlocked = false;
-    #currentLevel = 1;
-    #currentReqCount = 4;
-    #selected = new Set();
-    #answerValues = [];
-    #dom = {};
-    #i18n;
-    #t;
-    #isDark = false;
+    #settings; #container; #failCount = 0; #isVerified = false; #isBlocked = false;
+    #currentLevel = 1; #currentReqCount = 4; #selected = new Set(); #answerValues = [];
+    #dom = {}; #i18n; #t; #isDark = false; #uid;
 
     constructor(options) {
-        // Default Settings
+        // Buat ID unik untuk mencegah bentrok jika ada banyak CAPTCHA di satu halaman
+        this.#uid = 'mc_' + Math.random().toString(36).substr(2, 9);
+
         this.#settings = Object.assign({
-            containerId: null,
-            mode: 'light', // 'light', 'dark', 'auto'
-            level: 'random', // 1-7, 'random'
-            language: 'auto-web', // 'id', 'en', 'auto-user', 'auto-web'
-            maxAttempts: 5,
-            onSuccess: (data) => console.log('Success:', data),
-            onFail: (data) => console.warn('Failed attempt:', data),
-            onBlocked: (data) => console.error('Blocked:', data)
+            containerId: null, mode: 'light', level: 'random', language: 'auto-web', maxAttempts: 5,
+            onSuccess: () => {}, onFail: () => {}, onBlocked: () => {}
         }, options);
 
         this.#container = document.getElementById(this.#settings.containerId);
         if (!this.#container) throw new Error(`[MathCAPTCHA] Container #${this.#settings.containerId} tidak ditemukan.`);
 
-        // Dictionary Bahasa
         this.#i18n = {
             en: { robot: "I'm not a robot", priv: "Privacy", term: "Terms", inst: "Select {count} boxes that represent the values of the variables below:", maxSel: "Maximum {count} selections.", exactSel: "Please select exactly {count} boxes!", verAcc: "Access Verified", incorr: "Incorrect! Attempts left: {left}", blck: "You failed {max} times. Access blocked.", verFailed: "Verification Failed", verified: "Verified", verify: "Verify", failedTxt: "Failed:" },
             id: { robot: "Saya bukan robot", priv: "Privasi", term: "Ketentuan", inst: "Pilih {count} kotak yang merupakan nilai dari variabel di bawah ini:", maxSel: "Maksimal {count} pilihan.", exactSel: "Harap pilih tepat {count} kotak!", verAcc: "Akses Terverifikasi", incorr: "Salah! Sisa percobaan: {left}", blck: "Anda gagal {max} kali. Akses diblokir.", verFailed: "Verifikasi Gagal", verified: "Terverifikasi", verify: "Verifikasi", failedTxt: "Gagal:" }
         };
 
-        this.#initLanguage();
-        this.#initTheme();
-        this.#renderWidget();
-        this.#renderModal();
+        this.#initLanguage(); this.#initTheme(); this.#renderWidget(); this.#renderModal();
     }
-
-    // --- PRIVATE METHODS ---
 
     #initLanguage() {
         let langCode = this.#settings.language;
-        if (langCode === 'auto-web') {
-            langCode = document.documentElement.lang.startsWith('id') ? 'id' : 'en';
-        } else if (langCode === 'auto-user') {
-            langCode = navigator.language.startsWith('id') ? 'id' : 'en';
-        }
+        if (langCode === 'auto-web') langCode = document.documentElement.lang.startsWith('id') ? 'id' : 'en';
+        else if (langCode === 'auto-user') langCode = navigator.language.startsWith('id') ? 'id' : 'en';
         this.#t = this.#i18n[langCode] || this.#i18n['en'];
     }
 
@@ -72,9 +45,9 @@ class MathCAPTCHA {
         const darkClass = this.#isDark ? 'dark' : '';
         this.#container.innerHTML = `
             <div class="${darkClass}">
-                <div id="cw-main" class="bg-slate-50 dark:bg-slate-800 w-[300px] h-[74px] shadow-sm rounded border border-slate-300 dark:border-slate-600 flex items-center p-3 cursor-pointer select-none hover:shadow-md transition-shadow">
-                    <div id="cw-check" class="rc-anchor-checkbox flex items-center justify-center shrink-0"></div>
-                    <span id="cw-label" class="ml-3 font-medium text-slate-700 dark:text-slate-200 text-[14px]">${this.#t.robot}</span>
+                <div id="cw-main-${this.#uid}" class="bg-slate-50 dark:bg-slate-800 w-[300px] h-[74px] shadow-sm rounded border border-slate-300 dark:border-slate-600 flex items-center p-3 cursor-pointer select-none hover:shadow-md transition-shadow">
+                    <div id="cw-check-${this.#uid}" class="rc-anchor-checkbox flex items-center justify-center shrink-0"></div>
+                    <span id="cw-label-${this.#uid}" class="ml-3 font-medium text-slate-700 dark:text-slate-200 text-[14px]">${this.#t.robot}</span>
                     <div class="ml-auto flex flex-col items-center justify-center shrink-0 relative z-10">
                         <a href="https://github.com/JPROJECT-1/captcha-math" target="_blank" onclick="event.stopPropagation()" class="flex flex-col items-center justify-center hover:opacity-70 transition-opacity" title="GitHub">
                             <i class="fas fa-shield-halved text-[28px] text-blue-500 mb-0.5"></i>
@@ -88,8 +61,7 @@ class MathCAPTCHA {
                 </div>
             </div>
         `;
-        
-        this.#container.querySelector('#cw-main').addEventListener('click', (e) => {
+        document.getElementById(`cw-main-${this.#uid}`).addEventListener('click', (e) => {
             if(e.target.tagName !== 'A') this.#openModal();
         });
     }
@@ -97,37 +69,25 @@ class MathCAPTCHA {
     #renderModal() {
         const darkClass = this.#isDark ? 'dark' : '';
         const modalHTML = `
-            <div id="cm-overlay" class="${darkClass} fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-                <div id="cm-box" class="bg-white dark:bg-slate-800 w-full max-w-[400px] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden scale-95 transition-transform duration-300 relative">
-                    <button id="cm-close" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-red-100 hover:text-red-600 dark:text-slate-300 z-20 transition-colors">
-                        <i class="fas fa-xmark"></i>
-                    </button>
+            <div id="cm-overlay-${this.#uid}" class="${darkClass} fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div id="cm-box-${this.#uid}" class="bg-white dark:bg-slate-800 w-full max-w-[400px] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden scale-95 transition-transform duration-300 relative">
+                    <button id="cm-close-${this.#uid}" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-red-100 hover:text-red-600 dark:text-slate-300 z-20 transition-colors"><i class="fas fa-xmark"></i></button>
                     <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center pr-12">
-                        <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-sm">
-                            <i class="fas fa-shield-halved"></i> MathCAPTCHA
-                        </div>
+                        <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-sm"><i class="fas fa-shield-halved"></i> MathCAPTCHA</div>
                     </div>
                     <div class="bg-blue-600 text-white p-5 relative overflow-hidden">
-                        <div class="text-sm text-blue-100 font-medium mb-3" id="cm-instruction"></div>
-                        <div id="cm-eq-container" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px]"></div>
+                        <div class="text-sm text-blue-100 font-medium mb-3" id="cm-instruction-${this.#uid}"></div>
+                        <div id="cm-eq-container-${this.#uid}" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px]"></div>
                         <i class="fas fa-square-root-variable absolute -bottom-4 -right-2 text-8xl text-white opacity-10"></i>
                     </div>
-                    <div id="cm-alert" class="hidden px-4 py-2 text-sm font-semibold text-center transition-all duration-300"></div>
-                    <div class="p-4 bg-white dark:bg-slate-800">
-                        <div id="cm-grid" class="grid grid-cols-3 gap-2 w-full"></div>
-                    </div>
+                    <div id="cm-alert-${this.#uid}" class="hidden px-4 py-2 text-sm font-semibold text-center transition-all duration-300"></div>
+                    <div class="p-4 bg-white dark:bg-slate-800"><div id="cm-grid-${this.#uid}" class="grid grid-cols-3 gap-2 w-full"></div></div>
                     <div class="p-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900 rounded-b-2xl">
                         <div class="flex gap-2 items-center">
-                            <button id="cm-reload" class="w-10 h-10 rounded-full flex justify-center items-center text-slate-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-slate-800 transition-colors">
-                                <i class="fas fa-rotate-right text-lg"></i>
-                            </button>
-                            <div class="text-xs font-semibold text-slate-400 ml-2">
-                                ${this.#t.failedTxt} <span id="cm-fail-count" class="text-red-500 ml-1">0</span>/${this.#settings.maxAttempts}
-                            </div>
+                            <button id="cm-reload-${this.#uid}" class="w-10 h-10 rounded-full flex justify-center items-center text-slate-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-slate-800 transition-colors"><i class="fas fa-rotate-right text-lg"></i></button>
+                            <div class="text-xs font-semibold text-slate-400 ml-2">${this.#t.failedTxt} <span id="cm-fail-count-${this.#uid}" class="text-red-500 ml-1">0</span>/${this.#settings.maxAttempts}</div>
                         </div>
-                        <button id="cm-verify" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg font-bold shadow-md shadow-blue-500/30 transition-transform active:scale-95 flex items-center gap-2">
-                            ${this.#t.verify}
-                        </button>
+                        <button id="cm-verify-${this.#uid}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg font-bold shadow-md shadow-blue-500/30 transition-transform active:scale-95 flex items-center gap-2">${this.#t.verify}</button>
                     </div>
                     <div class="bg-slate-50 dark:bg-slate-900 pb-3 text-center text-[10px] text-slate-400 font-medium tracking-wide border-t border-slate-100/50 dark:border-slate-800/50">
                         &copy; 2026 <a href="https://jasonpw.web.id/" target="_blank" class="hover:text-blue-500">Jasonpw</a> &bull; <a href="https://ycylstudio.web.id/" target="_blank" class="text-blue-500 hover:text-blue-400">YCYL STUDIO</a>
@@ -141,19 +101,19 @@ class MathCAPTCHA {
         document.body.appendChild(wrapper.firstElementChild);
 
         this.#dom = {
-            overlay: document.getElementById('cm-overlay'),
-            box: document.getElementById('cm-box'),
-            closeBtn: document.getElementById('cm-close'),
-            instruction: document.getElementById('cm-instruction'),
-            eqContainer: document.getElementById('cm-eq-container'),
-            alertBox: document.getElementById('cm-alert'),
-            grid: document.getElementById('cm-grid'),
-            reloadBtn: document.getElementById('cm-reload'),
-            failCountEl: document.getElementById('cm-fail-count'),
-            verifyBtn: document.getElementById('cm-verify'),
-            widgetCheck: document.getElementById('cw-check'),
-            widgetLabel: document.getElementById('cw-label'),
-            widgetMain: document.getElementById('cw-main')
+            overlay: document.getElementById(`cm-overlay-${this.#uid}`),
+            box: document.getElementById(`cm-box-${this.#uid}`),
+            closeBtn: document.getElementById(`cm-close-${this.#uid}`),
+            instruction: document.getElementById(`cm-instruction-${this.#uid}`),
+            eqContainer: document.getElementById(`cm-eq-container-${this.#uid}`),
+            alertBox: document.getElementById(`cm-alert-${this.#uid}`),
+            grid: document.getElementById(`cm-grid-${this.#uid}`),
+            reloadBtn: document.getElementById(`cm-reload-${this.#uid}`),
+            failCountEl: document.getElementById(`cm-fail-count-${this.#uid}`),
+            verifyBtn: document.getElementById(`cm-verify-${this.#uid}`),
+            widgetCheck: document.getElementById(`cw-check-${this.#uid}`),
+            widgetLabel: document.getElementById(`cw-label-${this.#uid}`),
+            widgetMain: document.getElementById(`cw-main-${this.#uid}`)
         };
 
         this.#dom.closeBtn.onclick = () => this.#triggerFail('closed_by_user');
@@ -165,7 +125,6 @@ class MathCAPTCHA {
         if (this.#isVerified || this.#isBlocked) return;
         this.#dom.widgetCheck.innerHTML = '<i class="fas fa-spinner animate-spin-slow text-blue-500 text-xl"></i>';
         this.#dom.widgetCheck.style.borderColor = 'transparent';
-        
         setTimeout(() => {
             this.#dom.overlay.classList.remove("opacity-0", "pointer-events-none");
             this.#dom.box.classList.remove("scale-95");
@@ -198,10 +157,7 @@ class MathCAPTCHA {
     #getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
     #shuffle(array) {
         let arr = [...array];
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
+        for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
         return arr;
     }
 
@@ -241,13 +197,9 @@ class MathCAPTCHA {
     }
 
     #generateChallenge() {
-        this.#dom.grid.innerHTML = "";
-        this.#dom.eqContainer.innerHTML = "";
-        this.#selected.clear();
-        this.#dom.alertBox.classList.add("hidden");
-        this.#dom.box.classList.remove("animate-shake");
-        this.#dom.verifyBtn.innerHTML = this.#t.verify;
-        this.#dom.grid.style.pointerEvents = "auto";
+        this.#dom.grid.innerHTML = ""; this.#dom.eqContainer.innerHTML = ""; this.#selected.clear();
+        this.#dom.alertBox.classList.add("hidden"); this.#dom.box.classList.remove("animate-shake");
+        this.#dom.verifyBtn.innerHTML = this.#t.verify; this.#dom.grid.style.pointerEvents = "auto";
         this.#dom.failCountEl.textContent = this.#failCount;
 
         this.#currentReqCount = Math.random() > 0.5 ? 3 : 4;
@@ -258,8 +210,7 @@ class MathCAPTCHA {
         this.#answerValues = [];
         
         variables.forEach((v, index) => {
-            let prob;
-            do { prob = this.#getEquation(this.#currentLevel, v); } while (this.#answerValues.includes(prob.answer)); 
+            let prob; do { prob = this.#getEquation(this.#currentLevel, v); } while (this.#answerValues.includes(prob.answer)); 
             this.#answerValues.push(prob.answer);
             
             let eqDiv = document.createElement("div");
@@ -292,47 +243,31 @@ class MathCAPTCHA {
 
     #toggleCell(cell, numberValue) {
         if (this.#selected.has(numberValue)) {
-            this.#selected.delete(numberValue);
-            cell.classList.remove("tile-selected");
+            this.#selected.delete(numberValue); cell.classList.remove("tile-selected");
         } else {
-            if (this.#selected.size >= this.#currentReqCount) {
-                this.#showAlert(this.#t.maxSel.replace('{count}', this.#currentReqCount), "error");
-                return;
-            }
-            this.#selected.add(numberValue);
-            cell.classList.add("tile-selected");
+            if (this.#selected.size >= this.#currentReqCount) { this.#showAlert(this.#t.maxSel.replace('{count}', this.#currentReqCount), "error"); return; }
+            this.#selected.add(numberValue); cell.classList.add("tile-selected");
         }
         this.#dom.alertBox.classList.add("hidden");
     }
 
     #triggerFail(reason) {
-        this.#failCount++;
-        this.#dom.failCountEl.textContent = this.#failCount;
-        
-        // Membekukan Object Output agar tidak diubah-ubah setelah dikeluarkan
+        this.#failCount++; this.#dom.failCountEl.textContent = this.#failCount;
         const outputJSON = Object.freeze({
-            status: "failed",
-            reason: reason,
-            attemptsUsed: this.#failCount,
-            maxAttempts: this.#settings.maxAttempts,
-            levelPlayed: this.#currentLevel,
-            timestamp: new Date().toISOString()
+            status: "failed", reason: reason, attemptsUsed: this.#failCount,
+            maxAttempts: this.#settings.maxAttempts, levelPlayed: this.#currentLevel, timestamp: new Date().toISOString()
         });
 
         if (this.#failCount >= this.#settings.maxAttempts) {
             this.#showAlert(this.#t.blck.replace('{max}', this.#settings.maxAttempts), "error");
-            this.#shakeBox();
-            this.#dom.grid.style.pointerEvents = "none";
-            this.#dom.verifyBtn.disabled = true;
+            this.#shakeBox(); this.#dom.grid.style.pointerEvents = "none"; this.#dom.verifyBtn.disabled = true;
             setTimeout(() => this.#closeModal('blocked'), 1200);
-            
             this.#settings.onBlocked(Object.freeze({ ...outputJSON, status: "blocked" }));
         } else {
             this.#showAlert(this.#t.incorr.replace('{left}', this.#settings.maxAttempts - this.#failCount), "error");
             this.#shakeBox();
             if(reason !== 'closed_by_user') setTimeout(() => this.#generateChallenge(), 1500);
             else this.#closeModal('failed');
-            
             this.#settings.onFail(outputJSON);
         }
     }
@@ -340,8 +275,7 @@ class MathCAPTCHA {
     #verifyResponse() {
         if (this.#selected.size !== this.#currentReqCount) {
             this.#showAlert(this.#t.exactSel.replace('{count}', this.#currentReqCount), "error");
-            this.#shakeBox();
-            return;
+            this.#shakeBox(); return;
         }
 
         let isCorrect = true;
@@ -351,32 +285,16 @@ class MathCAPTCHA {
             this.#showAlert(`<i class="fas fa-shield-check text-lg mr-2"></i> ${this.#t.verAcc}`, "success");
             this.#dom.grid.style.pointerEvents = "none";
             setTimeout(() => this.#closeModal('success'), 800);
-            
-            // Generate Simulated Secure Token (Kombinasikan dengan validasi Backend untuk keamanan nyata)
-            const simulatedToken = btoa(JSON.stringify({
-                valid: true, 
-                timestamp: Date.now(), 
-                level: this.#currentLevel
-            }));
-
+            const simulatedToken = btoa(JSON.stringify({ valid: true, timestamp: Date.now(), level: this.#currentLevel }));
             this.#settings.onSuccess(Object.freeze({
-                status: "success",
-                data: {
-                    levelPlayed: this.#currentLevel,
-                    attemptsUsed: this.#failCount + 1,
-                    timestamp: new Date().toISOString(),
-                    token: simulatedToken
-                }
+                status: "success", data: { levelPlayed: this.#currentLevel, attemptsUsed: this.#failCount + 1, timestamp: new Date().toISOString(), token: simulatedToken }
             }));
-        } else {
-            this.#triggerFail('wrong_answer');
-        }
+        } else { this.#triggerFail('wrong_answer'); }
     }
 
     #shakeBox() {
         this.#dom.box.classList.remove("animate-shake");
-        void this.#dom.box.offsetWidth; 
-        this.#dom.box.classList.add("animate-shake");
+        void this.#dom.box.offsetWidth; this.#dom.box.classList.add("animate-shake");
     }
 
     #showAlert(msg, type) {
