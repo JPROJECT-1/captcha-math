@@ -1,22 +1,29 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Math CAPTCHA - Full Showcase</title>
+    <title>MathCAPTCHA by YCYL STUDIO - Secure & Dynamic</title>
     
-    <!-- Dependencies Wajib API -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- KaTeX untuk Render Matematika -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    },
                     animation: { 'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both', 'spin-slow': 'spin 1.5s linear infinite' },
                     keyframes: {
                         shake: {
@@ -30,183 +37,330 @@
             }
         }
     </script>
+    
+    <!-- Custom CSS untuk MathCAPTCHA & Syntax Highlighting -->
     <style>
-        /* CSS Inti MathCAPTCHA */
         ::selection { background: #3b82f6; color: white; }
+        
+        /* MathCAPTCHA Core Styles */
         .tile-selected { transform: scale(0.92); box-shadow: 0 0 0 4px #3b82f6; background-color: #eff6ff !important; color: #1d4ed8 !important; }
-        .dark .tile-selected { background-color: #1e3a8a !important; color: #bfdbfe !important; }
+        .dark .tile-selected { background-color: #1e3a8a !important; color: #bfdbfe !important; box-shadow: 0 0 0 4px #60a5fa; }
         .checkmark { display: none; }
         .tile-selected .checkmark { display: flex; }
         .katex { font-size: 1.15em !important; }
         .rc-anchor-checkbox { width: 28px; height: 28px; background: #fff; border: 2px solid #c1c1c1; border-radius: 2px; transition: all 0.2s ease; }
         .rc-anchor-checkbox:hover { border-color: #b2b2b2; }
-        .dark .rc-anchor-checkbox { background: #1e293b; border-color: #475569; }
+        .dark .rc-anchor-checkbox { background: #0f172a; border-color: #334155; }
+
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+        
+        /* Code Block Styling */
+        pre { background: #0f172a; border-radius: 0.75rem; padding: 1.25rem; overflow-x: auto; color: #e2e8f0; font-size: 0.875rem; line-height: 1.5; border: 1px solid #1e293b; }
+        code .keyword { color: #c678dd; }
+        code .string { color: #98c379; }
+        code .comment { color: #64748b; font-style: italic; }
+        code .function { color: #61afef; }
+        code .property { color: #e5c07b; }
     </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-900 min-h-screen text-slate-800 dark:text-slate-200 antialiased p-6 md:p-12 font-sans">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased transition-colors duration-300 min-h-screen flex flex-col">
 
-    <div class="max-w-6xl mx-auto space-y-10">
-        
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-4"><i class="fas fa-shield-halved"></i> MathCAPTCHA Showcase</h1>
-            <p class="text-slate-600 dark:text-slate-400">Contoh implementasi berbagai macam setting dan level kesulitan dalam satu halaman secara bersamaan.</p>
-        </div>
-
-        <!-- GRID PEMBUNGKUS CARD -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-            <!-- SAMPLE 1 -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <h2 class="text-xl font-bold mb-2">Level 1: Aritmatika Dasar</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 bg-slate-100 dark:bg-slate-900 p-3 rounded">
-                    <strong>Tujuan:</strong> Menguji operasi pertambahan, pengurangan, perkalian, dan pembagian sederhana.<br>
-                    <strong>Setingan:</strong> <code>mode: 'light'</code>, <code>language: 'id'</code>
-                </p>
-                <div id="captcha-lvl1" class="mb-4 flex justify-center"></div>
-                <div class="p-3 bg-slate-900 text-green-400 font-mono text-[10px] rounded h-32 overflow-y-auto" id="log-lvl1">// Log JSON Output...</div>
+    <!-- NAVBAR -->
+    <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i class="fas fa-shield-halved text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Math<span class="text-blue-600 dark:text-blue-400">CAPTCHA</span></span>
             </div>
-
-            <!-- SAMPLE 2 -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <h2 class="text-xl font-bold mb-2">Level 2: Akar & Pangkat</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 bg-slate-100 dark:bg-slate-900 p-3 rounded">
-                    <strong>Tujuan:</strong> Mencari nilai dari bilangan yang dipangkatkan atau diakarkan (Kuadrat).<br>
-                    <strong>Setingan:</strong> <code>mode: 'dark'</code>, <code>language: 'en'</code>
-                </p>
-                <div id="captcha-lvl2" class="mb-4 flex justify-center"></div>
-                <div class="p-3 bg-slate-900 text-green-400 font-mono text-[10px] rounded h-32 overflow-y-auto" id="log-lvl2">// Log JSON Output...</div>
-            </div>
-
-            <!-- SAMPLE 3 -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <h2 class="text-xl font-bold mb-2">Level 3: Aljabar Dasar</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 bg-slate-100 dark:bg-slate-900 p-3 rounded">
-                    <strong>Tujuan:</strong> Menyelesaikan persamaan linear satu variabel dan menemukan akar persamaan kuadrat.<br>
-                    <strong>Setingan:</strong> <code>mode: 'auto'</code>, <code>language: 'id'</code>
-                </p>
-                <div id="captcha-lvl3" class="mb-4 flex justify-center"></div>
-                <div class="p-3 bg-slate-900 text-green-400 font-mono text-[10px] rounded h-32 overflow-y-auto" id="log-lvl3">// Log JSON Output...</div>
-            </div>
-
-            <!-- SAMPLE 4 -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <h2 class="text-xl font-bold mb-2">Level 4: Trigonometri</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 bg-slate-100 dark:bg-slate-900 p-3 rounded">
-                    <strong>Tujuan:</strong> Menebak nilai dari rumus sudut istimewa (Sin 30, Cos 60, Tan 45).<br>
-                    <strong>Setingan:</strong> <code>mode: 'light'</code>, <code>language: 'en'</code>
-                </p>
-                <div id="captcha-lvl4" class="mb-4 flex justify-center"></div>
-                <div class="p-3 bg-slate-900 text-green-400 font-mono text-[10px] rounded h-32 overflow-y-auto" id="log-lvl4">// Log JSON Output...</div>
-            </div>
-
-            <!-- SAMPLE 5 -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <h2 class="text-xl font-bold mb-2">Level 5: Peluang & Kombinasi</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 bg-slate-100 dark:bg-slate-900 p-3 rounded">
-                    <strong>Tujuan:</strong> Menghitung probabilitas mata uang koin dan rumus kombinasi dasar (nCr).<br>
-                    <strong>Setingan:</strong> <code>mode: 'dark'</code>, <code>language: 'id'</code>
-                </p>
-                <div id="captcha-lvl5" class="mb-4 flex justify-center"></div>
-                <div class="p-3 bg-slate-900 text-green-400 font-mono text-[10px] rounded h-32 overflow-y-auto" id="log-lvl5">// Log JSON Output...</div>
-            </div>
-
-            <!-- SAMPLE 6 -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <h2 class="text-xl font-bold mb-2">Level 6: Vektor</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 bg-slate-100 dark:bg-slate-900 p-3 rounded">
-                    <strong>Tujuan:</strong> Mengalikan dua himpunan vektor (Dot Product Array).<br>
-                    <strong>Setingan:</strong> <code>mode: 'light'</code>, <code>language: 'en'</code>
-                </p>
-                <div id="captcha-lvl6" class="mb-4 flex justify-center"></div>
-                <div class="p-3 bg-slate-900 text-green-400 font-mono text-[10px] rounded h-32 overflow-y-auto" id="log-lvl6">// Log JSON Output...</div>
-            </div>
-
-            <!-- SAMPLE 7 -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 md:col-span-2 lg:col-span-2">
-                <h2 class="text-xl font-bold mb-2">Level 7: Kalkulus (Boss Level)</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 bg-slate-100 dark:bg-slate-900 p-3 rounded">
-                    <strong>Tujuan:</strong> Menyelesaikan rumus Turunan (Derivative) f'(x) dan Integral Tentu.<br>
-                    <strong>Setingan:</strong> <code>mode: 'auto'</code>, <code>language: 'id'</code>
-                </p>
-                <div id="captcha-lvl7" class="mb-4 flex justify-center"></div>
-                <div class="p-3 bg-slate-900 text-green-400 font-mono text-[10px] rounded h-32 overflow-y-auto" id="log-lvl7">// Log JSON Output...</div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Panggil File API -->
-    <script src="api.js"></script>
-
-    <!-- Inisialisasi Masing-Masing Widget -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
             
-            // Helper function untuk mempermudah penulisan log
-            const updateLog = (logId, title, color, data) => {
-                const el = document.getElementById(logId);
-                el.innerHTML = `<span class="text-${color}-400 font-bold">${title}</span><br>` + 
-                                JSON.stringify(data, null, 2).replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
-                el.scrollTop = el.scrollHeight; // Auto scroll ke bawah
-            };
+            <div class="flex items-center gap-6">
+                <a href="#docs" class="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors hidden sm:block">Dokumentasi</a>
+                <a href="https://github.com/JPROJECT-1/captcha-math" target="_blank" class="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"><i class="fab fa-github text-lg"></i></a>
+                <!-- Dark Mode Toggle -->
+                <div class="flex items-center gap-2 border-l border-slate-200 dark:border-slate-700 pl-6">
+                    <i class="fas fa-sun text-amber-500 text-sm"></i>
+                    <div class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
+                        <input type="checkbox" name="toggle" id="theme-toggle" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out border-slate-300 top-0 left-0" onclick="toggleTheme()"/>
+                        <label for="theme-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200 ease-in-out"></label>
+                    </div>
+                    <i class="fas fa-moon text-slate-400 dark:text-blue-300 text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </header>
 
-            // 1. Instansiasi Level 1
+    <!-- HERO SECTION -->
+    <section class="py-16 md:py-24 px-6 text-center max-w-4xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-semibold mb-6 border border-blue-200 dark:border-blue-800">
+            <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
+            API v2.0 Telah Rilis
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-tight">
+            Verifikasi Anti-Bot dengan <br class="hidden md:block"/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">Logika Matematika Dinamis.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto">
+            Tinggalkan tebak-tebakan gambar bus yang membosankan. MathCAPTCHA menghasilkan soal secara prosedural <i>(real-time)</i>, mendukung 10 bahasa, auto-scaling, dan sistem JSON callbacks profesional.
+        </p>
+    </section>
+
+    <!-- INTERACTIVE PLAYGROUND -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 mb-24 w-full">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12">
+                
+                <!-- KIRI: Control Panel -->
+                <div class="lg:col-span-5 bg-slate-50 dark:bg-slate-900/50 p-6 lg:p-8 border-r border-slate-200 dark:border-slate-700">
+                    <h2 class="font-bold text-lg mb-6 flex items-center text-slate-900 dark:text-white">
+                        <i class="fas fa-sliders text-blue-500 mr-3"></i> Konfigurasi API
+                    </h2>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tingkat Kesulitan (Level)</label>
+                            <select id="setting-level" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors shadow-sm">
+                                <option value="1">Level 1: Aritmatika Dasar</option>
+                                <option value="2">Level 2: Akar & Pangkat</option>
+                                <option value="3">Level 3: Aljabar Dasar</option>
+                                <option value="4">Level 4: Trigonometri</option>
+                                <option value="5">Level 5: Peluang & Harapan</option>
+                                <option value="6">Level 6: Vektor (Dot Product)</option>
+                                <option value="7">Level 7: Kalkulus (Turunan & Integral)</option>
+                                <option value="random" selected>Acak Semua Level (Random)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Bahasa UI (Language)</label>
+                            <select id="setting-lang" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors shadow-sm">
+                                <option value="id" selected>🇮🇩 Indonesia (ID)</option>
+                                <option value="en">🇺🇸 English (EN)</option>
+                                <option value="es">🇪🇸 Español (ES)</option>
+                                <option value="fr">🇫🇷 Français (FR)</option>
+                                <option value="de">🇩🇪 Deutsch (DE)</option>
+                                <option value="ru">🇷🇺 Русский (RU)</option>
+                                <option value="ar">🇸🇦 العربية (AR - RTL)</option>
+                                <option value="zh">🇨🇳 中文 (ZH)</option>
+                                <option value="ja">🇯🇵 日本語 (JA)</option>
+                                <option value="hi">🇮🇳 हिन्दी (HI)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Batas Gagal (Max Attempts)</label>
+                            <input type="number" id="setting-attempts" value="5" min="1" max="10" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors shadow-sm">
+                        </div>
+
+                        <button onclick="applySettings()" class="w-full bg-slate-900 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 mt-4">
+                            <i class="fas fa-rotate"></i> Terapkan & Generate Ulang
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KANAN: Playground & Log -->
+                <div class="lg:col-span-7 flex flex-col p-6 lg:p-8 relative">
+                    <div class="absolute top-8 right-8 text-xs font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Live Preview
+                    </div>
+                    
+                    <!-- Container Widget -->
+                    <div class="flex-grow flex flex-col items-center justify-center min-h-[250px]">
+                        <div id="captcha-playground" class="transition-transform hover:scale-105"></div>
+                    </div>
+
+                    <!-- JSON Terminal -->
+                    <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden mt-6 h-48">
+                        <div class="bg-[#1e293b] px-4 py-2 flex items-center gap-2 border-b border-slate-700/50">
+                            <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                            <span class="text-slate-400 text-[10px] font-mono ml-2 uppercase tracking-wider">Terminal Output JSON</span>
+                        </div>
+                        <div id="playground-log" class="p-4 font-mono text-xs text-[#a6accd] overflow-y-auto flex-grow break-words">
+                            <span class="text-[#64748b] italic">// Menunggu interaksi pengguna...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DOCUMENTATION SECTION -->
+    <section id="docs" class="max-w-4xl mx-auto px-4 sm:px-6 mb-24 w-full">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4">Cara Memasang API</h2>
+            <p class="text-slate-600 dark:text-slate-400">Implementasi bersih berbasis <i>Vanilla JavaScript Class (ES6)</i>. Aman dari manipulasi Console browser karena menggunakan <i>Private Fields (#)</i>.</p>
+        </div>
+
+        <div class="space-y-12">
+            
+            <!-- Langkah 1 -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">1</span> Siapkan Container HTML</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4 text-sm">Buat sebuah elemen <code>&lt;div&gt;</code> kosong dengan ID unik di lokasi formulir (form) Anda. Widget akan dirender secara otomatis di dalam div ini.</p>
+                <pre><code><span class="comment">&lt;!-- Letakkan di dalam form Anda --&gt;</span>
+&lt;<span class="keyword">div</span> <span class="property">id</span>=<span class="string">"my-captcha-box"</span>&gt;&lt;/<span class="keyword">div</span>&gt;
+
+<span class="comment">&lt;!-- Sertakan file library MathCAPTCHA --&gt;</span>
+&lt;<span class="keyword">script</span> <span class="property">src</span>=<span class="string">"https://jproject-1.github.io/captcha-math/api.js"</span>&gt;&lt;/<span class="keyword">script</span>&gt;</code></pre>
+            </div>
+
+            <!-- Langkah 2 -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">2</span> Inisialisasi Script (Settings)</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4 text-sm">Panggil class <code>MathCAPTCHA</code> dan masukkan konfigurasi JSON Anda. Setiap baris pengaturan dijelaskan pada komentar di bawah ini:</p>
+                <pre><code><span class="keyword">const</span> myCaptcha = <span class="keyword">new</span> <span class="function">MathCAPTCHA</span>({
+    
+    <span class="comment">// [WAJIB] ID dari div kosong yang telah Anda buat di HTML.</span>
+    <span class="property">containerId</span>: <span class="string">'my-captcha-box'</span>,
+    
+    <span class="comment">// [OPSIONAL] Pilihan Tema: 'light', 'dark', atau 'auto' (mengikuti preferensi OS)</span>
+    <span class="property">mode</span>: <span class="string">'auto'</span>,
+    
+    <span class="comment">// [OPSIONAL] Pilihan Bahasa UI. </span>
+    <span class="comment">// Mendukung: 'id', 'en', 'es', 'zh', 'ar', 'fr', 'de', 'ja', 'ru', 'hi'.</span>
+    <span class="comment">// Atau gunakan 'auto-web' agar widget mendeteksi &lt;html lang="..."&gt; otomatis.</span>
+    <span class="property">language</span>: <span class="string">'id'</span>,
+    
+    <span class="comment">// [OPSIONAL] Tingkat Kesulitan Soal.</span>
+    <span class="comment">// Angka 1 sampai 7 (1: Aritmatika, 7: Kalkulus). Gunakan 'random' untuk acak.</span>
+    <span class="property">level</span>: <span class="string">'random'</span>,
+    
+    <span class="comment">// [OPSIONAL] Toleransi kesalahan maksimal sebelum tombol dan akses diblokir permanen.</span>
+    <span class="property">maxAttempts</span>: <span class="property">5</span>,
+
+    <span class="comment">// ========================================================</span>
+    <span class="comment">// CALLBACK EVENTS (Menerima parameter 'response' format JSON)</span>
+    <span class="comment">// ========================================================</span>
+
+    <span class="comment">// Dijalankan HANYA jika verifikasi BERHASIL sempurna.</span>
+    <span class="function">onSuccess</span>: (<span class="property">response</span>) =&gt; {
+        console.<span class="function">log</span>(<span class="string">"Verifikasi Sukses!"</span>, response);
+        
+        <span class="comment">// Contoh Aksi: Aktifkan tombol Submit form Anda</span>
+        <span class="comment">// document.getElementById("btn-submit").disabled = false;</span>
+        
+        <span class="comment">// PENTING: Response akan mengembalikan 'response.data.token'.</span>
+        <span class="comment">// Kirim token ini ke backend (PHP/NodeJS) Anda untuk divalidasi.</span>
+    },
+
+    <span class="comment">// Dijalankan setiap kali pengguna SALAH memilih jawaban.</span>
+    <span class="function">onFail</span>: (<span class="property">response</span>) =&gt; {
+        console.<span class="function">warn</span>(<span class="string">"Jawaban salah, coba lagi."</span>, response);
+    },
+
+    <span class="comment">// Dijalankan jika pengguna melebihi maxAttempts (Gagal terus).</span>
+    <span class="function">onBlocked</span>: (<span class="property">response</span>) =&gt; {
+        console.<span class="function">error</span>(<span class="string">"Akses ditolak karena indikasi Bot."</span>, response);
+    }
+});</code></pre>
+            </div>
+
+            <!-- Hasil Output JSON -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">3</span> Contoh Struktur JSON Response</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4 text-sm">Sistem kami membekukan (<i>freeze</i>) objek output menggunakan <code>Object.freeze()</code> agar tidak bisa diubah di tengah jalan oleh *script* pihak ketiga.</p>
+                <pre><code><span class="comment">// Jika onSuccess dipanggil:</span>
+{
+  <span class="property">"status"</span>: <span class="string">"success"</span>,
+  <span class="property">"data"</span>: {
+    <span class="property">"levelPlayed"</span>: <span class="property">4</span>,
+    <span class="property">"attemptsUsed"</span>: <span class="property">2</span>,
+    <span class="property">"timestamp"</span>: <span class="string">"2026-07-26T14:30:00.000Z"</span>,
+    <span class="property">"token"</span>: <span class="string">"eyJ2YWxpZCI6dHJ1ZSwidGltZXN0YW1wIjoxNzE2..."</span>
+  }
+}</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 mt-auto">
+        <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-shield-halved text-blue-500"></i>
+                <span class="text-sm font-semibold text-slate-900 dark:text-white">MathCAPTCHA API</span>
+            </div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">
+                &copy; 2026 <a href="https://jasonpw.web.id/" target="_blank" class="font-medium text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">Jasonpw</a> &bull; 
+                Dikelola oleh <a href="https://ycylstudio.web.id/" target="_blank" class="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">YCYL STUDIO</a>.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Panggil File API.js External -->
+    <script src="https://jproject-1.github.io/captcha-math/api.js"></script>
+
+    <!-- Logic Interaktif Halaman -->
+    <script>
+        // 1. Fungsi Toggle Dark Mode
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const isDark = document.getElementById('theme-toggle').checked;
+            if (isDark) { htmlEl.classList.add('dark'); } 
+            else { htmlEl.classList.remove('dark'); }
+            applySettings(); // Re-render Widget agar sinkron
+        }
+
+        // Cek Preferensi OS User Pertama Kali
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.getElementById('theme-toggle').checked = true;
+            document.documentElement.classList.add('dark');
+        }
+
+        // 2. Formatting Log Terminal
+        function updateLog(title, colorHex, data) {
+            const logEl = document.getElementById('playground-log');
+            const time = new Date().toLocaleTimeString();
+            
+            // Format JSON dgn syntax coloring ala terminal
+            const formattedJson = JSON.stringify(data, null, 2)
+                .replace(/"status": "([^"]+)"/g, '"status": <span style="color:#98c379">"$1"</span>')
+                .replace(/"reason": "([^"]+)"/g, '"reason": <span style="color:#e5c07b">"$1"</span>')
+                .replace(/"token": "([^"]+)"/g, '"token": <span style="color:#c678dd">"$1"</span>')
+                .replace(/([0-9]+)/g, '<span style="color:#d19a66">$1</span>')
+                .replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+
+            logEl.innerHTML = `<span style="color:#64748b">[${time}]</span> <span style="color:${colorHex}; font-weight:bold;">${title}</span><br>${formattedJson}`;
+            logEl.scrollTop = logEl.scrollHeight; 
+        }
+
+        // 3. Fungsi Apply Settings & Inisialisasi MathCAPTCHA
+        function applySettings() {
+            // Bersihkan Modal Overlay Lama (Penting saat live test)
+            document.querySelectorAll('[id^="cm-overlay-"]').forEach(el => el.remove());
+
+            // Ambil Input
+            const levelVal = document.getElementById('setting-level').value;
+            const langVal = document.getElementById('setting-lang').value;
+            const attemptVal = parseInt(document.getElementById('setting-attempts').value) || 5;
+            const isDark = document.documentElement.classList.contains('dark');
+
+            // Reset Terminal
+            document.getElementById('playground-log').innerHTML = '<span style="color:#64748b; font-style:italic;">// Parameter diperbarui. Menunggu interaksi...</span>';
+
+            // Init API
             new MathCAPTCHA({
-                containerId: 'captcha-lvl1', mode: 'light', level: 1, language: 'id',
-                onSuccess: (res) => updateLog('log-lvl1', '[SUCCESS]', 'blue', res),
-                onFail: (res) => updateLog('log-lvl1', '[FAILED]', 'yellow', res),
-                onBlocked: (res) => updateLog('log-lvl1', '[BLOCKED]', 'red', res)
+                containerId: 'captcha-playground',
+                mode: isDark ? 'dark' : 'light',
+                level: levelVal === 'random' ? 'random' : parseInt(levelVal),
+                language: langVal,
+                maxAttempts: attemptVal,
+                
+                // Event Callbacks
+                onSuccess: (res) => updateLog('[200 OK - VERIFIED]', '#61afef', res),
+                onFail: (res) => updateLog('[403 FORBIDDEN - WRONG ANSWER]', '#e5c07b', res),
+                onBlocked: (res) => updateLog('[429 TOO MANY REQUESTS - BLOCKED]', '#e06c75', res)
             });
+        }
 
-            // 2. Instansiasi Level 2
-            new MathCAPTCHA({
-                containerId: 'captcha-lvl2', mode: 'dark', level: 2, language: 'en',
-                onSuccess: (res) => updateLog('log-lvl2', '[SUCCESS]', 'blue', res),
-                onFail: (res) => updateLog('log-lvl2', '[FAILED]', 'yellow', res),
-                onBlocked: (res) => updateLog('log-lvl2', '[BLOCKED]', 'red', res)
-            });
-
-            // 3. Instansiasi Level 3
-            new MathCAPTCHA({
-                containerId: 'captcha-lvl3', mode: 'auto', level: 3, language: 'id',
-                onSuccess: (res) => updateLog('log-lvl3', '[SUCCESS]', 'blue', res),
-                onFail: (res) => updateLog('log-lvl3', '[FAILED]', 'yellow', res),
-                onBlocked: (res) => updateLog('log-lvl3', '[BLOCKED]', 'red', res)
-            });
-
-            // 4. Instansiasi Level 4
-            new MathCAPTCHA({
-                containerId: 'captcha-lvl4', mode: 'light', level: 4, language: 'en',
-                onSuccess: (res) => updateLog('log-lvl4', '[SUCCESS]', 'blue', res),
-                onFail: (res) => updateLog('log-lvl4', '[FAILED]', 'yellow', res),
-                onBlocked: (res) => updateLog('log-lvl4', '[BLOCKED]', 'red', res)
-            });
-
-            // 5. Instansiasi Level 5
-            new MathCAPTCHA({
-                containerId: 'captcha-lvl5', mode: 'dark', level: 5, language: 'id',
-                onSuccess: (res) => updateLog('log-lvl5', '[SUCCESS]', 'blue', res),
-                onFail: (res) => updateLog('log-lvl5', '[FAILED]', 'yellow', res),
-                onBlocked: (res) => updateLog('log-lvl5', '[BLOCKED]', 'red', res)
-            });
-
-            // 6. Instansiasi Level 6
-            new MathCAPTCHA({
-                containerId: 'captcha-lvl6', mode: 'light', level: 6, language: 'en',
-                onSuccess: (res) => updateLog('log-lvl6', '[SUCCESS]', 'blue', res),
-                onFail: (res) => updateLog('log-lvl6', '[FAILED]', 'yellow', res),
-                onBlocked: (res) => updateLog('log-lvl6', '[BLOCKED]', 'red', res)
-            });
-
-            // 7. Instansiasi Level 7
-            new MathCAPTCHA({
-                containerId: 'captcha-lvl7', mode: 'auto', level: 7, language: 'id',
-                onSuccess: (res) => updateLog('log-lvl7', '[SUCCESS]', 'blue', res),
-                onFail: (res) => updateLog('log-lvl7', '[FAILED]', 'yellow', res),
-                onBlocked: (res) => updateLog('log-lvl7', '[BLOCKED]', 'red', res)
-            });
-
-        });
+        // Render Pertama Kali
+        document.addEventListener('DOMContentLoaded', applySettings);
     </script>
 </body>
 </html>
