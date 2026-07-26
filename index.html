@@ -1,32 +1,95 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
+<head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>CAPTCHA - MATH</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="captcha-box">
-      <div class="head">
-        <h2 id="question">Memuat soal...</h2>
-        <button class="reload-btn" id="reloadBtn" title="Reload CAPTCHA">
-          <i class="fas fa-rotate"></i>
-        </button>
-      </div>
-      <div class="grid" id="grid"></div>
-      <div class="footer">
-        <button class="btn" id="verifyBtn">
-          <i class="fas fa-check"></i> VERIFY
-        </button>
-      </div>
-      <div class="result" id="result"></div>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Math CAPTCHA - Implementasi API</title>
+    
+    <!-- Dependencies Wajib API -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both', 'spin-slow': 'spin 1.5s linear infinite' },
+                    keyframes: {
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* CSS Inti MathCAPTCHA */
+        ::selection { background: #3b82f6; color: white; }
+        .tile-selected { transform: scale(0.92); box-shadow: 0 0 0 4px #3b82f6; background-color: #eff6ff !important; color: #1d4ed8 !important; }
+        .dark .tile-selected { background-color: #1e3a8a !important; color: #bfdbfe !important; }
+        .checkmark { display: none; }
+        .tile-selected .checkmark { display: flex; }
+        .katex { font-size: 1.15em !important; }
+        .rc-anchor-checkbox { width: 28px; height: 28px; background: #fff; border: 2px solid #c1c1c1; border-radius: 2px; transition: all 0.2s ease; }
+        .rc-anchor-checkbox:hover { border-color: #b2b2b2; }
+        .dark .rc-anchor-checkbox { background: #1e293b; border-color: #475569; }
+    </style>
+</head>
+<body class="bg-slate-200 dark:bg-slate-900 min-h-screen flex flex-col justify-center items-center text-slate-800 dark:text-slate-200 antialiased p-4 transition-colors">
+
+    <!-- 1. Siapkan Wadah Kosong untuk Widget -->
+    <div id="captcha-wrapper"></div>
+    
+    <!-- Area Debugger / Log Server -->
+    <div class="mt-8 w-full max-w-md p-4 bg-slate-800 text-green-400 font-mono text-xs rounded-lg shadow-inner break-words">
+        <div class="text-slate-400 mb-2">// Server / Backend JSON Output Log:</div>
+        <div id="log-output">Menunggu respon CAPTCHA...</div>
     </div>
 
-    <script src="script.js"></script>
-  </body>
+    <!-- 2. Import file API Library -->
+    <script src="api.js"></script>
+
+    <!-- 3. Konfigurasi Eksekusi API -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // Inisialisasi API layaknya Pro-Library
+            const myCaptcha = new MathCAPTCHA({
+                containerId: 'captcha-wrapper',
+                mode: 'light',           // 'light', 'dark', 'auto' (Mendeteksi tema OS)
+                level: 'random',        // Tingkat kesulitan: 1, 2, 3, 4, 5, 6, 7, atau 'random'
+                language: 'auto-web',   // Bahasa: 'id', 'en', 'auto-user' (browser), 'auto-web' (dari <html lang="">)
+                maxAttempts: 5,         // Batas toleransi gagal
+                
+                // --- KUMPULAN CALLBACK JSON ---
+                onSuccess: function(response) {
+                    // PENTING: Kirim response.data.token ke Backend Anda via AJAX/Fetch
+                    cetakLog("<span class='text-blue-400'>[200 OK - VERIFIED]</span><br>", response);
+                    
+                    // Contoh pengiriman ke backend:
+                    // fetch('https://api.yoursite.com/verify', { method: 'POST', body: JSON.stringify({ token: response.data.token }) })
+                },
+                onFail: function(response) {
+                    cetakLog("<span class='text-yellow-400'>[403 FORBIDDEN - FAILED]</span><br>", response);
+                },
+                onBlocked: function(response) {
+                    cetakLog("<span class='text-red-400'>[429 TOO MANY REQUESTS - BLOCKED]</span><br>", response);
+                }
+            });
+
+            // Fungsi untuk Print ke area Hitam (Debug purpose)
+            function cetakLog(title, jsonResp) {
+                document.getElementById('log-output').innerHTML = title + JSON.stringify(jsonResp, null, 2).replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+            }
+        });
+    </script>
+</body>
 </html>
