@@ -1,5 +1,5 @@
 /**
- * YCYL MathCAPTCHA API - Pro Version (Auto Scaling & Multi-Language)
+ * YCYL MathCAPTCHA API v1.0.0
  * Hak Cipta (c) 2026 Jasonpw & YCYL STUDIO
  */
 
@@ -9,7 +9,6 @@ class MathCAPTCHA {
     #dom = {}; #i18n; #t; #isDark = false; #uid;
 
     constructor(options) {
-        // Buat ID unik untuk mencegah bentrok jika ada banyak CAPTCHA di satu halaman
         this.#uid = 'mc_' + Math.random().toString(36).substr(2, 9);
 
         this.#settings = Object.assign({
@@ -20,7 +19,6 @@ class MathCAPTCHA {
         this.#container = document.getElementById(this.#settings.containerId);
         if (!this.#container) throw new Error(`[MathCAPTCHA] Container #${this.#settings.containerId} tidak ditemukan.`);
 
-        // --- 10 BAHASA ---
         this.#i18n = {
             en: { robot: "I'm not a robot", priv: "Privacy", term: "Terms", inst: "Select {count} boxes that represent the values of the variables below:", maxSel: "Maximum {count} selections.", exactSel: "Please select exactly {count} boxes!", verAcc: "Access Verified", incorr: "Incorrect! Attempts left: {left}", blck: "You failed {max} times. Access blocked.", verFailed: "Verification Failed", verified: "Verified", verify: "Verify", failedTxt: "Failed:" },
             id: { robot: "Saya bukan robot", priv: "Privasi", term: "Ketentuan", inst: "Pilih {count} kotak yang merupakan nilai dari variabel di bawah ini:", maxSel: "Maksimal {count} pilihan.", exactSel: "Harap pilih tepat {count} kotak!", verAcc: "Akses Terverifikasi", incorr: "Salah! Sisa percobaan: {left}", blck: "Anda gagal {max} kali. Akses diblokir.", verFailed: "Verifikasi Gagal", verified: "Terverifikasi", verify: "Verifikasi", failedTxt: "Gagal:" },
@@ -34,13 +32,61 @@ class MathCAPTCHA {
             hi: { robot: "मैं रोबोट नहीं हूँ", priv: "गोपनीयता", term: "शर्तें", inst: "नीचे दिए गए चरों के मानों को दर्शाने वाले {count} बॉक्स चुनें:", maxSel: "अधिकतम {count} चयन।", exactSel: "कृपया ठीक {count} बॉक्स चुनें!", verAcc: "एक्सेस सत्यापित", incorr: "गलत! शेष प्रयास: {left}", blck: "आप {max} बार विफल रहे। एक्सेस ब्लॉक कर दिया गया है।", verFailed: "सत्यापन विफल", verified: "सत्यापित", verify: "सत्यापित करें", failedTxt: "विफल:" }
         };
 
-        this.#initLanguage(); this.#initTheme(); this.#renderWidget(); this.#renderModal();
+        this.#injectDependencies().then(() => {
+            this.#initLanguage(); 
+            this.#initTheme(); 
+            this.#renderWidget(); 
+            this.#renderModal();
+        });
+    }
+
+    #injectDependencies() {
+        return new Promise((resolve) => {
+            let loaded = 0; const required = 3;
+            const checkDone = () => { loaded++; if (loaded === required) resolve(); };
+
+            if (!document.querySelector('script[src*="tailwindcss"]')) {
+                const tw = document.createElement('script'); tw.src = "https://cdn.tailwindcss.com";
+                tw.onload = () => {
+                    tailwind.config = { darkMode: 'class', theme: { extend: { animation: { 'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both', 'spin-slow': 'spin 1.5s linear infinite' }, keyframes: { shake: { '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' }, '20%, 80%': { transform: 'translate3d(2px, 0, 0)' }, '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' }, '40%, 60%': { transform: 'translate3d(4px, 0, 0)' } } } } } };
+                    checkDone();
+                };
+                document.head.appendChild(tw);
+            } else checkDone();
+
+            if (!document.querySelector('link[href*="katex.min.css"]')) {
+                const ktCss = document.createElement('link'); ktCss.rel = "stylesheet"; ktCss.href = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css";
+                ktCss.onload = checkDone; document.head.appendChild(ktCss);
+            } else checkDone();
+
+            if (typeof katex === 'undefined') {
+                const ktJs = document.createElement('script'); ktJs.src = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js";
+                ktJs.onload = checkDone; document.head.appendChild(ktJs);
+            } else checkDone();
+
+            if (!document.getElementById('mathcaptcha-core-style')) {
+                const style = document.createElement('style'); style.id = 'mathcaptcha-core-style';
+                style.innerHTML = `
+                    .mc-tile-selected { transform: scale(0.92); box-shadow: 0 0 0 4px #3b82f6; background-color: #eff6ff !important; color: #1d4ed8 !important; }
+                    .dark .mc-tile-selected { background-color: #1e3a8a !important; color: #bfdbfe !important; box-shadow: 0 0 0 4px #60a5fa; }
+                    .mc-checkmark { display: none; } .mc-tile-selected .mc-checkmark { display: flex; }
+                    .mc-checkbox { width: 28px; height: 28px; background: #fff; border: 2px solid #c1c1c1; border-radius: 2px; transition: all 0.2s ease; }
+                    .mc-checkbox:hover { border-color: #b2b2b2; } .dark .mc-checkbox { background: #0f172a; border-color: #334155; }
+                    .katex { font-size: 1.15em !important; }
+                `;
+                document.head.appendChild(style);
+            }
+        });
+    }
+
+    #getShieldSVG(className) {
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="${className}"><path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z" clip-rule="evenodd" /></svg>`;
     }
 
     #initLanguage() {
         let langCode = this.#settings.language;
         if (langCode === 'auto-web') {
-            const htmlLang = document.documentElement.lang.split('-')[0].toLowerCase();
+            const htmlLang = document.documentElement.lang ? document.documentElement.lang.split('-')[0].toLowerCase() : 'en';
             langCode = this.#i18n[htmlLang] ? htmlLang : 'en';
         } else if (langCode === 'auto-user') {
             const userLang = navigator.language.split('-')[0].toLowerCase();
@@ -58,16 +104,16 @@ class MathCAPTCHA {
     #renderWidget() {
         const darkClass = this.#isDark ? 'dark' : '';
         this.#container.innerHTML = `
-            <div class="${darkClass}">
-                <div id="cw-main-${this.#uid}" class="bg-slate-50 dark:bg-slate-800 w-[300px] h-[74px] shadow-sm rounded border border-slate-300 dark:border-slate-600 flex items-center p-3 cursor-pointer select-none hover:shadow-md transition-shadow">
-                    <div id="cw-check-${this.#uid}" class="rc-anchor-checkbox flex items-center justify-center shrink-0"></div>
-                    <span id="cw-label-${this.#uid}" class="ml-3 font-medium text-slate-700 dark:text-slate-200 text-[14px]">${this.#t.robot}</span>
-                    <div class="ml-auto flex flex-col items-center justify-center shrink-0 relative z-10">
+            <div class="${darkClass} max-w-full">
+                <div id="cw-main-${this.#uid}" class="bg-slate-50 dark:bg-slate-800 w-[300px] max-w-full h-[74px] shadow-sm rounded border border-slate-300 dark:border-slate-600 flex items-center p-3 cursor-pointer select-none hover:shadow-md transition-shadow box-border">
+                    <div id="cw-check-${this.#uid}" class="mc-checkbox flex items-center justify-center shrink-0"></div>
+                    <span id="cw-label-${this.#uid}" class="ml-3 font-medium text-slate-700 dark:text-slate-200 text-[14px] truncate">${this.#t.robot}</span>
+                    <div class="ml-auto flex flex-col items-center justify-center shrink-0 relative z-10 pl-2">
                         <a href="https://github.com/JPROJECT-1/captcha-math" target="_blank" onclick="event.stopPropagation()" class="flex flex-col items-center justify-center hover:opacity-70 transition-opacity" title="GitHub">
-                            <i class="fas fa-shield-halved text-[28px] text-blue-500 mb-0.5"></i>
+                            ${this.#getShieldSVG('w-7 h-7 text-blue-500 mb-0.5')}
                             <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-tight mt-1 leading-none">MathCAPTCHA</span>
                         </a>
-                        <span class="text-[8px] text-slate-400 mt-0.5">
+                        <span class="text-[8px] text-slate-400 mt-0.5 flex gap-1">
                             <a href="https://jproject-1.github.io/captcha-math/privacy/" target="_blank" onclick="event.stopPropagation()" class="hover:underline hover:text-blue-500">${this.#t.priv}</a> - 
                             <a href="https://jproject-1.github.io/captcha-math/term/" target="_blank" onclick="event.stopPropagation()" class="hover:underline hover:text-blue-500">${this.#t.term}</a>
                         </span>
@@ -76,37 +122,34 @@ class MathCAPTCHA {
             </div>
         `;
         document.getElementById(`cw-main-${this.#uid}`).addEventListener('click', (e) => {
-            if(e.target.tagName !== 'A') this.#openModal();
+            if(e.target.tagName !== 'A' && !e.target.closest('a')) this.#openModal();
         });
     }
 
     #renderModal() {
         const darkClass = this.#isDark ? 'dark' : '';
         const modalHTML = `
-            <div id="cm-overlay-${this.#uid}" class="${darkClass} fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300" dir="${['ar'].includes(this.#settings.language) ? 'rtl' : 'ltr'}">
-                <div id="cm-box-${this.#uid}" class="bg-white dark:bg-slate-800 w-full max-w-[400px] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden scale-95 transition-transform duration-300 relative">
-                    <button id="cm-close-${this.#uid}" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-red-100 hover:text-red-600 dark:text-slate-300 z-20 transition-colors"><i class="fas fa-xmark"></i></button>
-                    <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center pr-12">
-                        <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-sm"><i class="fas fa-shield-halved"></i> MathCAPTCHA</div>
+            <div id="cm-overlay-${this.#uid}" class="${darkClass} fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-4" dir="${['ar'].includes(this.#settings.language) ? 'rtl' : 'ltr'}">
+                <div id="cm-box-${this.#uid}" class="bg-white dark:bg-slate-800 w-full max-w-[400px] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden scale-95 transition-transform duration-300 relative flex flex-col max-h-full">
+                    <button id="cm-close-${this.#uid}" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-red-100 hover:text-red-600 dark:text-slate-300 z-20 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                    <div class="bg-slate-50 dark:bg-slate-900 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center pr-12 shrink-0">
+                        <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-sm">${this.#getShieldSVG('w-5 h-5')} MathCAPTCHA</div>
                     </div>
-                    <div class="bg-blue-600 text-white p-5 relative overflow-hidden">
-                        <div class="text-sm text-blue-100 font-medium mb-3" id="cm-instruction-${this.#uid}"></div>
-                        
-                        <!-- Perbaikan Layout Equation Grid -->
+                    <div class="bg-blue-600 text-white p-5 relative overflow-hidden shrink-0">
+                        <div class="text-[13px] text-blue-100 font-medium mb-3 leading-tight" id="cm-instruction-${this.#uid}"></div>
                         <div id="cm-eq-container-${this.#uid}" class="bg-blue-700/60 p-4 rounded-xl shadow-inner relative z-10 grid gap-y-4 gap-x-2 text-lg font-bold min-h-[90px] grid-cols-2" dir="ltr"></div>
-                        
-                        <i class="fas fa-square-root-variable absolute -bottom-4 -right-2 text-8xl text-white opacity-10"></i>
+                        ${this.#getShieldSVG('absolute -bottom-10 -right-6 w-40 h-40 text-white opacity-10')}
                     </div>
-                    <div id="cm-alert-${this.#uid}" class="hidden px-4 py-2 text-sm font-semibold text-center transition-all duration-300"></div>
-                    <div class="p-4 bg-white dark:bg-slate-800"><div id="cm-grid-${this.#uid}" class="grid grid-cols-3 gap-2 w-full" dir="ltr"></div></div>
-                    <div class="p-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900 rounded-b-2xl">
+                    <div id="cm-alert-${this.#uid}" class="hidden px-4 py-2 text-sm font-semibold text-center transition-all duration-300 shrink-0"></div>
+                    <div class="p-4 bg-white dark:bg-slate-800 overflow-y-auto"><div id="cm-grid-${this.#uid}" class="grid grid-cols-3 gap-2 w-full" dir="ltr"></div></div>
+                    <div class="p-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900 rounded-b-2xl shrink-0">
                         <div class="flex gap-2 items-center">
-                            <button id="cm-reload-${this.#uid}" class="w-10 h-10 rounded-full flex justify-center items-center text-slate-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-slate-800 transition-colors"><i class="fas fa-rotate-right text-lg"></i></button>
-                            <div class="text-xs font-semibold text-slate-400 ml-2">${this.#t.failedTxt} <span id="cm-fail-count-${this.#uid}" class="text-red-500 mx-1">0</span>/${this.#settings.maxAttempts}</div>
+                            <button id="cm-reload-${this.#uid}" class="w-10 h-10 rounded-full flex justify-center items-center text-slate-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-slate-800 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></button>
+                            <div class="text-[11px] sm:text-xs font-semibold text-slate-400 ml-1">${this.#t.failedTxt} <span id="cm-fail-count-${this.#uid}" class="text-red-500 mx-1">0</span>/${this.#settings.maxAttempts}</div>
                         </div>
-                        <button id="cm-verify-${this.#uid}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg font-bold shadow-md shadow-blue-500/30 transition-transform active:scale-95 flex items-center gap-2">${this.#t.verify}</button>
+                        <button id="cm-verify-${this.#uid}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-bold shadow-md shadow-blue-500/30 transition-transform active:scale-95 flex items-center gap-2 text-sm">${this.#t.verify}</button>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-900 pb-3 text-center text-[10px] text-slate-400 font-medium tracking-wide border-t border-slate-100/50 dark:border-slate-800/50" dir="ltr">
+                    <div class="bg-slate-50 dark:bg-slate-900 pb-3 text-center text-[10px] text-slate-400 font-medium tracking-wide border-t border-slate-100/50 dark:border-slate-800/50 shrink-0" dir="ltr">
                         &copy; 2026 <a href="https://jasonpw.web.id/" target="_blank" class="hover:text-blue-500">Jasonpw</a> &bull; <a href="https://ycylstudio.web.id/" target="_blank" class="text-blue-500 hover:text-blue-400">YCYL STUDIO</a>
                     </div>
                 </div>
@@ -140,7 +183,7 @@ class MathCAPTCHA {
 
     #openModal() {
         if (this.#isVerified || this.#isBlocked) return;
-        this.#dom.widgetCheck.innerHTML = '<i class="fas fa-spinner animate-spin-slow text-blue-500 text-xl"></i>';
+        this.#dom.widgetCheck.innerHTML = `<svg class="animate-spin-slow w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
         this.#dom.widgetCheck.style.borderColor = 'transparent';
         setTimeout(() => {
             this.#dom.overlay.classList.remove("opacity-0", "pointer-events-none");
@@ -158,16 +201,19 @@ class MathCAPTCHA {
         if (status === 'success') {
             this.#isVerified = true;
             this.#dom.widgetCheck.style.borderColor = 'transparent';
-            this.#dom.widgetCheck.innerHTML = '<i class="fas fa-check text-[#0f9d58] text-[26px]"></i>';
+            this.#dom.widgetCheck.innerHTML = `<svg class="w-7 h-7 text-[#0f9d58]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
             this.#dom.widgetLabel.textContent = this.#t.verified;
             this.#dom.widgetMain.classList.remove("cursor-pointer", "hover:shadow-md");
         } else if (status === 'blocked' || status === 'failed') {
             this.#isBlocked = true;
             this.#dom.widgetCheck.style.borderColor = '#ef4444';
-            this.#dom.widgetCheck.innerHTML = '<i class="fas fa-xmark text-red-500 text-xl"></i>';
+            this.#dom.widgetCheck.innerHTML = `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
             this.#dom.widgetLabel.textContent = this.#t.verFailed;
             this.#dom.widgetLabel.classList.add("text-red-600");
             this.#dom.widgetMain.classList.remove("cursor-pointer", "hover:shadow-md");
+        } else {
+            this.#dom.widgetCheck.style.borderColor = '#c1c1c1';
+            this.#dom.widgetCheck.innerHTML = '';
         }
     }
 
@@ -220,7 +266,7 @@ class MathCAPTCHA {
         this.#dom.failCountEl.textContent = this.#failCount;
 
         this.#currentReqCount = Math.random() > 0.5 ? 3 : 4;
-        this.#dom.instruction.innerHTML = this.#t.inst.replace('{count}', `<b class="text-white bg-blue-800 px-1.5 py-0.5 rounded mx-1">${this.#currentReqCount}</b>`);
+        this.#dom.instruction.innerHTML = this.#t.inst.replace('{count}', `<b class="text-white bg-blue-800 px-2 py-0.5 rounded mx-1">${this.#currentReqCount}</b>`);
         
         this.#currentLevel = this.#settings.level === 'random' ? this.#getRandomInt(1, 7) : parseInt(this.#settings.level);
         const variables = this.#currentReqCount === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
@@ -230,47 +276,31 @@ class MathCAPTCHA {
             let prob; do { prob = this.#getEquation(this.#currentLevel, v); } while (this.#answerValues.includes(prob.answer)); 
             this.#answerValues.push(prob.answer);
             
-            // --- LOGIKA AUTO-SCALING TEKS MATEMATIKA ---
-            
-            // Wrapper untuk membatasi ruang dan mengatur layout
             let wrapperDiv = document.createElement("div");
-            wrapperDiv.className = "flex justify-center items-center w-full overflow-hidden";
+            wrapperDiv.className = "flex justify-center items-center w-full overflow-hidden min-w-0";
+            if (this.#currentReqCount === 3 && index === 2) wrapperDiv.classList.add("col-span-2");
             
-            // Jika hanya 3 variabel, jadikan elemen C (index ke-2) melebar 2 kolom
-            if (this.#currentReqCount === 3 && index === 2) {
-                wrapperDiv.classList.add("col-span-2");
-            }
-            
-            // Inner Div tempat KaTeX di-render (dibuat tidak boleh turun baris/wrap)
             let eqDiv = document.createElement("div");
-            eqDiv.style.whiteSpace = "nowrap"; 
-            eqDiv.style.transition = "transform 0.15s ease-out"; 
-            eqDiv.style.transformOrigin = "center"; 
+            eqDiv.style.whiteSpace = "nowrap"; eqDiv.style.transition = "transform 0.15s ease-out"; eqDiv.style.transformOrigin = "center"; 
+            wrapperDiv.appendChild(eqDiv); this.#dom.eqContainer.appendChild(wrapperDiv);
             
-            wrapperDiv.appendChild(eqDiv);
-            this.#dom.eqContainer.appendChild(wrapperDiv);
-            
-            // Render rumus matematika
-            katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
+            // PENGAMANAN KATEX Quirks Mode
+            try {
+                katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
+            } catch (err) {
+                // Fallback rendering aman tanpa merusak tampilan
+                const fallbackMath = prob.equationLatex.replace(/\\/g, '').replace(/frac{([^}]+)}{([^}]+)}/g, '$1/$2');
+                eqDiv.innerHTML = `<span style="font-size:1.1rem; font-family:monospace; font-weight:bold;">${fallbackMath}</span>`;
+            }
 
-            // Fungsi untuk mengecilkan font (scale) jika panjang melebihi batas wrapper
             const fitEquation = () => {
-                if(wrapperDiv.clientWidth === 0) return; // Abaikan jika modal belum tampil
-                
+                if(wrapperDiv.clientWidth === 0) return;
                 const availWidth = wrapperDiv.clientWidth;
                 const eqWidth = eqDiv.scrollWidth;
-                
-                if (eqWidth > availWidth) {
-                    const scale = (availWidth - 10) / eqWidth; // -10 untuk jarak aman (padding)
-                    eqDiv.style.transform = `scale(${scale})`;
-                } else {
-                    eqDiv.style.transform = `scale(1)`;
-                }
+                if (eqWidth > availWidth) eqDiv.style.transform = `scale(${(availWidth - 10) / eqWidth})`;
+                else eqDiv.style.transform = `scale(1)`;
             };
-
-            // Jalankan segera dan jalankan lagi setelah animasi popup modal selesai (350ms)
-            requestAnimationFrame(fitEquation);
-            setTimeout(fitEquation, 350); 
+            requestAnimationFrame(fitEquation); setTimeout(fitEquation, 350); 
         });
 
         let gridItems = [...this.#answerValues];
@@ -282,11 +312,11 @@ class MathCAPTCHA {
 
         gridItems.forEach((numberValue) => {
             const cell = document.createElement("div");
-            cell.className = "h-20 bg-slate-100 dark:bg-slate-700 dark:text-slate-100 rounded-xl flex items-center justify-center text-2xl font-bold text-slate-700 cursor-pointer transition-all duration-200 relative select-none hover:bg-slate-200 dark:hover:bg-slate-600 border-2 border-transparent overflow-hidden shadow-sm";
+            cell.className = "h-16 sm:h-20 bg-slate-100 dark:bg-slate-700 dark:text-slate-100 rounded-xl flex items-center justify-center text-xl sm:text-2xl font-bold text-slate-700 cursor-pointer transition-all duration-200 relative select-none hover:bg-slate-200 dark:hover:bg-slate-600 border-2 border-transparent overflow-hidden shadow-sm";
             const spanText = document.createElement("span"); spanText.textContent = numberValue;
             const checkIcon = document.createElement("div");
-            checkIcon.className = "checkmark absolute top-1 right-1 w-6 h-6 bg-blue-600 rounded-full items-center justify-center text-white text-xs shadow-sm";
-            checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+            checkIcon.className = "mc-checkmark absolute top-1 right-1 w-5 h-5 sm:w-6 sm:h-6 bg-blue-600 rounded-full items-center justify-center text-white text-[10px] sm:text-xs shadow-sm";
+            checkIcon.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
             cell.appendChild(spanText); cell.appendChild(checkIcon);
             cell.onclick = () => this.#toggleCell(cell, numberValue);
             this.#dom.grid.appendChild(cell);
@@ -295,10 +325,10 @@ class MathCAPTCHA {
 
     #toggleCell(cell, numberValue) {
         if (this.#selected.has(numberValue)) {
-            this.#selected.delete(numberValue); cell.classList.remove("tile-selected");
+            this.#selected.delete(numberValue); cell.classList.remove("mc-tile-selected");
         } else {
             if (this.#selected.size >= this.#currentReqCount) { this.#showAlert(this.#t.maxSel.replace('{count}', this.#currentReqCount), "error"); return; }
-            this.#selected.add(numberValue); cell.classList.add("tile-selected");
+            this.#selected.add(numberValue); cell.classList.add("mc-tile-selected");
         }
         this.#dom.alertBox.classList.add("hidden");
     }
@@ -316,10 +346,11 @@ class MathCAPTCHA {
             setTimeout(() => this.#closeModal('blocked'), 1200);
             this.#settings.onBlocked(Object.freeze({ ...outputJSON, status: "blocked" }));
         } else {
-            this.#showAlert(this.#t.incorr.replace('{left}', this.#settings.maxAttempts - this.#failCount), "error");
-            this.#shakeBox();
-            if(reason !== 'closed_by_user') setTimeout(() => this.#generateChallenge(), 1500);
-            else this.#closeModal('failed');
+            if(reason !== 'closed_by_user') {
+                this.#showAlert(this.#t.incorr.replace('{left}', this.#settings.maxAttempts - this.#failCount), "error");
+                this.#shakeBox();
+                setTimeout(() => this.#generateChallenge(), 1500);
+            } else this.#closeModal('cancel'); 
             this.#settings.onFail(outputJSON);
         }
     }
@@ -334,7 +365,7 @@ class MathCAPTCHA {
         this.#answerValues.forEach(ans => { if (!this.#selected.has(ans)) isCorrect = false; });
         
         if (isCorrect) {
-            this.#showAlert(`<i class="fas fa-shield-check text-lg mr-2"></i> ${this.#t.verAcc}`, "success");
+            this.#showAlert(`<svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${this.#t.verAcc}`, "success");
             this.#dom.grid.style.pointerEvents = "none";
             setTimeout(() => this.#closeModal('success'), 800);
             const simulatedToken = btoa(JSON.stringify({ valid: true, timestamp: Date.now(), level: this.#currentLevel }));
@@ -351,7 +382,7 @@ class MathCAPTCHA {
 
     #showAlert(msg, type) {
         this.#dom.alertBox.innerHTML = msg;
-        this.#dom.alertBox.className = "px-4 py-2 text-sm font-semibold text-center transition-all duration-300 rounded mx-4 mb-2";
+        this.#dom.alertBox.className = "px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-center transition-all duration-300 rounded mx-4 mb-2 flex justify-center items-center";
         if (type === "error") this.#dom.alertBox.classList.add("bg-red-100", "text-red-700", "dark:bg-red-900", "dark:text-red-100");
         else this.#dom.alertBox.classList.add("bg-green-100", "text-green-700", "dark:bg-green-900", "dark:text-green-100");
     }
