@@ -40,7 +40,6 @@ class MathCAPTCHA {
         });
     }
 
-    // --- AUTO INJECT DEPENDENCIES ---
     #injectDependencies() {
         return new Promise((resolve) => {
             let loaded = 0; const required = 3;
@@ -290,7 +289,7 @@ class MathCAPTCHA {
                 katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
             } catch (err) {
                 console.error("[MathCAPTCHA] KaTeX Error (Pastikan Anda menggunakan <!DOCTYPE html>):", err);
-                eqDiv.innerHTML = `<span style="font-size:14px; font-family:sans-serif;">${prob.equationLatex}</span>`;
+                eqDiv.innerHTML = `<div style="color:#ef4444; font-size:10px; text-align:center; white-space:normal; line-height:1.2; font-family:sans-serif;"><b>Error:</b> Tambahkan <br><code>&lt;!DOCTYPE html&gt;</code><br> di baris pertama HTML Anda.</div>`;
             }
 
             const fitEquation = () => {
