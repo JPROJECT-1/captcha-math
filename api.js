@@ -284,12 +284,13 @@ class MathCAPTCHA {
             eqDiv.style.whiteSpace = "nowrap"; eqDiv.style.transition = "transform 0.15s ease-out"; eqDiv.style.transformOrigin = "center"; 
             wrapperDiv.appendChild(eqDiv); this.#dom.eqContainer.appendChild(wrapperDiv);
             
-            // PENGAMANAN KATEX: Menghindari error Quirks Mode
+            // PENGAMANAN KATEX Quirks Mode
             try {
                 katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
             } catch (err) {
-                console.error("[MathCAPTCHA] KaTeX Error (Pastikan Anda menggunakan <!DOCTYPE html>):", err);
-                eqDiv.innerHTML = `<div style="color:#ef4444; font-size:10px; text-align:center; white-space:normal; line-height:1.2; font-family:sans-serif;"><b>Error:</b> Tambahkan <br><code>&lt;!DOCTYPE html&gt;</code><br> di baris pertama HTML Anda.</div>`;
+                // Fallback rendering aman tanpa merusak tampilan
+                const fallbackMath = prob.equationLatex.replace(/\\/g, '').replace(/frac{([^}]+)}{([^}]+)}/g, '$1/$2');
+                eqDiv.innerHTML = `<span style="font-size:1.1rem; font-family:monospace; font-weight:bold;">${fallbackMath}</span>`;
             }
 
             const fitEquation = () => {
