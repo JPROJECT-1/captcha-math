@@ -43,15 +43,11 @@ class MathCAPTCHA {
     // --- AUTO INJECT DEPENDENCIES ---
     #injectDependencies() {
         return new Promise((resolve) => {
-            let loaded = 0;
-            const required = 3; // Tailwind, KaTeX CSS, KaTeX JS
-
+            let loaded = 0; const required = 3;
             const checkDone = () => { loaded++; if (loaded === required) resolve(); };
 
-            // 1. Tailwind CSS
             if (!document.querySelector('script[src*="tailwindcss"]')) {
-                const tw = document.createElement('script');
-                tw.src = "https://cdn.tailwindcss.com";
+                const tw = document.createElement('script'); tw.src = "https://cdn.tailwindcss.com";
                 tw.onload = () => {
                     tailwind.config = { darkMode: 'class', theme: { extend: { animation: { 'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both', 'spin-slow': 'spin 1.5s linear infinite' }, keyframes: { shake: { '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' }, '20%, 80%': { transform: 'translate3d(2px, 0, 0)' }, '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' }, '40%, 60%': { transform: 'translate3d(4px, 0, 0)' } } } } } };
                     checkDone();
@@ -59,24 +55,18 @@ class MathCAPTCHA {
                 document.head.appendChild(tw);
             } else checkDone();
 
-            // 2. KaTeX CSS
             if (!document.querySelector('link[href*="katex.min.css"]')) {
-                const ktCss = document.createElement('link');
-                ktCss.rel = "stylesheet"; ktCss.href = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css";
+                const ktCss = document.createElement('link'); ktCss.rel = "stylesheet"; ktCss.href = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css";
                 ktCss.onload = checkDone; document.head.appendChild(ktCss);
             } else checkDone();
 
-            // 3. KaTeX JS
             if (typeof katex === 'undefined') {
-                const ktJs = document.createElement('script');
-                ktJs.src = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js";
+                const ktJs = document.createElement('script'); ktJs.src = "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js";
                 ktJs.onload = checkDone; document.head.appendChild(ktJs);
             } else checkDone();
 
-            // 4. Inject Custom Basic Style
             if (!document.getElementById('mathcaptcha-core-style')) {
-                const style = document.createElement('style');
-                style.id = 'mathcaptcha-core-style';
+                const style = document.createElement('style'); style.id = 'mathcaptcha-core-style';
                 style.innerHTML = `
                     .mc-tile-selected { transform: scale(0.92); box-shadow: 0 0 0 4px #3b82f6; background-color: #eff6ff !important; color: #1d4ed8 !important; }
                     .dark .mc-tile-selected { background-color: #1e3a8a !important; color: #bfdbfe !important; box-shadow: 0 0 0 4px #60a5fa; }
@@ -295,7 +285,13 @@ class MathCAPTCHA {
             eqDiv.style.whiteSpace = "nowrap"; eqDiv.style.transition = "transform 0.15s ease-out"; eqDiv.style.transformOrigin = "center"; 
             wrapperDiv.appendChild(eqDiv); this.#dom.eqContainer.appendChild(wrapperDiv);
             
-            katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
+            // PENGAMANAN KATEX: Menghindari error Quirks Mode
+            try {
+                katex.render(prob.equationLatex, eqDiv, { throwOnError: false, displayMode: false });
+            } catch (err) {
+                console.error("[MathCAPTCHA] KaTeX Error (Pastikan Anda menggunakan <!DOCTYPE html>):", err);
+                eqDiv.innerHTML = `<span style="font-size:14px; font-family:sans-serif;">${prob.equationLatex}</span>`;
+            }
 
             const fitEquation = () => {
                 if(wrapperDiv.clientWidth === 0) return;
@@ -354,7 +350,7 @@ class MathCAPTCHA {
                 this.#showAlert(this.#t.incorr.replace('{left}', this.#settings.maxAttempts - this.#failCount), "error");
                 this.#shakeBox();
                 setTimeout(() => this.#generateChallenge(), 1500);
-            } else this.#closeModal('cancel'); // Jika cuma ditutup jangan tampil alert
+            } else this.#closeModal('cancel'); 
             this.#settings.onFail(outputJSON);
         }
     }
