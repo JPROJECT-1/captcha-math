@@ -2,16 +2,14 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MathCAPTCHA v1.0.0 by YCYL STUDIO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <title>MathCAPTCHA v1.0.0 | Secure & Dynamic Anti-Bot</title>
     
-    <!-- Fonts & Icons -->
+    <meta name="description" content="MathCAPTCHA API v1.0.0. Verifikasi Anti-Bot modern dengan Logika Matematika Dinamis, auto-scaling, dukungan multibahasa, dan JSON callbacks." />
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
-    <!-- KaTeX untuk Render Matematika -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,239 +18,232 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { 
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['Fira Code', 'monospace']
-                    },
-                    animation: { 
-                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both', 
-                        'spin-slow': 'spin 1.5s linear infinite',
-                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'float-1': 'float1 12s ease-in-out infinite',
-                        'float-2': 'float2 15s ease-in-out infinite alternate',
-                        'float-3': 'float3 10s ease-in-out infinite'
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
+                    animation: { 'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', 'float-1': 'float1 12s ease-in-out infinite', 'float-2': 'float2 15s ease-in-out infinite alternate', 'float-3': 'float3 10s ease-in-out infinite' },
                     keyframes: {
-                        shake: {
-                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
-                        },
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        },
-                        float1: {
-                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-20px) rotate(10deg)' }
-                        },
-                        float2: {
-                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-                            '50%': { transform: 'translateY(25px) rotate(-15deg)' }
-                        },
-                        float3: {
-                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
-                            '50%': { transform: 'translateY(-15px) scale(1.05)' }
-                        }
+                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(30px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        float1: { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(-20px) rotate(10deg)' } },
+                        float2: { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(25px) rotate(-15deg)' } },
+                        float3: { '0%, 100%': { transform: 'translateY(0) scale(1)' }, '50%': { transform: 'translateY(-15px) scale(1.05)' } }
                     }
                 }
             }
         }
     </script>
     
-    <!-- Custom CSS -->
     <style>
         ::selection { background: #3b82f6; color: white; }
         
-        /* MathCAPTCHA Core Styles */
-        .tile-selected { transform: scale(0.92); box-shadow: 0 0 0 4px #3b82f6; background-color: #eff6ff !important; color: #1d4ed8 !important; }
-        .dark .tile-selected { background-color: #1e3a8a !important; color: #bfdbfe !important; box-shadow: 0 0 0 4px #60a5fa; }
-        .checkmark { display: none; }
-        .tile-selected .checkmark { display: flex; }
-        .katex { font-size: 1.15em !important; }
-        .rc-anchor-checkbox { width: 28px; height: 28px; background: #fff; border: 2px solid #c1c1c1; border-radius: 2px; transition: all 0.2s ease; }
-        .rc-anchor-checkbox:hover { border-color: #b2b2b2; }
-        .dark .rc-anchor-checkbox { background: #0f172a; border-color: #334155; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
 
-        /* Custom Toggle Switch */
+        html, body { overflow-x: hidden; }
+        
+        /* Toggle Switch */
         .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
         .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
         .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
         
-        /* Custom Dropdown Scrollbar */
+        /* Dropdown Scrollbar */
         .dropdown-menu::-webkit-scrollbar { width: 6px; }
         .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
         .dropdown-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .dark .dropdown-menu::-webkit-scrollbar-thumb { background: #475569; }
         
-        /* Code Block Styling */
-        pre { background: #0f172a; border-radius: 1rem; padding: 1.5rem; overflow-x: auto; color: #e2e8f0; font-size: 0.875rem; line-height: 1.6; border: 1px solid #1e293b; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-        code .keyword { color: #c678dd; }
-        code .string { color: #98c379; }
-        code .comment { color: #64748b; font-style: italic; }
-        code .function { color: #61afef; }
-        code .property { color: #e5c07b; }
+        /* Code Block */
+        pre { background: #0f172a; border-radius: 1rem; padding: 1.25rem; overflow-x: auto; color: #e2e8f0; font-size: 0.8rem; line-height: 1.6; border: 1px solid #1e293b; }
+        code .keyword { color: #c678dd; } code .string { color: #98c379; } code .comment { color: #64748b; font-style: italic; } code .function { color: #61afef; } code .property { color: #e5c07b; } code .tag { color: #e06c75; } code .attr { color: #d19a66; }
 
-        /* Animation Delays */
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
-        .delay-300 { animation-delay: 300ms; }
-        .delay-400 { animation-delay: 400ms; }
+        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; } .delay-300 { animation-delay: 300ms; } .delay-400 { animation-delay: 400ms; }
+        
+        /* Copy Button (Selalu tampil, jelas saat dihover) */
+        .copy-btn { opacity: 0.7; transition: opacity 0.2s, background-color 0.2s; backdrop-filter: blur(4px); }
+        .copy-btn:hover { opacity: 1; background-color: rgba(71, 85, 105, 0.9); }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased transition-colors duration-500 min-h-screen flex flex-col relative overflow-x-hidden">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased transition-colors duration-500 min-h-screen flex flex-col relative w-full">
 
-    <!-- FLOATING BACKGROUND ELEMENTS -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <i class="fas fa-square-root-variable absolute top-20 left-[10%] text-6xl text-blue-500 opacity-10 dark:opacity-5 animate-float-1"></i>
-        <i class="fas fa-calculator absolute bottom-1/4 right-[5%] text-8xl text-indigo-500 opacity-10 dark:opacity-5 animate-float-2"></i>
-        <i class="fas fa-plus absolute top-1/3 right-[15%] text-5xl text-blue-400 opacity-10 dark:opacity-5 animate-float-3"></i>
-        <i class="fas fa-divide absolute bottom-20 left-[15%] text-7xl text-indigo-400 opacity-10 dark:opacity-5 animate-float-1"></i>
-        <i class="fas fa-percent absolute top-[60%] left-[45%] text-4xl text-blue-500 opacity-[0.03] animate-float-2"></i>
+        <i class="fas fa-square-root-variable absolute top-20 left-[5%] md:left-[10%] text-4xl md:text-6xl text-blue-500 opacity-10 dark:opacity-5 animate-float-1"></i>
+        <i class="fas fa-calculator absolute bottom-1/4 right-[2%] md:right-[5%] text-5xl md:text-8xl text-indigo-500 opacity-10 dark:opacity-5 animate-float-2"></i>
+        <i class="fas fa-plus absolute top-1/3 right-[10%] md:right-[15%] text-3xl md:text-5xl text-blue-400 opacity-10 dark:opacity-5 animate-float-3"></i>
+        <i class="fas fa-divide absolute bottom-20 left-[10%] md:left-[15%] text-4xl md:text-7xl text-indigo-400 opacity-10 dark:opacity-5 animate-float-1"></i>
     </div>
 
     <!-- NAVBAR -->
     <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 transition-colors duration-500">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center relative z-10">
-            <div class="flex items-center gap-3 cursor-pointer group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-                    <i class="fas fa-shield-halved text-white text-xl"></i>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center relative z-10 w-full">
+            <div class="flex items-center gap-2 sm:gap-3 cursor-pointer group">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z" clip-rule="evenodd" /></svg>
                 </div>
-                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Math<span class="text-blue-600 dark:text-blue-400">CAPTCHA</span></span>
+                <span class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">Math<span class="text-blue-600 dark:text-blue-400">CAPTCHA</span></span>
             </div>
-            
-            <div class="flex items-center gap-5 sm:gap-6">
-                <!-- Select Docs Language -->
-                <div class="flex items-center text-xs font-semibold bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-2 sm:gap-6">
+                <div class="flex items-center text-[10px] sm:text-xs font-semibold bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                     <button onclick="changeDocsLang('id')" id="lang-btn-id" class="px-2 py-1 rounded text-blue-600 bg-white shadow-sm dark:bg-slate-700 dark:text-blue-400 transition-all">ID</button>
                     <button onclick="changeDocsLang('en')" id="lang-btn-en" class="px-2 py-1 rounded text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all">EN</button>
                 </div>
-
-                <a href="#docs" data-i18n="nav_docs" class="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors hidden sm:block">Dokumentasi</a>
-                
-                <!-- Dark Mode Toggle -->
-                <div class="flex items-center gap-3 border-l border-slate-200 dark:border-slate-700 pl-5 sm:pl-6">
-                    <i class="fas fa-sun text-amber-500 text-sm"></i>
+                <a href="#docs" data-i18n="nav_docs" class="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors hidden md:block">Dokumentasi</a>
+                <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-200 dark:border-slate-700 pl-2 sm:pl-6">
+                    <i class="fas fa-sun text-amber-500 text-[10px] sm:text-sm"></i>
                     <label for="theme-toggle" class="flex items-center cursor-pointer relative">
                         <input type="checkbox" id="theme-toggle" class="sr-only peer" onchange="toggleTheme()">
-                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all after:duration-300 dark:border-slate-600 peer-checked:bg-blue-600 shadow-inner"></div>
+                        <div class="w-8 h-4 sm:w-11 sm:h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 sm:after:h-5 sm:after:w-5 after:transition-all after:duration-300 dark:border-slate-600 peer-checked:bg-blue-600 shadow-inner"></div>
                     </label>
-                    <i class="fas fa-moon text-slate-400 dark:text-blue-300 text-sm"></i>
+                    <i class="fas fa-moon text-slate-400 dark:text-blue-300 text-[10px] sm:text-sm"></i>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- HERO SECTION (Animated) -->
-    <section class="py-16 md:py-24 px-6 text-center max-w-4xl mx-auto relative z-10 opacity-0 animate-fade-in-up">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 text-xs font-semibold mb-6 border border-blue-200 dark:border-blue-800 shadow-sm transition-colors duration-500">
+    <!-- HERO SECTION -->
+    <section class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 text-center max-w-4xl mx-auto relative z-10 w-full opacity-0 animate-fade-in-up">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 text-[10px] sm:text-xs font-semibold mb-6 border border-blue-200 dark:border-blue-800 shadow-sm transition-colors duration-500">
             <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
             <span data-i18n="hero_badge">API v1.0.0 Telah Rilis</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-tight transition-colors duration-500" data-i18n="hero_title">
+        <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-tight transition-colors duration-500" data-i18n="hero_title">
             Verifikasi Anti-Bot dengan <br class="hidden md:block"/>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">Logika Matematika Dinamis.</span>
         </h1>
-        <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto transition-colors duration-500" data-i18n="hero_desc">
+        <p class="text-[13px] sm:text-base md:text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto transition-colors duration-500 px-2" data-i18n="hero_desc">
             Tinggalkan tebak-tebakan gambar bus yang membosankan. MathCAPTCHA menghasilkan soal secara prosedural <i>(real-time)</i>, auto-scaling, dan sistem JSON callbacks profesional.
         </p>
+        <a href="https://github.com/JPROJECT-1/captcha-math" target="_blank" class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-all shadow-lg hover:-translate-y-0.5 max-w-full">
+            <i class="fab fa-github text-lg sm:text-xl shrink-0"></i>
+            <div class="text-left leading-tight truncate">
+                <div class="text-[10px] sm:text-xs text-slate-300 dark:text-slate-400 font-medium truncate" data-i18n="hero_os">Open Source di GitHub</div>
+                <div class="text-xs sm:text-sm font-bold truncate">JPROJECT-1/captcha-math</div>
+            </div>
+        </a>
     </section>
 
     <!-- INTERACTIVE PLAYGROUND -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 mb-24 w-full relative z-10 opacity-0 animate-fade-in-up delay-100">
-        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors duration-500">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 mb-24 w-full relative z-10 opacity-0 animate-fade-in-up delay-100">
+        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors duration-500">
             <div class="grid grid-cols-1 lg:grid-cols-12">
                 
-                <!-- KIRI: Control Panel (Custom Dropdowns) -->
-                <div class="lg:col-span-5 bg-slate-50/50 dark:bg-slate-900/30 p-6 lg:p-8 border-r border-slate-200 dark:border-slate-700 transition-colors duration-500">
-                    <h2 class="font-bold text-lg mb-6 flex items-center text-slate-900 dark:text-white" data-i18n="conf_title">
-                        <i class="fas fa-sliders text-blue-500 mr-3"></i> Konfigurasi API
+                <!-- KIRI: Control Panel -->
+                <div class="lg:col-span-4 xl:col-span-4 bg-slate-50/50 dark:bg-slate-900/30 p-5 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                    <h2 class="font-bold text-base sm:text-lg mb-6 flex items-center text-slate-900 dark:text-white" data-i18n="conf_title">
+                        <i class="fas fa-sliders text-blue-500 mr-2 sm:mr-3"></i> Konfigurasi API
                     </h2>
                     
-                    <div class="space-y-6">
-                        
-                        <!-- Custom Select Level -->
+                    <div class="space-y-5 sm:space-y-6">
+                        <div class="custom-dropdown" data-target="setting-mode">
+                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_mode">Tema Widget (Widget Theme)</label>
+                            <div class="relative">
+                                <input type="hidden" id="setting-mode" value="auto">
+                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl p-2.5 sm:p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none focus:ring-2 focus:ring-blue-500/50">
+                                    <span class="selected-text flex items-center gap-2"><i class="fas fa-desktop text-blue-500"></i> Auto (Mengikuti Halaman)</span>
+                                    <i class="fas fa-chevron-down text-slate-400 text-[10px] sm:text-xs transition-transform duration-200"></i>
+                                </button>
+                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto text-xs sm:text-sm">
+                                    <li data-value="auto" class="px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50"><i class="fas fa-desktop w-5 text-center opacity-70"></i> Auto</li>
+                                    <li data-value="light" class="px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50"><i class="fas fa-sun w-5 text-center opacity-70"></i> Light Mode</li>
+                                    <li data-value="dark" class="px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50"><i class="fas fa-moon w-5 text-center opacity-70"></i> Dark Mode</li>
+                                </ul>
+                            </div>
+                        </div>
+
                         <div class="custom-dropdown" data-target="setting-level">
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" data-i18n="conf_lvl">Tingkat Kesulitan (Level)</label>
+                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_lvl">Tingkat Kesulitan (Level)</label>
                             <div class="relative">
                                 <input type="hidden" id="setting-level" value="random">
-                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-xl p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none">
+                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl p-2.5 sm:p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none focus:ring-2 focus:ring-blue-500/50">
                                     <span class="selected-text flex items-center gap-2"><i class="fas fa-dice text-blue-500"></i> Acak Semua Level (Random)</span>
-                                    <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                                    <i class="fas fa-chevron-down text-slate-400 text-[10px] sm:text-xs transition-transform duration-200"></i>
                                 </button>
-                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-60 overflow-y-auto text-sm">
-                                    <li data-value="1" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 1: Aritmatika Dasar</li>
-                                    <li data-value="2" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 2: Akar & Pangkat</li>
-                                    <li data-value="3" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 3: Aljabar Dasar</li>
-                                    <li data-value="4" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 4: Trigonometri</li>
-                                    <li data-value="5" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 5: Peluang & Harapan</li>
-                                    <li data-value="6" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 6: Vektor (Dot Product)</li>
-                                    <li data-value="7" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 7: Kalkulus (Turunan)</li>
-                                    <li data-value="random" class="px-4 py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"><i class="fas fa-dice mr-1"></i> Acak Semua Level</li>
+                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto text-xs sm:text-sm">
+                                    <li data-value="1" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 1: Aritmatika Dasar</li>
+                                    <li data-value="2" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 2: Akar & Pangkat</li>
+                                    <li data-value="3" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 3: Aljabar Dasar</li>
+                                    <li data-value="4" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 4: Trigonometri</li>
+                                    <li data-value="5" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 5: Peluang & Harapan</li>
+                                    <li data-value="6" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 6: Vektor (Dot Product)</li>
+                                    <li data-value="7" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 7: Kalkulus (Turunan)</li>
+                                    <li data-value="random" class="px-4 py-2.5 sm:py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"><i class="fas fa-dice mr-1"></i> Acak Semua Level</li>
                                 </ul>
                             </div>
                         </div>
 
-                        <!-- Custom Select Language -->
                         <div class="custom-dropdown" data-target="setting-lang">
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" data-i18n="conf_lang">Bahasa UI (Language)</label>
+                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_lang">Bahasa UI (Language)</label>
                             <div class="relative">
                                 <input type="hidden" id="setting-lang" value="id">
-                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-xl p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none">
-                                    <span class="selected-text"><span class="text-blue-500 font-bold mr-1">ID</span> Indonesia (ID)</span>
-                                    <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl p-2.5 sm:p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none focus:ring-2 focus:ring-blue-500/50">
+                                    <span class="selected-text flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block text-slate-400">ID</span> <span>Indonesia (ID)</span></span>
+                                    <i class="fas fa-chevron-down text-slate-400 text-[10px] sm:text-xs transition-transform duration-200"></i>
                                 </button>
-                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-60 overflow-y-auto text-sm">
-                                    <li data-value="id" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">ID</span> Indonesia (ID)</li>
-                                    <li data-value="en" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">US</span> English (EN)</li>
-                                    <li data-value="es" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">ES</span> Español (ES)</li>
-                                    <li data-value="fr" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">FR</span> Français (FR)</li>
-                                    <li data-value="de" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">DE</span> Deutsch (DE)</li>
-                                    <li data-value="ru" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">RU</span> Русский (RU)</li>
-                                    <li data-value="ar" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">SA</span> العربية (AR)</li>
-                                    <li data-value="zh" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">CN</span> 中文 (ZH)</li>
-                                    <li data-value="ja" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">JP</span> 日本語 (JA)</li>
-                                    <li data-value="hi" class="px-4 py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white cursor-pointer transition-colors"><span class="font-bold opacity-70 mr-1 w-6 inline-block">IN</span> हिन्दी (HI)</li>
+                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto text-xs sm:text-sm">
+                                    <li data-value="id" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">ID</span> <span>Indonesia (ID)</span></li>
+                                    <li data-value="en" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">US</span> <span>English (EN)</span></li>
+                                    <li data-value="es" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">ES</span> <span>Español (ES)</span></li>
+                                    <li data-value="fr" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">FR</span> <span>Français (FR)</span></li>
+                                    <li data-value="de" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">DE</span> <span>Deutsch (DE)</span></li>
+                                    <li data-value="ru" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">RU</span> <span>Русский (RU)</span></li>
+                                    <li data-value="ar" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">SA</span> <span>العربية (AR)</span></li>
+                                    <li data-value="zh" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">CN</span> <span>中文 (ZH)</span></li>
+                                    <li data-value="ja" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">JP</span> <span>日本語 (JA)</span></li>
+                                    <li data-value="hi" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">IN</span> <span>हिन्दी (HI)</span></li>
                                 </ul>
                             </div>
                         </div>
 
-                        <!-- Custom Input Number -->
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" data-i18n="conf_att">Batas Gagal (Max Attempts)</label>
-                            <input type="number" id="setting-attempts" value="5" min="1" max="10" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 block p-3.5 transition-all shadow-sm outline-none hover:border-slate-400 dark:hover:border-slate-500">
+                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_att">Batas Gagal (Max Attempts)</label>
+                            <input type="number" id="setting-attempts" value="5" min="1" max="10" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 block p-2.5 sm:p-3.5 transition-all shadow-sm outline-none hover:border-slate-400 dark:hover:border-slate-500">
                         </div>
 
-                        <!-- Custom Button -->
-                        <button onclick="applySettings()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 mt-4 transform hover:-translate-y-0.5">
-                            <i class="fas fa-bolt"></i> <span data-i18n="conf_btn">Terapkan & Generate Ulang</span>
+                        <button onclick="applySettings()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 sm:py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 mt-2 sm:mt-4 transform hover:-translate-y-0.5 text-xs sm:text-base">
+                            <i class="fas fa-bolt"></i> <span data-i18n="conf_btn">Terapkan & Generate</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- KANAN: Playground & Log -->
-                <div class="lg:col-span-7 flex flex-col p-6 lg:p-8 relative">
-                    <div class="absolute top-8 right-8 text-xs font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 z-10">
-                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> <span data-i18n="live_prev">Live Preview</span>
-                    </div>
+                <!-- KANAN: Playground (Preview & Code) -->
+                <div class="lg:col-span-8 xl:col-span-8 flex flex-col p-4 sm:p-6 lg:p-8 relative min-w-0">
                     
-                    <!-- Container Widget -->
-                    <div class="flex-grow flex flex-col items-center justify-center min-h-[250px] z-0">
-                        <div id="captcha-playground" class="transition-transform duration-500 hover:scale-[1.02]"></div>
+                    <div class="flex-grow flex flex-col items-center justify-center min-h-[180px] sm:min-h-[250px] relative w-full mb-6 border-b border-slate-200 dark:border-slate-700/50 pb-6 overflow-hidden">
+                        <div class="absolute top-0 right-0 text-[9px] sm:text-xs font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 z-10">
+                            <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> <span data-i18n="live_prev">Live Preview</span>
+                        </div>
+                        <div class="w-full flex justify-center mt-4 px-2 box-border">
+                            <div id="captcha-playground" class="transition-transform duration-500 hover:scale-[1.02] max-w-full"></div>
+                        </div>
                     </div>
 
-                    <!-- JSON Terminal -->
-                    <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden mt-6 h-52 group">
-                        <div class="bg-[#1e293b] px-4 py-3 flex items-center gap-2 border-b border-slate-700/50 transition-colors">
-                            <div class="w-3 h-3 rounded-full bg-red-500/90 shadow-sm"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-500/90 shadow-sm"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-500/90 shadow-sm"></div>
-                            <span class="text-slate-400 text-[11px] font-mono ml-3 uppercase tracking-wider font-semibold" data-i18n="term_out">Terminal JSON Output</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full">
+                        
+                        <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden h-44 sm:h-52 relative group">
+                            <button onclick="copyCode(this, 'playground-log-raw')" class="copy-btn absolute top-1.5 sm:top-2 right-1.5 sm:right-2 p-1.5 bg-slate-700/80 text-slate-300 rounded"><i class="fas fa-copy text-xs"></i></button>
+                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-1.5 sm:gap-2 border-b border-slate-700/50 pr-10">
+                                <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-500/90 shadow-sm shrink-0"></div>
+                                <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-yellow-500/90 shadow-sm shrink-0"></div>
+                                <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-green-500/90 shadow-sm shrink-0"></div>
+                                <span class="text-slate-400 text-[9px] sm:text-[11px] font-mono ml-1.5 sm:ml-3 uppercase tracking-wider font-semibold truncate" data-i18n="term_out">Terminal JSON Output</span>
+                            </div>
+                            <div id="playground-log" class="p-3 sm:p-4 font-mono text-[9px] sm:text-[11px] text-[#a6accd] overflow-y-auto flex-grow break-words leading-relaxed selection:bg-blue-500/30 whitespace-pre-wrap">
+                                <span class="text-[#64748b] italic">// Awaiting user interaction...</span>
+                            </div>
+                            <div id="playground-log-raw" class="hidden"></div>
                         </div>
-                        <div id="playground-log" class="p-5 font-mono text-[13px] text-[#a6accd] overflow-y-auto flex-grow break-words leading-relaxed selection:bg-blue-500/30">
-                            <span class="text-[#64748b] italic">// Awaiting user interaction...</span>
+
+                        <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden h-44 sm:h-52 relative group">
+                            <button onclick="copyCode(this, 'generated-code')" class="copy-btn absolute top-1.5 sm:top-2 right-1.5 sm:right-2 p-1.5 bg-slate-700/80 text-slate-300 rounded"><i class="fas fa-copy text-xs"></i></button>
+                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center border-b border-slate-700/50 pr-10">
+                                <span class="text-slate-400 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider font-semibold flex items-center gap-1.5 sm:gap-2 truncate"><i class="fas fa-code text-blue-400 shrink-0"></i> <span data-i18n="gen_code_title">Generated Code</span></span>
+                            </div>
+                            <div class="p-0 overflow-y-auto flex-grow bg-[#0f172a]">
+                                <pre id="generated-code" class="text-[9px] sm:text-[11px] m-0 border-0 rounded-none bg-transparent p-3 sm:p-4 leading-relaxed font-mono selection:bg-blue-500/30 w-full min-w-fit"></pre>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -261,28 +252,31 @@
 
     <!-- DOCUMENTATION SECTION -->
     <section id="docs" class="max-w-4xl mx-auto px-4 sm:px-6 mb-24 w-full relative z-10 opacity-0 animate-fade-in-up delay-200">
-        <div class="text-center mb-14">
-            <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4 transition-colors" data-i18n="doc_title">Cara Memasang API</h2>
-            <p class="text-slate-600 dark:text-slate-400 text-lg transition-colors" data-i18n="doc_desc">Implementasi bersih berbasis <i>Vanilla JavaScript Class (ES6)</i>. Bebas library tambahan, aman dengan <i>Private Fields (#)</i>.</p>
+        <div class="text-center mb-10 sm:mb-14">
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 transition-colors" data-i18n="doc_title">Cara Memasang API</h2>
+            <p class="text-[13px] sm:text-lg text-slate-600 dark:text-slate-400 transition-colors" data-i18n="doc_desc">Implementasi bersih berbasis <i>Vanilla JavaScript Class (ES6)</i>. Bebas library tambahan, aman dengan <i>Private Fields (#)</i>.</p>
         </div>
 
-        <div class="space-y-10">
-            <!-- Langkah 1 -->
-            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">1</span> <span data-i18n="doc_step1">Siapkan Container HTML</span></h3>
-                <p class="text-slate-600 dark:text-slate-400 mb-5 text-sm" data-i18n="doc_step1_desc">Buat sebuah elemen div kosong dengan ID unik di lokasi formulir Anda. Widget akan dirender secara otomatis di dalam div ini.</p>
-                <pre><code><span class="comment">&lt;!-- Letakkan di dalam form pendaftaran/login Anda --&gt;</span>
-&lt;<span class="keyword">div</span> <span class="property">id</span>=<span class="string">"my-captcha-box"</span>&gt;&lt;/<span class="keyword">div</span>&gt;
+        <div class="space-y-8 sm:space-y-10">
+            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm">1</span> <span data-i18n="doc_step1">Siapkan Container HTML</span></h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step1_desc">Buat sebuah elemen div kosong dengan ID unik di lokasi formulir Anda. Widget akan dirender secara otomatis di dalam div ini.</p>
+                <div class="relative group">
+                    <button onclick="copyCode(this, 'code-step1')" class="copy-btn absolute top-3 right-3 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-xs"></i></button>
+                    <pre id="code-step1" class="text-[10px] sm:text-xs"><code><span class="comment">&lt;!-- Letakkan di dalam form pendaftaran/login Anda --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="string">"my-captcha-box"</span><span class="tag">&gt;&lt;/div&gt;</span>
 
 <span class="comment">&lt;!-- Sertakan file library MathCAPTCHA di bagian bawah body --&gt;</span>
-&lt;<span class="keyword">script</span> <span class="property">src</span>=<span class="string">"https://jproject-1.github.io/captcha-math/api.js"</span>&gt;&lt;/<span class="keyword">script</span>&gt;</code></pre>
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="string">"https://jproject-1.github.io/captcha-math/api.js"</span><span class="tag">&gt;&lt;/script&gt;</span></code></pre>
+                </div>
             </div>
 
-            <!-- Langkah 2 -->
-            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-300">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">2</span> <span data-i18n="doc_step2">Inisialisasi Script (Settings)</span></h3>
-                <p class="text-slate-600 dark:text-slate-400 mb-5 text-sm" data-i18n="doc_step2_desc">Panggil class MathCAPTCHA dan masukkan konfigurasi. Sistem Callbacks akan mendengarkan setiap aksi yang dilakukan pengguna.</p>
-                <pre><code><span class="keyword">const</span> myCaptcha = <span class="keyword">new</span> <span class="function">MathCAPTCHA</span>({
+            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-300">
+                <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm">2</span> <span data-i18n="doc_step2">Inisialisasi Script (Settings)</span></h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step2_desc">Panggil class MathCAPTCHA dan masukkan konfigurasi. Sistem Callbacks akan mendengarkan setiap aksi yang dilakukan pengguna.</p>
+                <div class="relative group">
+                    <button onclick="copyCode(this, 'code-step2')" class="copy-btn absolute top-3 right-3 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-xs"></i></button>
+                    <pre id="code-step2" class="text-[10px] sm:text-xs"><code><span class="keyword">const</span> myCaptcha = <span class="keyword">new</span> <span class="function">MathCAPTCHA</span>({
     
     <span class="property">containerId</span>: <span class="string">'my-captcha-box'</span>,
     <span class="property">mode</span>: <span class="string">'auto'</span>, <span class="comment">// 'light', 'dark', 'auto'</span>
@@ -303,17 +297,18 @@
         console.<span class="function">error</span>(<span class="string">"Diblokir permanen."</span>, response);
     }
 });</code></pre>
+                </div>
             </div>
 
-            <!-- Langkah 3: Penjelasan Output JSON -->
-            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-400">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">3</span> <span data-i18n="doc_step3">Struktur JSON Output</span></h3>
-                <p class="text-slate-600 dark:text-slate-400 mb-5 text-sm" data-i18n="doc_step3_desc">Berikut adalah penjelasan output yang diterima melalui fungsi callback saat pengguna berinteraksi.</p>
+            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-400">
+                <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm">3</span> <span data-i18n="doc_step3">Struktur JSON Output</span></h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step3_desc">Berikut adalah penjelasan output yang diterima melalui fungsi callback saat pengguna berinteraksi.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="text-sm font-bold text-green-600 dark:text-green-400 mb-2"><i class="fas fa-check-circle mr-1"></i> onSuccess Output</h4>
-                        <pre class="text-xs"><code>{
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full max-w-full">
+                    <div class="relative group">
+                        <h4 class="text-xs sm:text-sm font-bold text-green-600 dark:text-green-400 mb-2"><i class="fas fa-check-circle mr-1"></i> onSuccess Output</h4>
+                        <button onclick="copyCode(this, 'code-step3-1')" class="copy-btn absolute top-8 right-2 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-[10px]"></i></button>
+                        <pre id="code-step3-1" class="text-[9px] sm:text-xs"><code>{
   <span class="property">"status"</span>: <span class="string">"success"</span>,
   <span class="property">"data"</span>: {
     <span class="property">"levelPlayed"</span>: <span class="property">4</span>,
@@ -323,11 +318,12 @@
   }
 }</code></pre>
                     </div>
-                    <div>
-                        <h4 class="text-sm font-bold text-yellow-600 dark:text-yellow-500 mb-2"><i class="fas fa-exclamation-triangle mr-1"></i> onFail / onBlocked Output</h4>
-                        <pre class="text-xs"><code>{
+                    <div class="relative group">
+                        <h4 class="text-xs sm:text-sm font-bold text-yellow-600 dark:text-yellow-500 mb-2"><i class="fas fa-exclamation-triangle mr-1"></i> onFail / onBlocked Output</h4>
+                        <button onclick="copyCode(this, 'code-step3-2')" class="copy-btn absolute top-8 right-2 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-[10px]"></i></button>
+                        <pre id="code-step3-2" class="text-[9px] sm:text-xs"><code>{
   <span class="property">"status"</span>: <span class="string">"failed"</span>, <span class="comment">// atau "blocked"</span>
-  <span class="property">"reason"</span>: <span class="string">"wrong_answer"</span>, <span class="comment">// atau "closed_by_user"</span>
+  <span class="property">"reason"</span>: <span class="string">"wrong_answer"</span>, <span class="comment">// "closed_by_user"</span>
   <span class="property">"attemptsUsed"</span>: <span class="property">1</span>,
   <span class="property">"maxAttempts"</span>: <span class="property">5</span>,
   <span class="property">"levelPlayed"</span>: <span class="property">4</span>,
@@ -342,31 +338,28 @@
 
     <!-- FOOTER -->
     <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md mt-auto relative z-10 transition-colors duration-500">
-        <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
             <div class="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
-                <i class="fas fa-shield-halved text-blue-500 text-lg"></i>
-                <span class="text-sm font-semibold text-slate-900 dark:text-white">MathCAPTCHA API v1.0.0</span>
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z" clip-rule="evenodd" /></svg>
+                <span class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">MathCAPTCHA API v1.0.0</span>
             </div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <div class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                 &copy; 2026 <a href="https://jasonpw.web.id/" target="_blank" class="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">Jasonpw</a> &bull; 
                 Dikelola oleh <a href="https://ycylstudio.web.id/" target="_blank" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">YCYL STUDIO</a>.
             </div>
         </div>
     </footer>
 
-    <!-- Panggil File API.js External (Logika Utuh, tidak diubah) -->
+    <!-- EXTERNAL API CALL -->
     <script src="https://jproject-1.github.io/captcha-math/api.js"></script>
 
-    <!-- Logic Interaktif Halaman -->
     <script>
-        // --- 1. Fungsi Toggle Dark Mode (Smooth Transition) ---
+        // 1. Theme Toggle
         function toggleTheme() {
             const htmlEl = document.documentElement;
             const isDark = document.getElementById('theme-toggle').checked;
-            
             if (isDark) htmlEl.classList.add('dark'); 
             else htmlEl.classList.remove('dark'); 
-            
             setTimeout(applySettings, 50); 
         }
 
@@ -375,7 +368,21 @@
             document.documentElement.classList.add('dark');
         }
 
-        // --- 2. Setup Custom Dropdown UI ---
+        // 2. Custom Copy
+        function copyCode(btnElement, elementId) {
+            const el = document.getElementById(elementId);
+            // Ambil dari dataset.raw kalau ada, kalau tidak ya innerText normal (biar format gak rusak)
+            const textToCopy = el.dataset.raw ? el.dataset.raw : el.innerText;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const icon = btnElement.querySelector('i');
+                const originalClass = icon.className;
+                icon.className = 'fas fa-check text-green-400 text-xs';
+                setTimeout(() => { icon.className = originalClass; }, 2000);
+            });
+        }
+
+        // 3. Dropdowns
         function setupCustomDropdowns() {
             document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
                 const btn = dropdown.querySelector('.dropdown-btn');
@@ -387,7 +394,6 @@
 
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // Tutup menu lain
                     document.querySelectorAll('.dropdown-menu').forEach(m => {
                         if(m !== menu) { m.classList.add('hidden'); m.previousElementSibling.querySelector('.fa-chevron-down').classList.remove('rotate-180'); }
                     });
@@ -405,22 +411,22 @@
                 });
             });
 
-            // Klik di luar menutup semua dropdown
             document.addEventListener('click', () => {
                 document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
                 document.querySelectorAll('.fa-chevron-down').forEach(i => i.classList.remove('rotate-180'));
             });
         }
 
-        // --- 3. Sistem i18n untuk Dokumentasi ---
+        // 4. i18n Data
         const pageLangs = {
             id: {
                 nav_docs: "Dokumentasi", hero_badge: "API v1.0.0 Telah Rilis",
                 hero_title: "Verifikasi Anti-Bot dengan <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Logika Matematika Dinamis.</span>",
                 hero_desc: "Tinggalkan tebak-tebakan gambar bus yang membosankan. MathCAPTCHA menghasilkan soal secara prosedural (real-time), auto-scaling, dan sistem JSON callbacks profesional.",
-                conf_title: "<i class='fas fa-sliders text-blue-500 mr-3'></i> Konfigurasi API",
-                conf_lvl: "Tingkat Kesulitan (Level)", conf_lang: "Bahasa UI (Language)", conf_att: "Batas Gagal (Max Attempts)",
-                conf_btn: "Terapkan & Generate Ulang", live_prev: "Live Preview", term_out: "Terminal JSON Output",
+                hero_os: "Open Source di GitHub",
+                conf_title: "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> Konfigurasi API",
+                conf_mode: "Tema Widget (Widget Theme)", conf_lvl: "Tingkat Kesulitan (Level)", conf_lang: "Bahasa UI (Language)", conf_att: "Batas Gagal (Max Attempts)",
+                conf_btn: "Terapkan & Generate Ulang", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated Code",
                 doc_title: "Cara Memasang API", doc_desc: "Implementasi bersih berbasis Vanilla JavaScript Class (ES6). Bebas library tambahan, aman dengan Private Fields (#).",
                 doc_step1: "Siapkan Container HTML", doc_step1_desc: "Buat sebuah elemen div kosong dengan ID unik di lokasi formulir Anda. Widget akan dirender secara otomatis di dalam div ini.",
                 doc_step2: "Inisialisasi Script (Settings)", doc_step2_desc: "Panggil class MathCAPTCHA dan masukkan konfigurasi. Sistem Callbacks akan mendengarkan setiap aksi yang dilakukan pengguna.",
@@ -430,9 +436,10 @@
                 nav_docs: "Documentation", hero_badge: "API v1.0.0 Released",
                 hero_title: "Anti-Bot Verification with <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Dynamic Math Logic.</span>",
                 hero_desc: "Leave the boring bus image guessing behind. MathCAPTCHA generates procedural questions in real-time, features auto-scaling, and provides professional JSON callbacks.",
-                conf_title: "<i class='fas fa-sliders text-blue-500 mr-3'></i> API Configuration",
-                conf_lvl: "Difficulty Level", conf_lang: "UI Language", conf_att: "Max Attempts",
-                conf_btn: "Apply & Regenerate", live_prev: "Live Preview", term_out: "Terminal JSON Output",
+                hero_os: "Open Source on GitHub",
+                conf_title: "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> API Configuration",
+                conf_mode: "Widget Theme", conf_lvl: "Difficulty Level", conf_lang: "UI Language", conf_att: "Max Attempts",
+                conf_btn: "Apply & Regenerate", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated Code",
                 doc_title: "How to Install the API", doc_desc: "Clean implementation based on Vanilla JavaScript Class (ES6). Zero external dependencies, secure with Private Fields (#).",
                 doc_step1: "Prepare HTML Container", doc_step1_desc: "Create an empty div element with a unique ID inside your form. The widget will be rendered automatically in this div.",
                 doc_step2: "Initialize Script (Settings)", doc_step2_desc: "Call the MathCAPTCHA class and input your configuration. The Callbacks system will listen to every user action.",
@@ -441,7 +448,6 @@
         };
 
         function changeDocsLang(lang) {
-            // Update Toggle UI
             const btnID = document.getElementById('lang-btn-id');
             const btnEN = document.getElementById('lang-btn-en');
             
@@ -453,7 +459,6 @@
                 btnID.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all";
             }
 
-            // Replace Text
             const translations = pageLangs[lang];
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -461,11 +466,14 @@
             });
         }
 
-        // --- 4. Formatting Log Terminal Pro ---
+        // 5. Log formatter
         function updateLog(title, colorHex, data) {
             const logEl = document.getElementById('playground-log');
+            const logRawEl = document.getElementById('playground-log-raw');
             const time = new Date().toLocaleTimeString();
             
+            logRawEl.innerText = JSON.stringify(data, null, 2);
+
             const formattedJson = JSON.stringify(data, null, 2)
                 .replace(/"status": "([^"]+)"/g, '"status": <span style="color:#98c379">"$1"</span>')
                 .replace(/"reason": "([^"]+)"/g, '"reason": <span style="color:#e5c07b">"$1"</span>')
@@ -477,20 +485,60 @@
             logEl.scrollTop = logEl.scrollHeight; 
         }
 
-        // --- 5. Fungsi Apply Settings & Inisialisasi API ---
+        // 6. Code Generator HTML + JS
+        function updateGeneratedCode(mode, level, lang, attempts) {
+            const levelVal = level === 'random' ? "'random'" : level;
+            const modeVal = mode === 'auto' ? "'auto'" : `'${mode}'`;
+            const codeRaw = `<!-- HTML -->
+<div id="my-captcha-box"></div>
+
+<!-- JS -->
+<script src="https://jproject-1.github.io/captcha-math/api.js"><\/script>
+<script>
+  const myCaptcha = new MathCAPTCHA({
+    containerId: 'my-captcha-box',
+    mode: ${modeVal},
+    language: '${lang}',
+    level: ${levelVal},
+    maxAttempts: ${attempts},
+    
+    onSuccess: (res) => {
+      console.log("Success!", res);
+    }
+  });
+<\/script>`;
+            
+            const highlighted = codeRaw
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/(const|new|let|var|function|return)/g, '<span class="keyword">$1</span>')
+                .replace(/([a-zA-Z0-9_]+)(?=:)/g, '<span class="property">$1</span>')
+                .replace(/('.*?'|".*?")/g, '<span class="string">$1</span>')
+                .replace(/([0-9]+)(?!&)/g, '<span style="color:#d19a66">$1</span>')
+                .replace(/(&lt;!--.*?--&gt;|\/\/.*)/g, '<span class="comment">$1</span>')
+                .replace(/(&lt;\/?script.*?&gt;|&lt;\/?div.*?&gt;)/g, '<span class="tag">$1</span>');
+                
+            const el = document.getElementById('generated-code');
+            el.innerHTML = highlighted;
+            el.dataset.raw = codeRaw; // Simpan asli untuk copy bersih
+        }
+        
+        // 7. Core apply
         function applySettings() {
             document.querySelectorAll('[id^="cm-overlay-"]').forEach(el => el.remove());
 
             const levelVal = document.getElementById('setting-level').value;
             const langVal = document.getElementById('setting-lang').value;
+            const modeVal = document.getElementById('setting-mode').value;
             const attemptVal = parseInt(document.getElementById('setting-attempts').value) || 5;
-            const isDark = document.documentElement.classList.contains('dark');
 
-            document.getElementById('playground-log').innerHTML = '<span style="color:#64748b; font-style:italic;">// Parameter diperbarui. Menunggu interaksi...</span>';
+            document.getElementById('playground-log').innerHTML = '<span style="color:#64748b; font-style:italic;">// Menunggu interaksi...</span>';
+            document.getElementById('playground-log-raw').innerText = '// Menunggu interaksi...';
+            
+            updateGeneratedCode(modeVal, levelVal, langVal, attemptVal);
 
             new MathCAPTCHA({
                 containerId: 'captcha-playground',
-                mode: isDark ? 'dark' : 'light', 
+                mode: modeVal, 
                 level: levelVal === 'random' ? 'random' : parseInt(levelVal),
                 language: langVal,
                 maxAttempts: attemptVal,
@@ -501,7 +549,6 @@
             });
         }
 
-        // --- 6. RUN INIT ---
         document.addEventListener('DOMContentLoaded', () => {
             setupCustomDropdowns();
             applySettings();
