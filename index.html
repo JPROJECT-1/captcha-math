@@ -3,10 +3,44 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <title>MathCAPTCHA v1.0.0 | Secure & Dynamic Anti-Bot</title>
+    <title>MathCAPTCHA v1.0.0 | Secure & Dynamic Anti-Bot Verification</title>
     
-    <meta name="description" content="MathCAPTCHA API v1.0.0. Verifikasi Anti-Bot modern dengan Logika Matematika Dinamis, auto-scaling, dukungan multibahasa, dan JSON callbacks." />
+    <!-- Meta SEO & Favicon (Shield SVG) -->
+    <meta name="description" content="MathCAPTCHA API v1.0.0 by YCYL STUDIO. Verifikasi Anti-Bot modern dengan Logika Matematika Dinamis, auto-scaling, dukungan multibahasa, dan sistem JSON callbacks profesional." />
+    <meta name="keywords" content="MathCAPTCHA, CAPTCHA, Anti-Bot, Security, Open Source, Jasonpw, YCYL STUDIO, JavaScript API" />
+    <meta name="author" content="Jason Putra Wijaya, YCYL STUDIO" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#3b82f6" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath fill-rule='evenodd' d='M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z' clip-rule='evenodd' /%3E%3C/svg%3E" />
     
+    <!-- Open Graph (OG) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MathCAPTCHA v1.0.0 | Dynamic Anti-Bot Verification" />
+    <meta property="og:description" content="Tinggalkan tebak-tebakan gambar yang membosankan. Lindungi website Anda dengan MathCAPTCHA: prosedural, auto-scaling, dan profesional." />
+    <meta property="og:url" content="https://jproject-1.github.io/captcha-math/" />
+    <meta property="og:site_name" content="MathCAPTCHA by YCYL STUDIO" />
+    <!-- Memaksa icon shield svg sebagai OG image (Beberapa platform mendukung SVG OG) -->
+    <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath fill-rule='evenodd' d='M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z' clip-rule='evenodd' /%3E%3C/svg%3E" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="MathCAPTCHA v1.0.0" />
+    <meta name="twitter:description" content="Verifikasi Anti-Bot modern dengan Logika Matematika Dinamis, auto-scaling, dukungan multibahasa, dan sistem JSON callbacks." />
+
+    <!-- Schema.org Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MathCAPTCHA API",
+      "operatingSystem": "Any",
+      "applicationCategory": "SecurityApplication",
+      "version": "1.0.0",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Person", "name": "Jason Putra Wijaya", "url": "https://jasonpw.web.id/" },
+      "publisher": { "@type": "Organization", "name": "YCYL STUDIO", "url": "https://ycylstudio.web.id/" }
+    }
+    </script>
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -34,12 +68,14 @@
     <style>
         ::selection { background: #3b82f6; color: white; }
         
-        /* Custom Scrollbar */
+        /* Global Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         .dark ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
         html, body { overflow-x: hidden; }
         
@@ -48,25 +84,32 @@
         .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
         .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
         
-        /* Dropdown Scrollbar */
+        /* Custom Dropdown UI */
         .dropdown-menu::-webkit-scrollbar { width: 6px; }
         .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
         .dropdown-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .dark .dropdown-menu::-webkit-scrollbar-thumb { background: #475569; }
         
-        /* Code Block */
-        pre { background: #0f172a; border-radius: 1rem; padding: 1.25rem; overflow-x: auto; color: #e2e8f0; font-size: 0.8rem; line-height: 1.6; border: 1px solid #1e293b; }
+        /* Code Block Styling */
+        pre { background: #0f172a; border-radius: 1rem; padding: 1.25rem; overflow-x: auto; color: #e2e8f0; font-size: 0.8rem; line-height: 1.6; border: 1px solid #1e293b; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         code .keyword { color: #c678dd; } code .string { color: #98c379; } code .comment { color: #64748b; font-style: italic; } code .function { color: #61afef; } code .property { color: #e5c07b; } code .tag { color: #e06c75; } code .attr { color: #d19a66; }
 
         .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; } .delay-300 { animation-delay: 300ms; } .delay-400 { animation-delay: 400ms; }
         
-        /* Copy Button (Selalu tampil, jelas saat dihover) */
-        .copy-btn { opacity: 0.7; transition: opacity 0.2s, background-color 0.2s; backdrop-filter: blur(4px); }
+        /* Tombol Copy Statis (Tetap Muncul) */
+        .copy-btn { opacity: 0.85; transition: opacity 0.2s, background-color 0.2s; backdrop-filter: blur(4px); }
         .copy-btn:hover { opacity: 1; background-color: rgba(71, 85, 105, 0.9); }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased transition-colors duration-500 min-h-screen flex flex-col relative w-full">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased transition-colors duration-500 min-h-screen flex flex-col relative w-full max-w-full">
 
+    <!-- Custom Toast Alert -->
+    <div id="custom-toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-[99999] flex items-center gap-3 px-5 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl transition-all duration-300 -translate-y-24 opacity-0 pointer-events-none border border-slate-700 dark:border-slate-200">
+        <i id="toast-icon" class="fas fa-check-circle text-green-400"></i>
+        <span id="toast-message" class="text-sm font-semibold tracking-wide">Pesan disini</span>
+    </div>
+
+    <!-- FLOATING BACKGROUND ELEMENTS -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <i class="fas fa-square-root-variable absolute top-20 left-[5%] md:left-[10%] text-4xl md:text-6xl text-blue-500 opacity-10 dark:opacity-5 animate-float-1"></i>
         <i class="fas fa-calculator absolute bottom-1/4 right-[2%] md:right-[5%] text-5xl md:text-8xl text-indigo-500 opacity-10 dark:opacity-5 animate-float-2"></i>
@@ -83,13 +126,15 @@
                 </div>
                 <span class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">Math<span class="text-blue-600 dark:text-blue-400">CAPTCHA</span></span>
             </div>
+            
             <div class="flex items-center gap-2 sm:gap-6">
                 <div class="flex items-center text-[10px] sm:text-xs font-semibold bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
                     <button onclick="changeDocsLang('id')" id="lang-btn-id" class="px-2 py-1 rounded text-blue-600 bg-white shadow-sm dark:bg-slate-700 dark:text-blue-400 transition-all">ID</button>
                     <button onclick="changeDocsLang('en')" id="lang-btn-en" class="px-2 py-1 rounded text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all">EN</button>
                 </div>
                 <a href="#docs" data-i18n="nav_docs" class="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors hidden md:block">Dokumentasi</a>
-                <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-200 dark:border-slate-700 pl-2 sm:pl-6">
+                
+                <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-200 dark:border-slate-700 pl-2 sm:pl-6" title="Tema Halaman">
                     <i class="fas fa-sun text-amber-500 text-[10px] sm:text-sm"></i>
                     <label for="theme-toggle" class="flex items-center cursor-pointer relative">
                         <input type="checkbox" id="theme-toggle" class="sr-only peer" onchange="toggleTheme()">
@@ -219,28 +264,35 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full">
-                        
+                        <!-- JSON Terminal -->
                         <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden h-44 sm:h-52 relative group">
-                            <button onclick="copyCode(this, 'playground-log-raw')" class="copy-btn absolute top-1.5 sm:top-2 right-1.5 sm:right-2 p-1.5 bg-slate-700/80 text-slate-300 rounded"><i class="fas fa-copy text-xs"></i></button>
-                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-1.5 sm:gap-2 border-b border-slate-700/50 pr-10">
+                            <!-- TOMBOL COPY TETAP MUNCUL -->
+                            <button onclick="copyCode(this, 'playground-log-raw')" class="copy-btn absolute top-2 right-2 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10">
+                                <i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span>
+                            </button>
+                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-1.5 sm:gap-2 border-b border-slate-700/50 pr-20">
                                 <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-500/90 shadow-sm shrink-0"></div>
                                 <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-yellow-500/90 shadow-sm shrink-0"></div>
                                 <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-green-500/90 shadow-sm shrink-0"></div>
                                 <span class="text-slate-400 text-[9px] sm:text-[11px] font-mono ml-1.5 sm:ml-3 uppercase tracking-wider font-semibold truncate" data-i18n="term_out">Terminal JSON Output</span>
                             </div>
-                            <div id="playground-log" class="p-3 sm:p-4 font-mono text-[9px] sm:text-[11px] text-[#a6accd] overflow-y-auto flex-grow break-words leading-relaxed selection:bg-blue-500/30 whitespace-pre-wrap">
+                            <div id="playground-log" class="p-4 sm:p-5 font-mono text-[9px] sm:text-[11px] text-[#a6accd] overflow-y-auto flex-grow break-words leading-relaxed selection:bg-blue-500/30 whitespace-pre-wrap">
                                 <span class="text-[#64748b] italic">// Awaiting user interaction...</span>
                             </div>
                             <div id="playground-log-raw" class="hidden"></div>
                         </div>
 
+                        <!-- Generated Sample Code -->
                         <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden h-44 sm:h-52 relative group">
-                            <button onclick="copyCode(this, 'generated-code')" class="copy-btn absolute top-1.5 sm:top-2 right-1.5 sm:right-2 p-1.5 bg-slate-700/80 text-slate-300 rounded"><i class="fas fa-copy text-xs"></i></button>
-                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center border-b border-slate-700/50 pr-10">
-                                <span class="text-slate-400 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider font-semibold flex items-center gap-1.5 sm:gap-2 truncate"><i class="fas fa-code text-blue-400 shrink-0"></i> <span data-i18n="gen_code_title">Generated Code</span></span>
+                            <!-- TOMBOL COPY TETAP MUNCUL -->
+                            <button onclick="copyCode(this, 'generated-code')" class="copy-btn absolute top-2 right-2 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10">
+                                <i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span>
+                            </button>
+                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center border-b border-slate-700/50 pr-20">
+                                <span class="text-slate-400 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider font-semibold flex items-center gap-1.5 sm:gap-2 truncate"><i class="fas fa-code text-blue-400 shrink-0"></i> <span data-i18n="gen_code_title">Generated JS Code</span></span>
                             </div>
-                            <div class="p-0 overflow-y-auto flex-grow bg-[#0f172a]">
-                                <pre id="generated-code" class="text-[9px] sm:text-[11px] m-0 border-0 rounded-none bg-transparent p-3 sm:p-4 leading-relaxed font-mono selection:bg-blue-500/30 w-full min-w-fit"></pre>
+                            <div class="p-0 overflow-y-auto flex-grow bg-[#0f172a] relative">
+                                <pre id="generated-code" class="text-[9px] sm:text-[11px] m-0 border-0 rounded-none bg-transparent pt-4 pb-4 px-4 sm:px-5 leading-relaxed font-mono selection:bg-blue-500/30 w-full min-w-fit"></pre>
                             </div>
                         </div>
 
@@ -258,12 +310,14 @@
         </div>
 
         <div class="space-y-8 sm:space-y-10">
+            <!-- Langkah 1 -->
             <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500">
                 <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm">1</span> <span data-i18n="doc_step1">Siapkan Container HTML</span></h3>
                 <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step1_desc">Buat sebuah elemen div kosong dengan ID unik di lokasi formulir Anda. Widget akan dirender secara otomatis di dalam div ini.</p>
                 <div class="relative group">
-                    <button onclick="copyCode(this, 'code-step1')" class="copy-btn absolute top-3 right-3 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-xs"></i></button>
-                    <pre id="code-step1" class="text-[10px] sm:text-xs"><code><span class="comment">&lt;!-- Letakkan di dalam form pendaftaran/login Anda --&gt;</span>
+                    <!-- TOMBOL COPY TETAP MUNCUL -->
+                    <button onclick="copyCode(this, 'code-step1')" class="copy-btn absolute top-3 right-3 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10"><i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span></button>
+                    <pre id="code-step1" class="text-[10px] sm:text-xs pt-12"><code><span class="comment">&lt;!-- Letakkan di dalam form pendaftaran/login Anda --&gt;</span>
 <span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="string">"my-captcha-box"</span><span class="tag">&gt;&lt;/div&gt;</span>
 
 <span class="comment">&lt;!-- Sertakan file library MathCAPTCHA di bagian bawah body --&gt;</span>
@@ -271,12 +325,14 @@
                 </div>
             </div>
 
+            <!-- Langkah 2 -->
             <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-300">
                 <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm">2</span> <span data-i18n="doc_step2">Inisialisasi Script (Settings)</span></h3>
                 <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step2_desc">Panggil class MathCAPTCHA dan masukkan konfigurasi. Sistem Callbacks akan mendengarkan setiap aksi yang dilakukan pengguna.</p>
                 <div class="relative group">
-                    <button onclick="copyCode(this, 'code-step2')" class="copy-btn absolute top-3 right-3 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-xs"></i></button>
-                    <pre id="code-step2" class="text-[10px] sm:text-xs"><code><span class="keyword">const</span> myCaptcha = <span class="keyword">new</span> <span class="function">MathCAPTCHA</span>({
+                    <!-- TOMBOL COPY TETAP MUNCUL -->
+                    <button onclick="copyCode(this, 'code-step2')" class="copy-btn absolute top-3 right-3 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10"><i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span></button>
+                    <pre id="code-step2" class="text-[10px] sm:text-xs pt-12"><code><span class="keyword">const</span> myCaptcha = <span class="keyword">new</span> <span class="function">MathCAPTCHA</span>({
     
     <span class="property">containerId</span>: <span class="string">'my-captcha-box'</span>,
     <span class="property">mode</span>: <span class="string">'auto'</span>, <span class="comment">// 'light', 'dark', 'auto'</span>
@@ -300,6 +356,7 @@
                 </div>
             </div>
 
+            <!-- Langkah 3: Penjelasan Output JSON -->
             <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-400">
                 <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm">3</span> <span data-i18n="doc_step3">Struktur JSON Output</span></h3>
                 <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step3_desc">Berikut adalah penjelasan output yang diterima melalui fungsi callback saat pengguna berinteraksi.</p>
@@ -307,8 +364,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full max-w-full">
                     <div class="relative group">
                         <h4 class="text-xs sm:text-sm font-bold text-green-600 dark:text-green-400 mb-2"><i class="fas fa-check-circle mr-1"></i> onSuccess Output</h4>
-                        <button onclick="copyCode(this, 'code-step3-1')" class="copy-btn absolute top-8 right-2 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-[10px]"></i></button>
-                        <pre id="code-step3-1" class="text-[9px] sm:text-xs"><code>{
+                        <button onclick="copyCode(this, 'code-step3-1')" class="copy-btn absolute top-8 right-2 px-2 py-1 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1 hover:text-white z-10"><i class="fas fa-copy text-[10px]"></i><span class="text-[9px] font-semibold">Salin</span></button>
+                        <pre id="code-step3-1" class="text-[9px] sm:text-xs pt-10"><code>{
   <span class="property">"status"</span>: <span class="string">"success"</span>,
   <span class="property">"data"</span>: {
     <span class="property">"levelPlayed"</span>: <span class="property">4</span>,
@@ -320,8 +377,8 @@
                     </div>
                     <div class="relative group">
                         <h4 class="text-xs sm:text-sm font-bold text-yellow-600 dark:text-yellow-500 mb-2"><i class="fas fa-exclamation-triangle mr-1"></i> onFail / onBlocked Output</h4>
-                        <button onclick="copyCode(this, 'code-step3-2')" class="copy-btn absolute top-8 right-2 p-1.5 bg-slate-700/80 hover:bg-slate-600 text-slate-300 rounded z-10"><i class="fas fa-copy text-[10px]"></i></button>
-                        <pre id="code-step3-2" class="text-[9px] sm:text-xs"><code>{
+                        <button onclick="copyCode(this, 'code-step3-2')" class="copy-btn absolute top-8 right-2 px-2 py-1 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1 hover:text-white z-10"><i class="fas fa-copy text-[10px]"></i><span class="text-[9px] font-semibold">Salin</span></button>
+                        <pre id="code-step3-2" class="text-[9px] sm:text-xs pt-10"><code>{
   <span class="property">"status"</span>: <span class="string">"failed"</span>, <span class="comment">// atau "blocked"</span>
   <span class="property">"reason"</span>: <span class="string">"wrong_answer"</span>, <span class="comment">// "closed_by_user"</span>
   <span class="property">"attemptsUsed"</span>: <span class="property">1</span>,
@@ -354,7 +411,29 @@
     <script src="https://jproject-1.github.io/captcha-math/api.js"></script>
 
     <script>
-        // 1. Theme Toggle
+        // 1. Toast Notification Custom Tanpa API Luar
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('custom-toast');
+            const icon = document.getElementById('toast-icon');
+            const msgEl = document.getElementById('toast-message');
+
+            msgEl.innerText = msg;
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle text-green-400 dark:text-green-500 text-lg';
+            } else if (type === 'info') {
+                icon.className = 'fas fa-info-circle text-blue-400 dark:text-blue-500 text-lg';
+            }
+
+            toast.classList.remove('-translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        // 2. Theme Toggle Halaman Utama
         function toggleTheme() {
             const htmlEl = document.documentElement;
             const isDark = document.getElementById('theme-toggle').checked;
@@ -368,21 +447,23 @@
             document.documentElement.classList.add('dark');
         }
 
-        // 2. Custom Copy
+        // 3. Custom Copy (Bisa mendeteksi plain text via dataset)
         function copyCode(btnElement, elementId) {
             const el = document.getElementById(elementId);
-            // Ambil dari dataset.raw kalau ada, kalau tidak ya innerText normal (biar format gak rusak)
             const textToCopy = el.dataset.raw ? el.dataset.raw : el.innerText;
             
             navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast("Kode berhasil disalin ke clipboard!", "success");
                 const icon = btnElement.querySelector('i');
                 const originalClass = icon.className;
                 icon.className = 'fas fa-check text-green-400 text-xs';
                 setTimeout(() => { icon.className = originalClass; }, 2000);
+            }).catch(err => {
+                showToast("Gagal menyalin kode.", "error");
             });
         }
 
-        // 3. Dropdowns
+        // 4. Dropdowns Kustom
         function setupCustomDropdowns() {
             document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
                 const btn = dropdown.querySelector('.dropdown-btn');
@@ -417,7 +498,7 @@
             });
         }
 
-        // 4. i18n Data
+        // 5. i18n Data
         const pageLangs = {
             id: {
                 nav_docs: "Dokumentasi", hero_badge: "API v1.0.0 Telah Rilis",
@@ -426,7 +507,7 @@
                 hero_os: "Open Source di GitHub",
                 conf_title: "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> Konfigurasi API",
                 conf_mode: "Tema Widget (Widget Theme)", conf_lvl: "Tingkat Kesulitan (Level)", conf_lang: "Bahasa UI (Language)", conf_att: "Batas Gagal (Max Attempts)",
-                conf_btn: "Terapkan & Generate Ulang", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated Code",
+                conf_btn: "Terapkan & Generate", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated JS Code",
                 doc_title: "Cara Memasang API", doc_desc: "Implementasi bersih berbasis Vanilla JavaScript Class (ES6). Bebas library tambahan, aman dengan Private Fields (#).",
                 doc_step1: "Siapkan Container HTML", doc_step1_desc: "Buat sebuah elemen div kosong dengan ID unik di lokasi formulir Anda. Widget akan dirender secara otomatis di dalam div ini.",
                 doc_step2: "Inisialisasi Script (Settings)", doc_step2_desc: "Panggil class MathCAPTCHA dan masukkan konfigurasi. Sistem Callbacks akan mendengarkan setiap aksi yang dilakukan pengguna.",
@@ -439,7 +520,7 @@
                 hero_os: "Open Source on GitHub",
                 conf_title: "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> API Configuration",
                 conf_mode: "Widget Theme", conf_lvl: "Difficulty Level", conf_lang: "UI Language", conf_att: "Max Attempts",
-                conf_btn: "Apply & Regenerate", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated Code",
+                conf_btn: "Apply & Regenerate", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated JS Code",
                 doc_title: "How to Install the API", doc_desc: "Clean implementation based on Vanilla JavaScript Class (ES6). Zero external dependencies, secure with Private Fields (#).",
                 doc_step1: "Prepare HTML Container", doc_step1_desc: "Create an empty div element with a unique ID inside your form. The widget will be rendered automatically in this div.",
                 doc_step2: "Initialize Script (Settings)", doc_step2_desc: "Call the MathCAPTCHA class and input your configuration. The Callbacks system will listen to every user action.",
@@ -466,7 +547,7 @@
             });
         }
 
-        // 5. Log formatter
+        // 6. Log formatter
         function updateLog(title, colorHex, data) {
             const logEl = document.getElementById('playground-log');
             const logRawEl = document.getElementById('playground-log-raw');
@@ -485,28 +566,30 @@
             logEl.scrollTop = logEl.scrollHeight; 
         }
 
-        // 6. Code Generator HTML + JS
+        // 7. Code Generator HANYA Format Objek JavaScript
         function updateGeneratedCode(mode, level, lang, attempts) {
             const levelVal = level === 'random' ? "'random'" : level;
             const modeVal = mode === 'auto' ? "'auto'" : `'${mode}'`;
-            const codeRaw = `<!-- HTML -->
-<div id="my-captcha-box"></div>
-
-<!-- JS -->
-<script src="https://jproject-1.github.io/captcha-math/api.js"><\/script>
-<script>
-  const myCaptcha = new MathCAPTCHA({
+            const codeRaw = `const myCaptcha = new MathCAPTCHA({
     containerId: 'my-captcha-box',
-    mode: ${modeVal},
-    language: '${lang}',
-    level: ${levelVal},
+    mode: ${modeVal}, // 'light', 'dark', 'auto'
+    language: '${lang}', // 10 Languages supported
+    level: ${levelVal}, // 1-7 or 'random'
     maxAttempts: ${attempts},
-    
-    onSuccess: (res) => {
-      console.log("Success!", res);
+
+    onSuccess: (response) => {
+        console.log("Sukses!", response);
+        // Kirim 'response.data.token' ke backend untuk validasi
+    },
+
+    onFail: (response) => {
+        console.warn("Salah tebak.", response);
+    },
+
+    onBlocked: (response) => {
+        console.error("Diblokir permanen.", response);
     }
-  });
-<\/script>`;
+});`;
             
             const highlighted = codeRaw
                 .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -519,10 +602,10 @@
                 
             const el = document.getElementById('generated-code');
             el.innerHTML = highlighted;
-            el.dataset.raw = codeRaw; // Simpan asli untuk copy bersih
+            el.dataset.raw = codeRaw; 
         }
         
-        // 7. Core apply
+        // 8. Core apply
         function applySettings() {
             document.querySelectorAll('[id^="cm-overlay-"]').forEach(el => el.remove());
 
@@ -547,11 +630,15 @@
                 onFail: (res) => updateLog('[403 FORBIDDEN - FAILED ATTEMPT]', '#e5c07b', res),
                 onBlocked: (res) => updateLog('[429 TOO MANY REQUESTS - BLOCKED]', '#e06c75', res)
             });
+
+            // Tampilkan toast notifikasi
+            showToast("Konfigurasi API berhasil diterapkan!", "info");
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             setupCustomDropdowns();
-            applySettings();
+            // applySettings dipanggil di sini untuk render awal
+            setTimeout(applySettings, 200); 
         });
     </script>
 </body>
