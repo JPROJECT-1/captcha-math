@@ -1,295 +1,939 @@
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
+<!doctype html>
+<html class="scroll-smooth" lang="id">
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta
+      content="width=device-width,initial-scale=1,maximum-scale=5"
+      name="viewport"
+    />
+
+    <!-- SEO, Favicon & Open Graph Tags -->
     <title>MathCAPTCHA v1.0.0 | Secure & Dynamic Anti-Bot</title>
-    
-    <meta name="description" content="MathCAPTCHA API v1.0.0. Verifikasi Anti-Bot modern dengan Logika Matematika Dinamis, auto-scaling, dukungan multibahasa, dan JSON callbacks." />
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
-    <!-- Tailwind CSS -->
+    <meta
+      content="MathCAPTCHA API v1.0.0. Verifikasi Anti-Bot modern dengan Logika Matematika Dinamis, auto-scaling, dukungan multibahasa, dan JSON callbacks."
+      name="description"
+    />
+    <meta
+      name="keywords"
+      content="mathcaptcha, anti-bot, captcha, javascript captcha, open source, keamanan web, ycyl studio, jasonpw"
+    />
+    <meta name="author" content="Jasonpw" />
+
+    <!-- Favicon SVG (Shield Icon) langsung dirender oleh browser -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z'/></svg>"
+    />
+
+    <meta
+      property="og:title"
+      content="MathCAPTCHA v1.0.0 | Secure & Dynamic Anti-Bot"
+    />
+    <meta
+      property="og:description"
+      content="Tinggalkan tebak-tebakan gambar bus yang membosankan. Verifikasi dengan Logika Matematika Dinamis."
+    />
+    <!-- og:image menggunakan emoji perisai CDN agar terbaca oleh web scraper -->
+    <meta
+      property="og:image"
+      content="https://placehold.co/1200x630/0f172a/3b82f6?text=MathCAPTCHA+API"
+    />
+    <meta
+      property="og:url"
+      content="https://jproject-1.github.io/captcha-math/"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#3b82f6" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
-                    animation: { 'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards', 'float-1': 'float1 12s ease-in-out infinite', 'float-2': 'float2 15s ease-in-out infinite alternate', 'float-3': 'float3 10s ease-in-out infinite' },
-                    keyframes: {
-                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(30px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        float1: { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(-20px) rotate(10deg)' } },
-                        float2: { '0%, 100%': { transform: 'translateY(0) rotate(0deg)' }, '50%': { transform: 'translateY(25px) rotate(-15deg)' } },
-                        float3: { '0%, 100%': { transform: 'translateY(0) scale(1)' }, '50%': { transform: 'translateY(-15px) scale(1.05)' } }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              mono: ["Fira Code", "monospace"],
+            },
+            animation: {
+              "fade-in-up":
+                "fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              "float-1": "float1 12s ease-in-out infinite",
+              "float-2": "float2 15s ease-in-out infinite alternate",
+              "float-3": "float3 10s ease-in-out infinite",
+            },
+            keyframes: {
+              fadeInUp: {
+                "0%": { opacity: "0", transform: "translateY(30px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              float1: {
+                "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+                "50%": { transform: "translateY(-20px) rotate(10deg)" },
+              },
+              float2: {
+                "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+                "50%": { transform: "translateY(25px) rotate(-15deg)" },
+              },
+              float3: {
+                "0%, 100%": { transform: "translateY(0) scale(1)" },
+                "50%": { transform: "translateY(-15px) scale(1.05)" },
+              },
+            },
+          },
+        },
+      };
     </script>
-    
     <style>
-        ::selection { background: #3b82f6; color: white; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        .dark ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-
-        html, body { overflow-x: hidden; }
-        
-        /* Toggle Switch */
-        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
-        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
-        
-        /* Dropdown Scrollbar */
-        .dropdown-menu::-webkit-scrollbar { width: 6px; }
-        .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
-        .dropdown-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark .dropdown-menu::-webkit-scrollbar-thumb { background: #475569; }
-        
-        /* Code Block */
-        pre { background: #0f172a; border-radius: 1rem; padding: 1.25rem; overflow-x: auto; color: #e2e8f0; font-size: 0.8rem; line-height: 1.6; border: 1px solid #1e293b; }
-        code .keyword { color: #c678dd; } code .string { color: #98c379; } code .comment { color: #64748b; font-style: italic; } code .function { color: #61afef; } code .property { color: #e5c07b; } code .tag { color: #e06c75; } code .attr { color: #d19a66; }
-
-        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; } .delay-300 { animation-delay: 300ms; } .delay-400 { animation-delay: 400ms; }
-        
-        /* Copy Button */
-        .copy-btn { opacity: 0.85; transition: opacity 0.2s, background-color 0.2s; backdrop-filter: blur(4px); }
-        .copy-btn:hover { opacity: 1; background-color: rgba(71, 85, 105, 0.9); }
+      ::selection {
+        background: #3b82f6;
+        color: #fff;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      .dark ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+      body,
+      html {
+        overflow-x: hidden;
+      }
+      .toggle-checkbox:checked {
+        right: 0;
+        border-color: #3b82f6;
+      }
+      .toggle-checkbox:checked + .toggle-label {
+        background-color: #3b82f6;
+      }
+      .toggle-checkbox:checked + .toggle-label:after {
+        transform: translateX(100%);
+        border-color: #fff;
+      }
+      .dropdown-menu::-webkit-scrollbar {
+        width: 6px;
+      }
+      .dropdown-menu::-webkit-scrollbar-track {
+        background: 0 0;
+      }
+      .dropdown-menu::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .dark .dropdown-menu::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+      pre {
+        background: #0f172a;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        overflow-x: auto;
+        color: #e2e8f0;
+        font-size: 0.8rem;
+        line-height: 1.6;
+        border: 1px solid #1e293b;
+      }
+      code .keyword {
+        color: #c678dd;
+      }
+      code .string {
+        color: #98c379;
+      }
+      code .comment {
+        color: #64748b;
+        font-style: italic;
+      }
+      code .function {
+        color: #61afef;
+      }
+      code .property {
+        color: #e5c07b;
+      }
+      code .tag {
+        color: #e06c75;
+      }
+      code .attr {
+        color: #d19a66;
+      }
+      .delay-100 {
+        animation-delay: 0.1s;
+      }
+      .delay-200 {
+        animation-delay: 0.2s;
+      }
+      .delay-300 {
+        animation-delay: 0.3s;
+      }
+      .delay-400 {
+        animation-delay: 0.4s;
+      }
+      .delay-500 {
+        animation-delay: 0.5s;
+      }
+      .delay-600 {
+        animation-delay: 0.6s;
+      }
+      .copy-btn {
+        opacity: 0.85;
+        transition:
+          opacity 0.2s,
+          background-color 0.2s;
+        backdrop-filter: blur(4px);
+      }
+      .copy-btn:hover {
+        opacity: 1;
+        background-color: rgba(71, 85, 105, 0.9);
+      }
     </style>
-</head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased transition-colors duration-500 min-h-screen flex flex-col relative w-full">
-
-    <!-- Custom Toast Alert (Notification) -->
-    <div id="custom-toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-[99999] flex items-center gap-3 px-5 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl transition-all duration-300 -translate-y-24 opacity-0 pointer-events-none border border-slate-700 dark:border-slate-200">
-        <i id="toast-icon" class="fas fa-check-circle text-green-400"></i>
-        <span id="toast-message" class="text-sm font-semibold tracking-wide">Pesan disini</span>
+  </head>
+  <body
+    class="flex transition-colors antialiased bg-slate-50 dark:bg-slate-900 dark:text-slate-200 duration-500 flex-col min-h-screen relative text-slate-800 w-full"
+  >
+    <div
+      class="flex items-center -translate-x-1/2 -translate-y-24 bg-slate-900 border border-slate-700 dark:bg-white dark:border-slate-200 dark:text-slate-900 duration-300 fixed gap-3 left-1/2 opacity-0 pointer-events-none px-5 py-3 rounded-2xl shadow-2xl text-white top-5 transform transition-all z-[99999]"
+      id="custom-toast"
+    >
+      <i class="fas fa-check-circle text-green-400" id="toast-icon"></i>
+      <span class="tracking-wide font-semibold text-sm" id="toast-message"
+        >Pesan disini</span
+      >
     </div>
 
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <i class="fas fa-square-root-variable absolute top-20 left-[5%] md:left-[10%] text-4xl md:text-6xl text-blue-500 opacity-10 dark:opacity-5 animate-float-1"></i>
-        <i class="fas fa-calculator absolute bottom-1/4 right-[2%] md:right-[5%] text-5xl md:text-8xl text-indigo-500 opacity-10 dark:opacity-5 animate-float-2"></i>
-        <i class="fas fa-plus absolute top-1/3 right-[10%] md:right-[15%] text-3xl md:text-5xl text-blue-400 opacity-10 dark:opacity-5 animate-float-3"></i>
-        <i class="fas fa-divide absolute bottom-20 left-[10%] md:left-[15%] text-4xl md:text-7xl text-indigo-400 opacity-10 dark:opacity-5 animate-float-1"></i>
+    <div class="inset-0 fixed overflow-hidden pointer-events-none z-0">
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-1 text-4xl fa-square-root-variable left-[5%] md:left-[10%] md:text-6xl text-blue-500 top-20"
+      ></i>
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-2 bottom-1/4 fa-calculator md:right-[5%] md:text-8xl right-[2%] text-5xl text-indigo-500"
+      ></i>
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-3 fa-plus md:right-[15%] md:text-5xl right-[10%] text-3xl text-blue-400 top-1/3"
+      ></i>
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-1 text-4xl bottom-20 fa-divide left-[10%] md:left-[15%] md:text-7xl text-indigo-400"
+      ></i>
     </div>
 
-    <!-- NAVBAR -->
-    <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 transition-colors duration-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center relative z-10 w-full">
-            <div class="flex items-center gap-2 sm:gap-3 cursor-pointer group">
-                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z" clip-rule="evenodd" /></svg>
-                </div>
-                <span class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">Math<span class="text-blue-600 dark:text-blue-400">CAPTCHA</span></span>
-            </div>
-            
-            <div class="flex items-center gap-2 sm:gap-6">
-                <div class="flex items-center text-[10px] sm:text-xs font-semibold bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
-                    <button onclick="changeDocsLang('id')" id="lang-btn-id" class="px-2 py-1 rounded text-blue-600 bg-white shadow-sm dark:bg-slate-700 dark:text-blue-400 transition-all">ID</button>
-                    <button onclick="changeDocsLang('en')" id="lang-btn-en" class="px-2 py-1 rounded text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all">EN</button>
-                </div>
-                <a href="#docs" data-i18n="nav_docs" class="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors hidden md:block">Dokumentasi</a>
-                
-                <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-200 dark:border-slate-700 pl-2 sm:pl-6" title="Tema Halaman">
-                    <i class="fas fa-sun text-amber-500 text-[10px] sm:text-sm"></i>
-                    <label for="theme-toggle" class="flex items-center cursor-pointer relative">
-                        <input type="checkbox" id="theme-toggle" class="sr-only peer" onchange="toggleTheme()">
-                        <div class="w-8 h-4 sm:w-11 sm:h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 sm:after:h-5 sm:after:w-5 after:transition-all after:duration-300 dark:border-slate-600 peer-checked:bg-blue-600 shadow-inner"></div>
-                    </label>
-                    <i class="fas fa-moon text-slate-400 dark:text-blue-300 text-[10px] sm:text-sm"></i>
-                </div>
-            </div>
+    <header
+      class="transition-colors border-b border-slate-200 duration-500 backdrop-blur-lg bg-white/80 dark:bg-slate-900/80 dark:border-slate-800 sticky top-0 z-50"
+    >
+      <div
+        class="flex items-center px-4 justify-between max-w-7xl mx-auto sm:px-6 py-3 relative sm:py-4 w-full z-10"
+      >
+        <div class="flex items-center gap-2 sm:gap-3 cursor-pointer group">
+          <div
+            class="flex items-center bg-gradient-to-br duration-300 from-blue-500 group-hover:scale-105 h-8 justify-center rounded-xl shadow-blue-500/20 shadow-lg sm:h-10 sm:w-10 to-indigo-600 transition-transform w-8"
+          >
+            <svg
+              class="h-4 sm:h-5 sm:w-5 w-4 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                clip-rule="evenodd"
+                d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z"
+                fill-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <span
+            class="text-lg sm:text-xl dark:text-white font-bold text-slate-900 tracking-tight"
+            >Math<span class="text-blue-600 dark:text-blue-400"
+              >CAPTCHA</span
+            ></span
+          >
         </div>
+
+        <div class="flex items-center gap-2 sm:gap-6">
+          <!-- DROPDOWN BAHASA SUDAH DIBUKA (UNLOCKED) -->
+          <div class="custom-dropdown relative z-50" data-target="page-lang">
+            <input id="page-lang" type="hidden" value="id" />
+            <button
+              class="flex items-center text-xs sm:text-sm bg-slate-100 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-blue-500 dark:text-slate-200 dropdown-btn focus:ring-2 focus:ring-blue-500/50 hover:border-blue-500 justify-between outline-none p-1.5 px-3 rounded-lg shadow-sm transition-all min-w-[60px]"
+              type="button"
+              aria-expanded="false"
+            >
+              <span
+                class="flex items-center gap-2 selected-text font-bold text-blue-600 dark:text-blue-400"
+                >ID</span
+              >
+              <i
+                class="text-[10px] ml-2 duration-200 fa-chevron-down fas text-slate-400 transition-transform"
+              ></i>
+            </button>
+            <ul
+              class="sm:text-sm text-xs bg-white border dark:border-slate-600 rounded-xl w-40 absolute right-0 border-slate-200 dark:bg-slate-800 dropdown-menu hidden max-h-56 mt-1.5 overflow-y-auto shadow-xl z-[60]"
+            >
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="id"
+                data-lang-text="ID"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">ID</span>
+                Indonesia
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="en"
+                data-lang-text="EN"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">EN</span>
+                English
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="es"
+                data-lang-text="ES"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">ES</span>
+                Español
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="zh"
+                data-lang-text="ZH"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">ZH</span>
+                中文
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="ja"
+                data-lang-text="JA"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">JA</span>
+                日本語
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="ru"
+                data-lang-text="RU"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">RU</span>
+                Русский
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="fr"
+                data-lang-text="FR"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">FR</span>
+                Français
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="ar"
+                data-lang-text="AR"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">AR</span>
+                العربية
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="hi"
+                data-lang-text="HI"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">HI</span>
+                हिन्दी
+              </li>
+            </ul>
+          </div>
+
+          <a
+            class="transition-colors dark:text-slate-400 text-slate-600 dark:hover:text-blue-400 font-medium hidden hover:text-blue-600 md:block text-sm"
+            href="#docs"
+            data-i18n="nav_docs"
+            >Dokumentasi</a
+          >
+          <div
+            class="flex items-center gap-2 sm:gap-3 border-l border-slate-200 dark:border-slate-700 pl-2 sm:pl-6"
+            title="Tema Halaman"
+          >
+            <i class="text-[10px] fas sm:text-sm fa-sun text-amber-500"></i>
+            <label
+              class="flex items-center cursor-pointer relative"
+              for="theme-toggle"
+            >
+              <input
+                id="theme-toggle"
+                type="checkbox"
+                class="sr-only peer"
+                onchange="toggleTheme()"
+              />
+              <div
+                class="rounded-full after:absolute after:bg-white after:border after:border-slate-300 after:content-[''] after:duration-300 after:h-3 after:left-[2px] after:rounded-full after:top-[2px] after:transition-all after:w-3 bg-slate-300 dark:bg-slate-800 dark:border-slate-600 h-4 peer peer-checked:after:border-white peer-checked:after:translate-x-full peer-checked:bg-blue-600 peer-focus:outline-none shadow-inner sm:after:h-5 sm:after:w-5 sm:h-6 sm:w-11 w-8"
+              ></div>
+            </label>
+            <i
+              class="text-[10px] fas text-slate-400 dark:text-blue-300 fa-moon sm:text-sm"
+            ></i>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 text-center max-w-4xl mx-auto relative z-10 w-full opacity-0 animate-fade-in-up">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 text-[10px] sm:text-xs font-semibold mb-6 border border-blue-200 dark:border-blue-800 shadow-sm transition-colors duration-500">
-            <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
-            <span data-i18n="hero_badge">API v1.0.0 Telah Rilis</span>
+    <section
+      class="relative w-full mx-auto px-4 sm:px-6 z-10 animate-fade-in-up opacity-0 max-w-4xl md:py-24 py-12 sm:py-16 text-center"
+    >
+      <div
+        class="items-center gap-2 bg-blue-100 border border-blue-200 dark:bg-blue-900/40 dark:border-blue-800 dark:text-blue-400 duration-500 font-semibold inline-flex mb-6 px-3 py-1 rounded-full shadow-sm sm:text-xs text-[10px] text-blue-700 transition-colors"
+      >
+        <span class="flex relative h-2 w-2">
+          <span
+            class="rounded-full inline-flex absolute animate-ping bg-blue-400 h-full opacity-75 w-full"
+          ></span>
+          <span
+            class="relative h-2 w-2 bg-blue-500 inline-flex rounded-full"
+          ></span>
+        </span>
+        <span data-i18n="hero_badge">API v1.0.0 Telah Rilis</span>
+      </div>
+      <h1
+        class="transition-colors duration-500 mb-6 dark:text-white font-extrabold leading-tight md:text-6xl sm:text-4xl text-3xl text-slate-900 tracking-tight"
+        data-i18n="hero_title"
+      >
+        Verifikasi Anti-Bot dengan<br class="hidden md:block" /><span
+          class="bg-clip-text bg-gradient-to-r from-blue-600 text-transparent to-indigo-500"
+          >Logika Matematika Dinamis.</span
+        >
+      </h1>
+      <p
+        class="transition-colors duration-500 dark:text-slate-400 max-w-2xl mb-8 md:text-xl mx-auto px-2 sm:text-base text-[13px] text-slate-600"
+        data-i18n="hero_desc"
+      >
+        Tinggalkan tebak-tebakan gambar bus yang membosankan. MathCAPTCHA
+        menghasilkan soal secara prosedural <i>(real-time)</i>, auto-scaling,
+        dan sistem JSON callbacks profesional.
+      </p>
+      <a
+        class="items-center px-4 hover:-translate-y-0.5 rounded-xl shadow-lg text-white transition-all bg-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 gap-3 hover:bg-slate-800 inline-flex max-w-full py-2 sm:px-5 sm:py-2.5"
+        href="https://github.com/JPROJECT-1/captcha-math"
+        target="_blank"
+      >
+        <i class="text-lg sm:text-xl fa-github fab shrink-0"></i>
+        <div class="leading-tight text-left truncate">
+          <div
+            class="text-[10px] sm:text-xs dark:text-slate-400 font-medium text-slate-300 truncate"
+            data-i18n="hero_os"
+          >
+            Open Source di GitHub
+          </div>
+          <div class="sm:text-sm text-xs font-bold truncate">
+            JPROJECT-1/captcha-math
+          </div>
         </div>
-        <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-tight transition-colors duration-500" data-i18n="hero_title">
-            Verifikasi Anti-Bot dengan <br class="hidden md:block"/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">Logika Matematika Dinamis.</span>
-        </h1>
-        <p class="text-[13px] sm:text-base md:text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto transition-colors duration-500 px-2" data-i18n="hero_desc">
-            Tinggalkan tebak-tebakan gambar bus yang membosankan. MathCAPTCHA menghasilkan soal secara prosedural <i>(real-time)</i>, auto-scaling, dan sistem JSON callbacks profesional.
+      </a>
+    </section>
+
+    <section
+      class="relative w-full mx-auto px-4 sm:px-6 z-10 animate-fade-in-up opacity-0 mb-24 delay-100 max-w-7xl"
+    >
+      <div
+        class="transition-colors duration-500 border-slate-200 dark:border-slate-700 border rounded-2xl backdrop-blur-xl bg-white/95 dark:bg-slate-800/95 md:rounded-3xl overflow-hidden shadow-2xl"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-12">
+          <div
+            class="transition-colors border-b border-slate-200 duration-500 bg-slate-50/50 dark:bg-slate-900/30 dark:border-slate-700 lg:border-b-0 lg:border-r lg:col-span-4 lg:p-8 p-5 sm:p-6 xl:col-span-4"
+          >
+            <h2
+              class="flex items-center font-bold dark:text-white text-base text-slate-900 mb-6 sm:text-lg"
+              data-i18n="conf_title"
+            >
+              <i class="fas text-blue-500 fa-sliders mr-2 sm:mr-3"></i>
+              Konfigurasi API
+            </h2>
+            <div class="sm:space-y-6 space-y-5">
+              <div class="custom-dropdown" data-target="setting-mode">
+                <label
+                  class="sm:text-sm text-slate-700 block dark:text-slate-300 font-semibold mb-1.5 sm:mb-2 text-[11px]"
+                  data-i18n="conf_mode"
+                  >Tema Widget (Widget Theme)</label
+                >
+                <div class="relative">
+                  <input id="setting-mode" type="hidden" value="auto" />
+                  <button
+                    class="flex items-center text-xs sm:text-sm bg-white border border-slate-300 dark:bg-slate-900 dark:border-slate-600 dark:hover:border-blue-500 dark:text-slate-200 dropdown-btn focus:ring-2 focus:ring-blue-500/50 hover:border-blue-500 justify-between outline-none p-2.5 rounded-xl shadow-sm sm:p-3.5 text-slate-700 transition-all w-full"
+                    type="button"
+                    aria-expanded="false"
+                  >
+                    <span class="flex items-center gap-2 selected-text"
+                      ><i class="fas text-blue-500 fa-desktop"></i> Auto
+                      (Mengikuti Halaman)</span
+                    >
+                    <i
+                      class="text-[10px] sm:text-xs duration-200 fa-chevron-down fas text-slate-400 transition-transform"
+                    ></i>
+                  </button>
+                  <ul
+                    class="sm:text-sm text-xs bg-white border dark:border-slate-600 rounded-xl w-full absolute border-slate-200 dark:bg-slate-800 dropdown-menu hidden max-h-56 mt-1.5 overflow-y-auto shadow-xl z-30"
+                  >
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50 dark:text-slate-200 text-slate-700"
+                      data-value="auto"
+                    >
+                      <i class="fas opacity-70 text-center w-5 fa-desktop"></i>
+                      Auto
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50 dark:text-slate-200 text-slate-700"
+                      data-value="light"
+                    >
+                      <i class="fas opacity-70 text-center w-5 fa-sun"></i>
+                      Light Mode
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50 dark:text-slate-200 text-slate-700"
+                      data-value="dark"
+                    >
+                      <i class="fas opacity-70 text-center w-5 fa-moon"></i>
+                      Dark Mode
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="custom-dropdown" data-target="setting-level">
+                <label
+                  class="sm:text-sm text-slate-700 block dark:text-slate-300 font-semibold mb-1.5 sm:mb-2 text-[11px]"
+                  data-i18n="conf_lvl"
+                  >Tingkat Kesulitan (Level)</label
+                >
+                <div class="relative">
+                  <input id="setting-level" type="hidden" value="random" />
+                  <button
+                    class="flex items-center text-xs sm:text-sm bg-white border border-slate-300 dark:bg-slate-900 dark:border-slate-600 dark:hover:border-blue-500 dark:text-slate-200 dropdown-btn focus:ring-2 focus:ring-blue-500/50 hover:border-blue-500 justify-between outline-none p-2.5 rounded-xl shadow-sm sm:p-3.5 text-slate-700 transition-all w-full"
+                    type="button"
+                    aria-expanded="false"
+                  >
+                    <span class="flex items-center gap-2 selected-text"
+                      ><i class="fas text-blue-500 fa-dice"></i> Acak Semua
+                      Level (Random)</span
+                    >
+                    <i
+                      class="text-[10px] sm:text-xs duration-200 fa-chevron-down fas text-slate-400 transition-transform"
+                    ></i>
+                  </button>
+                  <ul
+                    class="sm:text-sm text-xs bg-white border dark:border-slate-600 rounded-xl w-full absolute border-slate-200 dark:bg-slate-800 dropdown-menu hidden max-h-56 mt-1.5 overflow-y-auto shadow-xl z-30"
+                  >
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50"
+                      data-value="1"
+                    >
+                      Level 1: Aritmatika Dasar
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50"
+                      data-value="2"
+                    >
+                      Level 2: Akar & Pangkat
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50"
+                      data-value="3"
+                    >
+                      Level 3: Aljabar Dasar
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50"
+                      data-value="4"
+                    >
+                      Level 4: Trigonometri
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50"
+                      data-value="5"
+                    >
+                      Level 5: Peluang & Harapan
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50"
+                      data-value="6"
+                    >
+                      Level 6: Vektor (Dot Product)
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 border-b border-slate-100 dark:border-slate-700/50"
+                      data-value="7"
+                    >
+                      Level 7: Kalkulus (Turunan)
+                    </li>
+                    <li
+                      class="transition-colors cursor-pointer px-4 py-2.5 sm:py-3 dark:hover:bg-slate-700 hover:bg-blue-50 dark:text-blue-400 font-semibold text-blue-600"
+                      data-value="random"
+                    >
+                      <i class="fas fa-dice mr-1"></i> Acak Semua Level
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="custom-dropdown" data-target="setting-lang">
+                <label
+                  class="sm:text-sm text-slate-700 block dark:text-slate-300 font-semibold mb-1.5 sm:mb-2 text-[11px]"
+                  data-i18n="conf_lang"
+                  >Bahasa UI (Language)</label
+                >
+                <div class="relative">
+                  <input id="setting-lang" type="hidden" value="id" />
+                  <button
+                    class="flex items-center text-xs sm:text-sm bg-white border border-slate-300 dark:bg-slate-900 dark:border-slate-600 dark:hover:border-blue-500 dark:text-slate-200 dropdown-btn focus:ring-2 focus:ring-blue-500/50 hover:border-blue-500 justify-between outline-none p-2.5 rounded-xl shadow-sm sm:p-3.5 text-slate-700 transition-all w-full"
+                    type="button"
+                    aria-expanded="false"
+                  >
+                    <span class="flex items-center selected-text"
+                      ><span
+                        class="text-[10px] font-bold inline-block uppercase w-6 text-slate-400"
+                        >ID</span
+                      >
+                      <span>Indonesia (ID)</span></span
+                    >
+                    <i
+                      class="text-[10px] sm:text-xs duration-200 fa-chevron-down fas text-slate-400 transition-transform"
+                    ></i>
+                  </button>
+                  <ul
+                    class="sm:text-sm text-xs bg-white border dark:border-slate-600 rounded-xl w-full absolute border-slate-200 dark:bg-slate-800 dropdown-menu hidden max-h-56 mt-1.5 overflow-y-auto shadow-xl z-30"
+                  >
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="id"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >ID</span
+                      >
+                      <span>Indonesia (ID)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="en"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >US</span
+                      >
+                      <span>English (EN)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="es"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >ES</span
+                      >
+                      <span>Español (ES)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="fr"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >FR</span
+                      >
+                      <span>Français (FR)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="de"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >DE</span
+                      >
+                      <span>Deutsch (DE)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="ru"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >RU</span
+                      >
+                      <span>Русский (RU)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="ar"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >SA</span
+                      >
+                      <span>العربية (AR)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="zh"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >CN</span
+                      >
+                      <span>中文 (ZH)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="ja"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >JP</span
+                      >
+                      <span>日本語 (JA)</span>
+                    </li>
+                    <li
+                      class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 sm:py-3 transition-colors"
+                      data-value="hi"
+                    >
+                      <span
+                        class="text-[10px] font-bold inline-block uppercase w-6 opacity-70"
+                        >IN</span
+                      >
+                      <span>हिन्दी (HI)</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <label
+                  class="sm:text-sm text-slate-700 block dark:text-slate-300 font-semibold mb-1.5 sm:mb-2 text-[11px]"
+                  data-i18n="conf_att"
+                  >Batas Gagal (Max Attempts)</label
+                >
+                <input
+                  id="setting-attempts"
+                  type="number"
+                  value="5"
+                  class="sm:text-sm text-xs bg-white border dark:border-slate-600 rounded-xl w-full border-slate-300 dark:bg-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-blue-500/50 outline-none p-2.5 shadow-sm sm:p-3.5 text-slate-700 transition-all block dark:hover:border-slate-500 focus:border-blue-500 hover:border-slate-400"
+                  max="10"
+                  min="1"
+                />
+              </div>
+              <button
+                class="flex items-center px-4 py-3 w-full active:scale-95 bg-gradient-to-r duration-300 font-bold from-blue-600 gap-2 hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 justify-center mt-2 rounded-xl shadow-blue-500/30 shadow-lg sm:mt-4 sm:py-3.5 sm:text-base text-white text-xs to-indigo-600 transform transition-all"
+                onclick="applySettings()"
+              >
+                <i class="fas fa-bolt"></i>
+                <span data-i18n="conf_btn">Terapkan & Generate</span>
+              </button>
+            </div>
+          </div>
+          <div
+            class="flex relative flex-col lg:col-span-8 lg:p-8 min-w-0 p-4 sm:p-6 xl:col-span-8"
+          >
+            <div
+              class="flex items-center border-b border-slate-200 dark:border-slate-700/50 flex-col flex-grow justify-center mb-6 min-h-[180px] overflow-hidden pb-6 relative sm:min-h-[250px] w-full"
+            >
+              <div
+                class="flex items-center font-semibold gap-1.5 text-[9px] text-slate-400 uppercase absolute right-0 sm:text-xs top-0 tracking-widest z-10"
+              >
+                <span
+                  class="rounded-full animate-pulse bg-green-500 h-1.5 shadow-[0_0_8px_rgba(34,197,94,0.6)] sm:h-2 sm:w-2 w-1.5"
+                ></span>
+                <span data-i18n="live_prev">Live Preview</span>
+              </div>
+              <div class="flex box-border justify-center mt-4 px-2 w-full">
+                <div
+                  class="hover:scale-[1.02] duration-500 max-w-full transition-transform"
+                  id="captcha-playground"
+                ></div>
+              </div>
+            </div>
+            <div class="gap-4 grid grid-cols-1 md:grid-cols-2 w-full sm:gap-5">
+              <div
+                class="flex relative flex-col overflow-hidden bg-[#0f172a] border border-slate-700/50 group h-44 rounded-xl shadow-inner sm:h-52"
+              >
+                <button
+                  class="flex items-center hover:text-white absolute bg-slate-700/80 copy-btn gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-300 z-10 right-2 top-2"
+                  onclick="copyCode(this, 'playground-log-raw')"
+                >
+                  <i class="fas fa-copy text-xs"></i
+                  ><span class="text-[10px] font-semibold tracking-wide"
+                    >Salin</span
+                  >
+                </button>
+                <div
+                  class="flex items-center border-b bg-[#1e293b] border-slate-700/50 pr-20 px-3 py-2 sm:px-4 sm:py-3 gap-1.5 sm:gap-2"
+                >
+                  <div
+                    class="rounded-full shadow-sm h-2.5 shrink-0 sm:h-3 sm:w-3 w-2.5 bg-red-500/90"
+                  ></div>
+                  <div
+                    class="rounded-full shadow-sm h-2.5 shrink-0 sm:h-3 sm:w-3 w-2.5 bg-yellow-500/90"
+                  ></div>
+                  <div
+                    class="rounded-full shadow-sm h-2.5 shrink-0 sm:h-3 sm:w-3 w-2.5 bg-green-500/90"
+                  ></div>
+                  <span
+                    class="text-[9px] font-semibold text-slate-400 uppercase font-mono sm:text-[11px] tracking-wider truncate ml-1.5 sm:ml-3"
+                    data-i18n="term_out"
+                    >Terminal JSON Output</span
+                  >
+                </div>
+                <div
+                  class="text-[9px] font-mono sm:text-[11px] leading-relaxed selection:bg-blue-500/30 break-words flex-grow overflow-y-auto p-4 sm:p-5 text-[#a6accd] whitespace-pre-wrap"
+                  id="playground-log"
+                >
+                  <span class="italic text-[#64748b]"
+                    >// Awaiting user interaction...</span
+                  >
+                </div>
+                <div class="hidden" id="playground-log-raw"></div>
+              </div>
+              <div
+                class="flex relative flex-col overflow-hidden bg-[#0f172a] border border-slate-700/50 group h-44 rounded-xl shadow-inner sm:h-52"
+              >
+                <button
+                  class="flex items-center hover:text-white absolute bg-slate-700/80 copy-btn gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-300 z-10 right-2 top-2"
+                  onclick="copyCode(this, 'generated-code')"
+                >
+                  <i class="fas fa-copy text-xs"></i
+                  ><span class="text-[10px] font-semibold tracking-wide"
+                    >Salin</span
+                  >
+                </button>
+                <div
+                  class="flex items-center justify-between bg-[#1e293b] border-b border-slate-700/50 pr-20 px-3 py-2 sm:px-4 sm:py-3"
+                >
+                  <span
+                    class="flex items-center font-semibold gap-1.5 text-[9px] text-slate-400 uppercase font-mono sm:gap-2 sm:text-[11px] tracking-wider truncate"
+                  >
+                    <i class="fas text-blue-400 fa-code shrink-0"></i>
+                    <span data-i18n="gen_code_title">Generated HTML + JS</span>
+                  </span>
+                </div>
+                <div
+                  class="relative flex-grow bg-[#0f172a] overflow-y-auto p-0"
+                >
+                  <pre
+                    class="text-[9px] font-mono sm:text-[11px] leading-relaxed selection:bg-blue-500/30 bg-transparent border-0 m-0 min-w-fit pb-4 pt-4 px-4 rounded-none sm:px-5 w-full"
+                    id="generated-code"
+                  ></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="relative w-full mx-auto px-4 sm:px-6 z-10 animate-fade-in-up opacity-0 max-w-4xl delay-200 mb-24"
+      id="docs"
+    >
+      <div class="mb-10 sm:mb-14 text-center">
+        <h2
+          class="transition-colors dark:text-white text-slate-900 font-bold mb-3 sm:mb-4 sm:text-3xl text-2xl"
+          data-i18n="doc_title"
+        >
+          Cara Memasang API
+        </h2>
+        <p
+          class="transition-colors dark:text-slate-400 text-slate-600 text-[13px] sm:text-lg"
+          data-i18n="doc_desc"
+        >
+          Implementasi bersih berbasis <i>Vanilla JavaScript Class (ES6)</i>.
+          Bebas library tambahan, aman dengan <i>Private Fields (#)</i>.
         </p>
-        <a href="https://github.com/JPROJECT-1/captcha-math" target="_blank" class="inline-flex items-center gap-3 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-all shadow-lg hover:-translate-y-0.5 max-w-full">
-            <i class="fab fa-github text-lg sm:text-xl shrink-0"></i>
-            <div class="text-left leading-tight truncate">
-                <div class="text-[10px] sm:text-xs text-slate-300 dark:text-slate-400 font-medium truncate" data-i18n="hero_os">Open Source di GitHub</div>
-                <div class="text-xs sm:text-sm font-bold truncate">JPROJECT-1/captcha-math</div>
-            </div>
-        </a>
-    </section>
-
-    <!-- INTERACTIVE PLAYGROUND -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 mb-24 w-full relative z-10 opacity-0 animate-fade-in-up delay-100">
-        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors duration-500">
-            <div class="grid grid-cols-1 lg:grid-cols-12">
-                
-                <!-- KIRI: Control Panel -->
-                <div class="lg:col-span-4 xl:col-span-4 bg-slate-50/50 dark:bg-slate-900/30 p-5 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 transition-colors duration-500">
-                    <h2 class="font-bold text-base sm:text-lg mb-6 flex items-center text-slate-900 dark:text-white" data-i18n="conf_title">
-                        <i class="fas fa-sliders text-blue-500 mr-2 sm:mr-3"></i> Konfigurasi API
-                    </h2>
-                    
-                    <div class="space-y-5 sm:space-y-6">
-                        <div class="custom-dropdown" data-target="setting-mode">
-                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_mode">Tema Widget (Widget Theme)</label>
-                            <div class="relative">
-                                <input type="hidden" id="setting-mode" value="auto">
-                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl p-2.5 sm:p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none focus:ring-2 focus:ring-blue-500/50">
-                                    <span class="selected-text flex items-center gap-2"><i class="fas fa-desktop text-blue-500"></i> Auto (Mengikuti Halaman)</span>
-                                    <i class="fas fa-chevron-down text-slate-400 text-[10px] sm:text-xs transition-transform duration-200"></i>
-                                </button>
-                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto text-xs sm:text-sm">
-                                    <li data-value="auto" class="px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50"><i class="fas fa-desktop w-5 text-center opacity-70"></i> Auto</li>
-                                    <li data-value="light" class="px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50"><i class="fas fa-sun w-5 text-center opacity-70"></i> Light Mode</li>
-                                    <li data-value="dark" class="px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50"><i class="fas fa-moon w-5 text-center opacity-70"></i> Dark Mode</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="custom-dropdown" data-target="setting-level">
-                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_lvl">Tingkat Kesulitan (Level)</label>
-                            <div class="relative">
-                                <input type="hidden" id="setting-level" value="random">
-                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl p-2.5 sm:p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none focus:ring-2 focus:ring-blue-500/50">
-                                    <span class="selected-text flex items-center gap-2"><i class="fas fa-dice text-blue-500"></i> Acak Semua Level (Random)</span>
-                                    <i class="fas fa-chevron-down text-slate-400 text-[10px] sm:text-xs transition-transform duration-200"></i>
-                                </button>
-                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto text-xs sm:text-sm">
-                                    <li data-value="1" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 1: Aritmatika Dasar</li>
-                                    <li data-value="2" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 2: Akar & Pangkat</li>
-                                    <li data-value="3" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 3: Aljabar Dasar</li>
-                                    <li data-value="4" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 4: Trigonometri</li>
-                                    <li data-value="5" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 5: Peluang & Harapan</li>
-                                    <li data-value="6" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 6: Vektor (Dot Product)</li>
-                                    <li data-value="7" class="px-4 py-2.5 sm:py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-700/50">Level 7: Kalkulus (Turunan)</li>
-                                    <li data-value="random" class="px-4 py-2.5 sm:py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"><i class="fas fa-dice mr-1"></i> Acak Semua Level</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="custom-dropdown" data-target="setting-lang">
-                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_lang">Bahasa UI (Language)</label>
-                            <div class="relative">
-                                <input type="hidden" id="setting-lang" value="id">
-                                <button type="button" class="dropdown-btn w-full flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl p-2.5 sm:p-3.5 shadow-sm hover:border-blue-500 dark:hover:border-blue-500 transition-all outline-none focus:ring-2 focus:ring-blue-500/50">
-                                    <span class="selected-text flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block text-slate-400">ID</span> <span>Indonesia (ID)</span></span>
-                                    <i class="fas fa-chevron-down text-slate-400 text-[10px] sm:text-xs transition-transform duration-200"></i>
-                                </button>
-                                <ul class="dropdown-menu absolute hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 mt-1.5 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto text-xs sm:text-sm">
-                                    <li data-value="id" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">ID</span> <span>Indonesia (ID)</span></li>
-                                    <li data-value="en" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">US</span> <span>English (EN)</span></li>
-                                    <li data-value="es" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">ES</span> <span>Español (ES)</span></li>
-                                    <li data-value="fr" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">FR</span> <span>Français (FR)</span></li>
-                                    <li data-value="de" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">DE</span> <span>Deutsch (DE)</span></li>
-                                    <li data-value="ru" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">RU</span> <span>Русский (RU)</span></li>
-                                    <li data-value="ar" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">SA</span> <span>العربية (AR)</span></li>
-                                    <li data-value="zh" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">CN</span> <span>中文 (ZH)</span></li>
-                                    <li data-value="ja" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">JP</span> <span>日本語 (JA)</span></li>
-                                    <li data-value="hi" class="px-4 py-2.5 sm:py-3 hover:bg-blue-500 hover:text-white dark:hover:bg-blue-600 cursor-pointer transition-colors flex items-center"><span class="text-[10px] font-bold uppercase w-6 inline-block opacity-70">IN</span> <span>हिन्दी (HI)</span></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[11px] sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2" data-i18n="conf_att">Batas Gagal (Max Attempts)</label>
-                            <input type="number" id="setting-attempts" value="5" min="1" max="10" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 block p-2.5 sm:p-3.5 transition-all shadow-sm outline-none hover:border-slate-400 dark:hover:border-slate-500">
-                        </div>
-
-                        <button onclick="applySettings()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 sm:py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 mt-2 sm:mt-4 transform hover:-translate-y-0.5 text-xs sm:text-base">
-                            <i class="fas fa-bolt"></i> <span data-i18n="conf_btn">Terapkan & Generate</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- KANAN: Playground (Preview & Code) -->
-                <div class="lg:col-span-8 xl:col-span-8 flex flex-col p-4 sm:p-6 lg:p-8 relative min-w-0">
-                    
-                    <div class="flex-grow flex flex-col items-center justify-center min-h-[180px] sm:min-h-[250px] relative w-full mb-6 border-b border-slate-200 dark:border-slate-700/50 pb-6 overflow-hidden">
-                        <div class="absolute top-0 right-0 text-[9px] sm:text-xs font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 z-10">
-                            <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> <span data-i18n="live_prev">Live Preview</span>
-                        </div>
-                        <div class="w-full flex justify-center mt-4 px-2 box-border">
-                            <div id="captcha-playground" class="transition-transform duration-500 hover:scale-[1.02] max-w-full"></div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full">
-                        <!-- JSON Terminal -->
-                        <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden h-44 sm:h-52 relative group">
-                            <button onclick="copyCode(this, 'playground-log-raw')" class="copy-btn absolute top-2 right-2 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10">
-                                <i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span>
-                            </button>
-                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex items-center gap-1.5 sm:gap-2 border-b border-slate-700/50 pr-20">
-                                <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-500/90 shadow-sm shrink-0"></div>
-                                <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-yellow-500/90 shadow-sm shrink-0"></div>
-                                <div class="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-green-500/90 shadow-sm shrink-0"></div>
-                                <span class="text-slate-400 text-[9px] sm:text-[11px] font-mono ml-1.5 sm:ml-3 uppercase tracking-wider font-semibold truncate" data-i18n="term_out">Terminal JSON Output</span>
-                            </div>
-                            <div id="playground-log" class="p-4 sm:p-5 font-mono text-[9px] sm:text-[11px] text-[#a6accd] overflow-y-auto flex-grow break-words leading-relaxed selection:bg-blue-500/30 whitespace-pre-wrap">
-                                <span class="text-[#64748b] italic">// Awaiting user interaction...</span>
-                            </div>
-                            <div id="playground-log-raw" class="hidden"></div>
-                        </div>
-
-                        <!-- Generated Sample Code -->
-                        <div class="bg-[#0f172a] rounded-xl shadow-inner border border-slate-700/50 flex flex-col overflow-hidden h-44 sm:h-52 relative group">
-                            <button onclick="copyCode(this, 'generated-code')" class="copy-btn absolute top-2 right-2 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10">
-                                <i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span>
-                            </button>
-                            <div class="bg-[#1e293b] px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center border-b border-slate-700/50 pr-20">
-                                <span class="text-slate-400 text-[9px] sm:text-[11px] font-mono uppercase tracking-wider font-semibold flex items-center gap-1.5 sm:gap-2 truncate"><i class="fas fa-code text-blue-400 shrink-0"></i> <span data-i18n="gen_code_title">Generated HTML + JS</span></span>
-                            </div>
-                            <div class="p-0 overflow-y-auto flex-grow bg-[#0f172a] relative">
-                                <pre id="generated-code" class="text-[9px] sm:text-[11px] m-0 border-0 rounded-none bg-transparent pt-4 pb-4 px-4 sm:px-5 leading-relaxed font-mono selection:bg-blue-500/30 w-full min-w-fit"></pre>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- DOCUMENTATION SECTION -->
-    <section id="docs" class="max-w-4xl mx-auto px-4 sm:px-6 mb-24 w-full relative z-10 opacity-0 animate-fade-in-up delay-200">
-        <div class="text-center mb-10 sm:mb-14">
-            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 transition-colors" data-i18n="doc_title">Cara Memasang API</h2>
-            <p class="text-[13px] sm:text-lg text-slate-600 dark:text-slate-400 transition-colors" data-i18n="doc_desc">Implementasi bersih berbasis <i>Vanilla JavaScript Class (ES6)</i>. Bebas library tambahan, aman dengan <i>Private Fields (#)</i>.</p>
-        </div>
-
-        <div class="space-y-8 sm:space-y-10">
-            <!-- Langkah 1 -->
-            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 relative">
-                <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm shrink-0">1</span> <span data-i18n="doc_step1">PENTING: Gunakan Doctype</span></h3>
-                <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step1_desc">API ini memerlukan standar HTML5. Pastikan baris paling atas dari file HTML Anda memuat tag doctype, atau fitur matematika tidak akan dimuat dengan baik.</p>
-                <div class="relative group mt-4">
-                    <button onclick="copyCode(this, 'code-step1')" class="copy-btn absolute top-3 right-3 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10"><i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span></button>
-                    <pre id="code-step1" class="text-[10px] sm:text-xs pt-12 pr-20"><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+      </div>
+      <div class="sm:space-y-10 space-y-8">
+        <div
+          class="transition-colors duration-500 border-slate-200 dark:border-slate-700 border rounded-2xl backdrop-blur-md bg-white/90 dark:bg-slate-800/90 p-5 relative shadow-sm sm:p-8 sm:rounded-3xl"
+        >
+          <h3
+            class="flex items-center font-bold dark:text-white text-base text-slate-900 mb-3 sm:text-xl"
+          >
+            <span
+              class="flex items-center rounded-lg bg-blue-100 dark:bg-blue-900/50 dark:text-blue-400 h-7 justify-center mr-3 shrink-0 sm:h-8 sm:text-sm sm:w-8 text-blue-600 text-xs w-7"
+              >1</span
+            >
+            <span data-i18n="doc_step1">PENTING: Gunakan Doctype</span>
+          </h3>
+          <p
+            class="sm:text-sm text-xs dark:text-slate-400 mb-4 sm:mb-5 text-slate-600"
+            data-i18n="doc_step1_desc"
+          >
+            API ini memerlukan standar HTML5. Pastikan baris paling atas dari
+            file HTML Anda memuat tag doctype, atau fitur matematika tidak akan
+            dimuat dengan baik.
+          </p>
+          <div class="relative group mt-4">
+            <button
+              class="flex items-center hover:text-white absolute bg-slate-700/80 copy-btn gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-300 z-10 right-3 top-3"
+              onclick="copyCode(this, 'code-step1')"
+            >
+              <i class="fas fa-copy text-xs"></i
+              ><span class="text-[10px] font-semibold tracking-wide"
+                >Salin</span
+              >
+            </button>
+            <pre
+              class="text-[10px] sm:text-xs pr-20 pt-12"
+              id="code-step1"
+            ><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
 <span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="string">"en"</span><span class="tag">&gt;</span>
 ...</code></pre>
-                </div>
-            </div>
+          </div>
+        </div>
 
-            <!-- Langkah 2 -->
-            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-300 relative">
-                <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm shrink-0">2</span> <span data-i18n="doc_step2">Inisialisasi Cepat</span></h3>
-                <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step2_desc">Siapkan container kosong dan panggil script API MathCAPTCHA.</p>
-                <div class="relative group mt-4">
-                    <button onclick="copyCode(this, 'code-step2')" class="copy-btn absolute top-3 right-3 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10"><i class="fas fa-copy text-xs"></i><span class="text-[10px] font-semibold tracking-wide">Salin</span></button>
-                    <pre id="code-step2" class="text-[10px] sm:text-xs pt-12 pr-20"><code><span class="comment">&lt;!-- Letakkan di dalam form Anda --&gt;</span>
+        <div
+          class="transition-colors duration-500 border-slate-200 dark:border-slate-700 border rounded-2xl backdrop-blur-md bg-white/90 dark:bg-slate-800/90 p-5 relative shadow-sm sm:p-8 sm:rounded-3xl animate-fade-in-up opacity-0 delay-300"
+        >
+          <h3
+            class="flex items-center font-bold dark:text-white text-base text-slate-900 mb-3 sm:text-xl"
+          >
+            <span
+              class="flex items-center rounded-lg bg-blue-100 dark:bg-blue-900/50 dark:text-blue-400 h-7 justify-center mr-3 shrink-0 sm:h-8 sm:text-sm sm:w-8 text-blue-600 text-xs w-7"
+              >2</span
+            >
+            <span data-i18n="doc_step2">Inisialisasi Cepat</span>
+          </h3>
+          <p
+            class="sm:text-sm text-xs dark:text-slate-400 mb-4 sm:mb-5 text-slate-600"
+            data-i18n="doc_step2_desc"
+          >
+            Siapkan container kosong dan panggil script API MathCAPTCHA.
+          </p>
+          <div class="relative group mt-4">
+            <button
+              class="flex items-center hover:text-white absolute bg-slate-700/80 copy-btn gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-300 z-10 right-3 top-3"
+              onclick="copyCode(this, 'code-step2')"
+            >
+              <i class="fas fa-copy text-xs"></i
+              ><span class="text-[10px] font-semibold tracking-wide"
+                >Salin</span
+              >
+            </button>
+            <pre
+              class="text-[10px] sm:text-xs pr-20 pt-12"
+              id="code-step2"
+            ><code><span class="comment">&lt;!-- Letakkan di dalam form Anda --&gt;</span>
 <span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="string">"my-captcha-box"</span><span class="tag">&gt;&lt;/div&gt;</span>
 
 <span class="comment">&lt;!-- Masukkan Script di bawah form --&gt;</span>
@@ -308,292 +952,925 @@
     }
   });
 <span class="tag">&lt;/script&gt;</span></code></pre>
-                </div>
-            </div>
+          </div>
+        </div>
 
-            <!-- Langkah 3: Penjelasan Output JSON -->
-            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors duration-500 opacity-0 animate-fade-in-up delay-400 relative">
-                <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mb-3 flex items-center"><span class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 text-xs sm:text-sm shrink-0">3</span> <span data-i18n="doc_step3">Struktur JSON Output</span></h3>
-                <p class="text-slate-600 dark:text-slate-400 mb-4 sm:mb-5 text-xs sm:text-sm" data-i18n="doc_step3_desc">Berikut adalah penjelasan output yang diterima melalui fungsi callback saat pengguna berinteraksi.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full max-w-full">
-                    <div class="relative group mt-2">
-                        <h4 class="text-xs sm:text-sm font-bold text-green-600 dark:text-green-400 mb-2 flex items-center"><i class="fas fa-check-circle mr-1.5"></i> onSuccess Output</h4>
-                        <button onclick="copyCode(this, 'code-step3-1')" class="copy-btn absolute top-10 right-2 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10"><i class="fas fa-copy text-[10px]"></i><span class="text-[9px] font-semibold">Salin</span></button>
-                        <pre id="code-step3-1" class="text-[9px] sm:text-xs pt-12 pr-16"><code>{
+        <div
+          class="transition-colors duration-500 border-slate-200 dark:border-slate-700 border rounded-2xl backdrop-blur-md bg-white/90 dark:bg-slate-800/90 p-5 relative shadow-sm sm:p-8 sm:rounded-3xl animate-fade-in-up opacity-0 delay-400"
+        >
+          <h3
+            class="flex items-center font-bold dark:text-white text-base text-slate-900 mb-3 sm:text-xl"
+          >
+            <span
+              class="flex items-center rounded-lg bg-blue-100 dark:bg-blue-900/50 dark:text-blue-400 h-7 justify-center mr-3 shrink-0 sm:h-8 sm:text-sm sm:w-8 text-blue-600 text-xs w-7"
+              >3</span
+            >
+            <span data-i18n="doc_step3">Struktur JSON Output</span>
+          </h3>
+          <p
+            class="sm:text-sm text-xs dark:text-slate-400 mb-4 sm:mb-5 text-slate-600"
+            data-i18n="doc_step3_desc"
+          >
+            Berikut adalah penjelasan output yang diterima melalui fungsi
+            callback saat pengguna berinteraksi.
+          </p>
+          <div
+            class="gap-4 grid grid-cols-1 md:grid-cols-2 w-full max-w-full sm:gap-6"
+          >
+            <div class="relative group mt-2">
+              <h4
+                class="flex items-center text-xs sm:text-sm font-bold mb-2 dark:text-green-400 text-green-600"
+              >
+                <i class="fas fa-check-circle mr-1.5"></i> onSuccess Output
+              </h4>
+              <button
+                class="flex items-center hover:text-white absolute bg-slate-700/80 copy-btn gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-300 z-10 right-2 top-10"
+                onclick="copyCode(this, 'code-step3-1')"
+              >
+                <i class="text-[10px] fas fa-copy"></i
+                ><span class="text-[9px] font-semibold">Salin</span>
+              </button>
+              <pre
+                class="text-[9px] sm:text-xs pr-16 pt-12"
+                id="code-step3-1"
+              ><code>{
   <span class="property">"status"</span>: <span class="string">"success"</span>,
   <span class="property">"data"</span>: {
     <span class="property">"levelPlayed"</span>: <span class="property">4</span>,
     <span class="property">"attemptsUsed"</span>: <span class="property">2</span>,
-    <span class="property">"timestamp"</span>: <span class="string">"2026-07-26..."</span>,
+    <span class="property">"timestamp"</span>: <span class="string">"2026-08-24..."</span>,
     <span class="property">"token"</span>: <span class="string">"eyJ2YWxpZCI6..."</span>
   }
 }</code></pre>
-                    </div>
-                    <div class="relative group mt-2">
-                        <h4 class="text-xs sm:text-sm font-bold text-yellow-600 dark:text-yellow-500 mb-2 flex items-center"><i class="fas fa-exclamation-triangle mr-1.5"></i> onFail / onBlocked Output</h4>
-                        <button onclick="copyCode(this, 'code-step3-2')" class="copy-btn absolute top-10 right-2 px-2.5 py-1.5 bg-slate-700/80 text-slate-300 rounded-lg flex items-center gap-1.5 hover:text-white z-10"><i class="fas fa-copy text-[10px]"></i><span class="text-[9px] font-semibold">Salin</span></button>
-                        <pre id="code-step3-2" class="text-[9px] sm:text-xs pt-12 pr-16"><code>{
-  <span class="property">"status"</span>: <span class="string">"failed"</span>, <span class="comment">// atau "blocked"</span>
+            </div>
+            <div class="relative group mt-2">
+              <h4
+                class="flex items-center text-xs sm:text-sm font-bold mb-2 dark:text-yellow-500 text-yellow-600"
+              >
+                <i class="fas mr-1.5 fa-exclamation-triangle"></i> onFail /
+                onBlocked Output
+              </h4>
+              <button
+                class="flex items-center hover:text-white absolute bg-slate-700/80 copy-btn gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-300 z-10 right-2 top-10"
+                onclick="copyCode(this, 'code-step3-2')"
+              >
+                <i class="text-[10px] fas fa-copy"></i
+                ><span class="text-[9px] font-semibold">Salin</span>
+              </button>
+              <pre
+                class="text-[9px] sm:text-xs pr-16 pt-12"
+                id="code-step3-2"
+              ><code>{
+  <span class="property">"status"</span>: <span class="string">"failed"</span>, <span class="comment">// أو "blocked"</span>
   <span class="property">"reason"</span>: <span class="string">"wrong_answer"</span>, <span class="comment">// "closed_by_user"</span>
   <span class="property">"attemptsUsed"</span>: <span class="property">1</span>,
   <span class="property">"maxAttempts"</span>: <span class="property">5</span>,
   <span class="property">"levelPlayed"</span>: <span class="property">4</span>,
-  <span class="property">"timestamp"</span>: <span class="string">"2026-07-26..."</span>
+  <span class="property">"timestamp"</span>: <span class="string">"2026-08-24..."</span>
 }</code></pre>
-                    </div>
-                </div>
             </div>
-
+          </div>
         </div>
+
+        <!-- Bagian: Referensi API Lengkap -->
+        <div
+          class="transition-colors duration-500 border-slate-200 dark:border-slate-700 border rounded-2xl backdrop-blur-md bg-white/90 dark:bg-slate-800/90 p-5 relative shadow-sm sm:p-8 sm:rounded-3xl animate-fade-in-up opacity-0 delay-500"
+        >
+          <h3
+            class="flex items-center font-bold dark:text-white text-base text-slate-900 mb-3 sm:text-xl"
+          >
+            <span
+              class="flex items-center rounded-lg bg-blue-100 dark:bg-blue-900/50 dark:text-blue-400 h-7 justify-center mr-3 shrink-0 sm:h-8 sm:text-sm sm:w-8 text-blue-600 text-xs w-7"
+              >4</span
+            >
+            <span data-i18n="doc_step4">Referensi API Lengkap (Parameter)</span>
+          </h3>
+          <div
+            class="overflow-x-auto mt-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm"
+          >
+            <table
+              class="w-full text-left text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap"
+            >
+              <thead
+                class="bg-slate-100 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm"
+              >
+                <tr>
+                  <th
+                    class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                  >
+                    Parameter
+                  </th>
+                  <th
+                    class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                  >
+                    Tipe Data
+                  </th>
+                  <th
+                    class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                  >
+                    Default
+                  </th>
+                  <th
+                    class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                  >
+                    Deskripsi Singkat
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-slate-200 dark:divide-slate-700/50 text-xs sm:text-sm"
+              >
+                <tr
+                  class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <td
+                    class="px-4 py-3 font-mono text-blue-600 dark:text-blue-400 font-semibold"
+                  >
+                    containerId*
+                  </td>
+                  <td class="px-4 py-3">String</td>
+                  <td class="px-4 py-3 text-slate-400 italic">null</td>
+                  <td class="px-4 py-3">
+                    (Wajib) ID elemen div tempat CAPTCHA di-render.
+                  </td>
+                </tr>
+                <tr
+                  class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <td
+                    class="px-4 py-3 font-mono text-blue-600 dark:text-blue-400 font-semibold"
+                  >
+                    mode
+                  </td>
+                  <td class="px-4 py-3">String</td>
+                  <td
+                    class="px-4 py-3 font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded"
+                  >
+                    auto
+                  </td>
+                  <td class="px-4 py-3">
+                    Menentukan tema antarmuka. Opsi: <code>'light'</code>,
+                    <code>'dark'</code>, <code>'auto'</code>.
+                  </td>
+                </tr>
+                <tr
+                  class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <td
+                    class="px-4 py-3 font-mono text-blue-600 dark:text-blue-400 font-semibold"
+                  >
+                    language
+                  </td>
+                  <td class="px-4 py-3">String</td>
+                  <td
+                    class="px-4 py-3 font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded"
+                  >
+                    auto-web
+                  </td>
+                  <td class="px-4 py-3">
+                    Bahasa instruksi UI. Opsi: <code>'id'</code>,
+                    <code>'en'</code>, dll, atau <code>'auto-user'</code>.
+                  </td>
+                </tr>
+                <tr
+                  class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <td
+                    class="px-4 py-3 font-mono text-blue-600 dark:text-blue-400 font-semibold"
+                  >
+                    level
+                  </td>
+                  <td class="px-4 py-3">Integer|String</td>
+                  <td
+                    class="px-4 py-3 font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded"
+                  >
+                    random
+                  </td>
+                  <td class="px-4 py-3">
+                    Tingkat kesulitan (1 - 7). Gunakan
+                    <code>'random'</code> untuk diacak.
+                  </td>
+                </tr>
+                <tr
+                  class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <td
+                    class="px-4 py-3 font-mono text-blue-600 dark:text-blue-400 font-semibold"
+                  >
+                    maxAttempts
+                  </td>
+                  <td class="px-4 py-3">Integer</td>
+                  <td
+                    class="px-4 py-3 font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded"
+                  >
+                    5
+                  </td>
+                  <td class="px-4 py-3">
+                    Batas jumlah percobaan gagal قبل pemblokiran sementara.
+                  </td>
+                </tr>
+                <tr
+                  class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <td
+                    class="px-4 py-3 font-mono text-blue-600 dark:text-blue-400 font-semibold"
+                  >
+                    onSuccess*
+                  </td>
+                  <td class="px-4 py-3">Function</td>
+                  <td class="px-4 py-3 text-slate-400 italic">void</td>
+                  <td class="px-4 py-3">
+                    (Wajib) Callback dieksekusi saat jawaban pengguna
+                    valid/benar.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bagian: Validasi Backend PHP -->
+        <div
+          class="transition-colors duration-500 border-slate-200 dark:border-slate-700 border rounded-2xl backdrop-blur-md bg-white/90 dark:bg-slate-800/90 p-5 relative shadow-sm sm:p-8 sm:rounded-3xl animate-fade-in-up opacity-0 delay-600"
+        >
+          <h3
+            class="flex items-center font-bold dark:text-white text-base text-slate-900 mb-3 sm:text-xl"
+          >
+            <span
+              class="flex items-center rounded-lg bg-blue-100 dark:bg-blue-900/50 dark:text-blue-400 h-7 justify-center mr-3 shrink-0 sm:h-8 sm:text-sm sm:w-8 text-blue-600 text-xs w-7"
+              >5</span
+            >
+            <span data-i18n="doc_step5">Validasi Backend (PHP/Server)</span>
+          </h3>
+          <p
+            class="sm:text-sm text-xs dark:text-slate-400 mb-4 text-slate-600"
+            data-i18n="doc_step5_desc"
+          >
+            Keamanan terbaik tidak hanya mengandalkan frontend. Kirimkan token
+            yang diterima saat onSuccess ke sistem backend Anda untuk
+            mengamankan proses form atau login.
+          </p>
+          <div class="relative group mt-4">
+            <button
+              class="flex items-center hover:text-white absolute bg-slate-700/80 copy-btn gap-1.5 px-2.5 py-1.5 rounded-lg text-slate-300 z-10 right-3 top-3"
+              onclick="copyCode(this, 'code-step5')"
+            >
+              <i class="fas fa-copy text-xs"></i
+              ><span class="text-[10px] font-semibold tracking-wide"
+                >Salin</span
+              >
+            </button>
+            <pre
+              class="text-[10px] sm:text-xs pr-20 pt-12"
+              id="code-step5"
+            ><code><span class="comment">&lt;?php</span>
+<span class="comment">// Contoh penerimaan verifikasi di server menggunakan PHP murni</span>
+
+<span class="keyword">if</span> ($_SERVER[<span class="string">'REQUEST_METHOD'</span>] === <span class="string">'POST'</span>) {
+    <span class="property">$token</span> = $_POST[<span class="string">'captcha_token'</span>] ?? <span class="string">''</span>;
+    
+    <span class="keyword">if</span> (!empty(<span class="property">$token</span>)) {
+        <span class="property">$decoded_data</span> = json_decode(base64_decode(<span class="property">$token</span>), true);
+        
+        <span class="keyword">if</span> (<span class="property">$decoded_data</span> &amp;&amp; isset(<span class="property">$decoded_data</span>[<span class="string">'valid'</span>]) &amp;&amp; <span class="property">$decoded_data</span>[<span class="string">'valid'</span>] === true) {
+            <span class="comment">// Lanjutkan instruksi: Simpan ke MySQL atau izinkan user Login</span>
+            <span class="keyword">echo</span> <span class="string">"Validasi Sukses!"</span>;
+        } <span class="keyword">else</span> {
+            <span class="keyword">echo</span> <span class="string">"Token Captcha Invalid."</span>;
+        }
+    }
+}
+<span class="comment">?&gt;</span></code></pre>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md mt-auto relative z-10 transition-colors duration-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <div class="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z" clip-rule="evenodd" /></svg>
-                <span class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">MathCAPTCHA API v1.0.0</span>
-            </div>
-            <div class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                &copy; 2026 <a href="https://jasonpw.web.id/" target="_blank" class="text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">Jasonpw</a> &bull; 
-                Dikelola oleh <a href="https://ycylstudio.web.id/" target="_blank" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">YCYL STUDIO</a>.
-            </div>
+    <footer
+      class="transition-colors duration-500 border-slate-200 backdrop-blur-md relative bg-white/50 border-t dark:bg-slate-950/50 dark:border-slate-800 mt-auto z-10"
+    >
+      <div
+        class="flex items-center px-4 justify-between max-w-7xl mx-auto sm:px-6 flex-col gap-4 md:flex-row md:text-left py-6 sm:py-8 text-center"
+      >
+        <div
+          class="flex items-center gap-2 hover:opacity-100 opacity-80 transition-opacity"
+        >
+          <svg
+            class="text-blue-500 h-4 sm:h-5 sm:w-5 w-4"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z"
+              fill-rule="evenodd"
+            />
+          </svg>
+          <span
+            class="sm:text-sm text-xs dark:text-white font-semibold text-slate-900"
+            >MathCAPTCHA API v1.0.0</span
+          >
         </div>
+        <div
+          class="text-[10px] sm:text-xs dark:text-slate-400 font-medium leading-relaxed text-slate-500"
+        >
+          © 2026
+          <a
+            class="transition-colors dark:hover:text-blue-400 hover:text-blue-600 dark:text-slate-300 text-slate-700"
+            href="https://jasonpw.web.id/"
+            target="_blank"
+            >Jasonpw</a
+          >
+          • Dikelola oleh
+          <a
+            class="transition-colors dark:text-blue-400 text-blue-600 dark:hover:text-blue-300 hover:text-blue-800"
+            href="https://ycylstudio.web.id/"
+            target="_blank"
+            >YCYL STUDIO</a
+          >.
+        </div>
+      </div>
     </footer>
 
-    <!-- EXTERNAL API CALL -->
     <script src="https://jproject-1.github.io/captcha-math/api.js"></script>
-
     <script>
-        // 1. Toast Notification Custom Tanpa API Luar
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('custom-toast');
-            const icon = document.getElementById('toast-icon');
-            const msgEl = document.getElementById('toast-message');
+      function showToast(e, t = "success") {
+        const a = document.getElementById("custom-toast"),
+          n = document.getElementById("toast-icon"),
+          s = document.getElementById("toast-message");
+        ((s.innerText = e),
+          "success" === t
+            ? (n.className =
+                "fas fa-check-circle text-green-400 dark:text-green-500 text-lg")
+            : "info" === t
+              ? (n.className =
+                  "fas fa-info-circle text-blue-400 dark:text-blue-500 text-lg")
+              : "error" === t &&
+                (n.className =
+                  "fas fa-exclamation-circle text-red-400 dark:text-red-500 text-lg"),
+          a.classList.remove("-translate-y-24", "opacity-0"),
+          a.classList.add("translate-y-0", "opacity-100"),
+          setTimeout(() => {
+            (a.classList.remove("translate-y-0", "opacity-100"),
+              a.classList.add("-translate-y-24", "opacity-0"));
+          }, 3e3));
+      }
+      function toggleTheme() {
+        const e = document.documentElement;
+        (document.getElementById("theme-toggle").checked
+          ? e.classList.add("dark")
+          : e.classList.remove("dark"),
+          setTimeout(applySettings, 50));
+      }
+      function copyCode(a, e) {
+        ((e = document.getElementById(e)), (e = e.dataset.raw || e.innerText));
+        navigator.clipboard
+          .writeText(e)
+          .then(() => {
+            showToast("Kode berhasil disalin ke clipboard!", "success");
+            const e = a.querySelector("i"),
+              t = e.className;
+            ((e.className = "fas fa-check text-green-400 text-xs"),
+              setTimeout(() => {
+                e.className = t;
+              }, 2e3));
+          })
+          .catch((e) => {
+            showToast("Gagal menyalin kode.", "error");
+          });
+      }
 
-            msgEl.innerText = msg;
-            if (type === 'success') {
-                icon.className = 'fas fa-check-circle text-green-400 dark:text-green-500 text-lg';
-            } else if (type === 'info') {
-                icon.className = 'fas fa-info-circle text-blue-400 dark:text-blue-500 text-lg';
-            } else if (type === 'error') {
-                icon.className = 'fas fa-exclamation-circle text-red-400 dark:text-red-500 text-lg';
-            }
+      let pageLangs = {};
 
-            toast.classList.remove('-translate-y-24', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('-translate-y-24', 'opacity-0');
-            }, 3000);
-        }
-
-        // 2. Theme Toggle Halaman Utama
-        function toggleTheme() {
-            const htmlEl = document.documentElement;
-            const isDark = document.getElementById('theme-toggle').checked;
-            if (isDark) htmlEl.classList.add('dark'); 
-            else htmlEl.classList.remove('dark'); 
-            setTimeout(applySettings, 50); 
-        }
-
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.getElementById('theme-toggle').checked = true;
-            document.documentElement.classList.add('dark');
-        }
-
-        // 3. Custom Copy (Bisa mendeteksi plain text via dataset)
-        function copyCode(btnElement, elementId) {
-            const el = document.getElementById(elementId);
-            const textToCopy = el.dataset.raw ? el.dataset.raw : el.innerText;
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                showToast("Kode berhasil disalin ke clipboard!", "success");
-                const icon = btnElement.querySelector('i');
-                const originalClass = icon.className;
-                icon.className = 'fas fa-check text-green-400 text-xs';
-                setTimeout(() => { icon.className = originalClass; }, 2000);
-            }).catch(err => {
-                showToast("Gagal menyalin kode.", "error");
-            });
-        }
-
-        // 4. Dropdowns Kustom
-        function setupCustomDropdowns() {
-            document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
-                const btn = dropdown.querySelector('.dropdown-btn');
-                const menu = dropdown.querySelector('.dropdown-menu');
-                const selText = dropdown.querySelector('.selected-text');
-                const hiddenInput = dropdown.querySelector('input[type="hidden"]');
-                const icon = dropdown.querySelector('.fa-chevron-down');
-                const items = dropdown.querySelectorAll('.dropdown-menu li');
-
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    document.querySelectorAll('.dropdown-menu').forEach(m => {
-                        if(m !== menu) { m.classList.add('hidden'); m.previousElementSibling.querySelector('.fa-chevron-down').classList.remove('rotate-180'); }
-                    });
-                    menu.classList.toggle('hidden');
-                    icon.classList.toggle('rotate-180');
-                });
-
-                items.forEach(item => {
-                    item.addEventListener('click', () => {
-                        selText.innerHTML = item.innerHTML;
-                        hiddenInput.value = item.getAttribute('data-value');
-                        menu.classList.add('hidden');
-                        icon.classList.remove('rotate-180');
-                    });
-                });
-            });
-
-            document.addEventListener('click', () => {
-                document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
-                document.querySelectorAll('.fa-chevron-down').forEach(i => i.classList.remove('rotate-180'));
-            });
-        }
-
-        // 5. i18n Data
-        const pageLangs = {
-            id: {
-                nav_docs: "Dokumentasi", hero_badge: "API v1.0.0 Telah Rilis",
-                hero_title: "Verifikasi Anti-Bot dengan <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Logika Matematika Dinamis.</span>",
-                hero_desc: "Tinggalkan tebak-tebakan gambar bus yang membosankan. MathCAPTCHA menghasilkan soal secara prosedural (real-time), auto-scaling, dan sistem JSON callbacks profesional.",
-                hero_os: "Open Source di GitHub",
-                conf_title: "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> Konfigurasi API",
-                conf_mode: "Tema Widget (Widget Theme)", conf_lvl: "Tingkat Kesulitan (Level)", conf_lang: "Bahasa UI (Language)", conf_att: "Batas Gagal (Max Attempts)",
-                conf_btn: "Terapkan & Generate", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated HTML + JS",
-                doc_title: "Cara Memasang API", doc_desc: "Implementasi bersih berbasis Vanilla JavaScript Class (ES6). Bebas library tambahan, aman dengan Private Fields (#).",
-                doc_step1: "PENTING: Gunakan Doctype", doc_step1_desc: "API ini memerlukan standar HTML5. Pastikan baris paling atas dari file HTML Anda memuat tag doctype, atau fitur matematika tidak akan dimuat dengan baik.",
-                doc_step2: "Inisialisasi Cepat", doc_step2_desc: "Siapkan container kosong dan panggil script API MathCAPTCHA.",
-                doc_step3: "Struktur JSON Output", doc_step3_desc: "Berikut adalah penjelasan output yang diterima melalui fungsi callback saat pengguna berinteraksi."
-            },
-            en: {
-                nav_docs: "Documentation", hero_badge: "API v1.0.0 Released",
-                hero_title: "Anti-Bot Verification with <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Dynamic Math Logic.</span>",
-                hero_desc: "Leave the boring bus image guessing behind. MathCAPTCHA generates procedural questions in real-time, features auto-scaling, and provides professional JSON callbacks.",
-                hero_os: "Open Source on GitHub",
-                conf_title: "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> API Configuration",
-                conf_mode: "Widget Theme", conf_lvl: "Difficulty Level", conf_lang: "UI Language", conf_att: "Max Attempts",
-                conf_btn: "Apply & Regenerate", live_prev: "Live Preview", term_out: "Terminal JSON Output", gen_code_title: "Generated HTML + JS",
-                doc_title: "How to Install the API", doc_desc: "Clean implementation based on Vanilla JavaScript Class (ES6). Zero external dependencies, secure with Private Fields (#).",
-                doc_step1: "IMPORTANT: Use Doctype", doc_step1_desc: "This API requires HTML5 standard. Ensure the top line of your HTML file includes the doctype tag, otherwise math features won't load properly.",
-                doc_step2: "Quick Initialization", doc_step2_desc: "Prepare an empty container and call the MathCAPTCHA API script.",
-                doc_step3: "JSON Output Structure", doc_step3_desc: "Below is the explanation of the output received through callback functions when users interact."
-            }
+      // Inisialisasi Translator via JSON
+      async function initTranslations() {
+        // Dictionary lengkap agar selalu bekerja meski fetch JSON lokal di-block browser
+        const fallbackLangs = {
+          id: {
+            nav_docs: "Dokumentasi",
+            hero_badge: "API v1.0.0 Telah Rilis",
+            hero_title:
+              "Verifikasi Anti-Bot dengan <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Logika Matematika Dinamis.</span>",
+            hero_desc:
+              "Tinggalkan tebak-tebakan gambar bus yang membosankan. MathCAPTCHA menghasilkan soal secara prosedural (real-time), auto-scaling, dan sistem JSON callbacks profesional.",
+            hero_os: "Open Source di GitHub",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> Konfigurasi API",
+            conf_mode: "Tema Widget (Widget Theme)",
+            conf_lvl: "Tingkat Kesulitan (Level)",
+            conf_lang: "Bahasa UI (Language)",
+            conf_att: "Batas Gagal (Max Attempts)",
+            conf_btn: "Terapkan & Generate",
+            live_prev: "Live Preview",
+            term_out: "Terminal JSON Output",
+            gen_code_title: "Generated HTML + JS",
+            doc_title: "Cara Memasang API",
+            doc_desc:
+              "Implementasi bersih berbasis Vanilla JavaScript Class (ES6). Bebas library tambahan, aman dengan Private Fields (#).",
+            doc_step1: "PENTING: Gunakan Doctype",
+            doc_step1_desc:
+              "API ini memerlukan standar HTML5. Pastikan baris paling atas dari file HTML Anda memuat tag doctype, atau fitur matematika tidak akan dimuat dengan baik.",
+            doc_step2: "Inisialisasi Cepat",
+            doc_step2_desc:
+              "Siapkan container kosong dan panggil script API MathCAPTCHA.",
+            doc_step3: "Struktur JSON Output",
+            doc_step3_desc:
+              "Berikut adalah penjelasan output yang diterima melalui fungsi callback saat pengguna berinteraksi.",
+            doc_step4: "Referensi API Lengkap (Parameter)",
+            doc_step5: "Validasi Backend (PHP/Server)",
+            doc_step5_desc:
+              "Keamanan terbaik tidak hanya mengandalkan frontend. Kirimkan token yang diterima saat onSuccess ke sistem backend Anda untuk mengamankan proses form atau login.",
+          },
+          en: {
+            nav_docs: "Documentation",
+            hero_badge: "API v1.0.0 Released",
+            hero_title:
+              "Anti-Bot Verification with <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Dynamic Math Logic.</span>",
+            hero_desc:
+              "Leave the boring bus image guessing behind. MathCAPTCHA generates procedural questions in real-time, features auto-scaling, and provides professional JSON callbacks.",
+            hero_os: "Open Source on GitHub",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> API Configuration",
+            conf_mode: "Widget Theme",
+            conf_lvl: "Difficulty Level",
+            conf_lang: "UI Language",
+            conf_att: "Max Attempts",
+            conf_btn: "Apply & Regenerate",
+            live_prev: "Live Preview",
+            term_out: "Terminal JSON Output",
+            gen_code_title: "Generated HTML + JS",
+            doc_title: "How to Install the API",
+            doc_desc:
+              "Clean implementation based on Vanilla JavaScript Class (ES6). Zero external dependencies, secure with Private Fields (#).",
+            doc_step1: "IMPORTANT: Use Doctype",
+            doc_step1_desc:
+              "This API requires HTML5 standard. Ensure the top line of your HTML file includes the doctype tag, otherwise math features won't load properly.",
+            doc_step2: "Quick Initialization",
+            doc_step2_desc:
+              "Prepare an empty container and call the MathCAPTCHA API script.",
+            doc_step3: "JSON Output Structure",
+            doc_step3_desc:
+              "Below is the explanation of the output received through callback functions when users interact.",
+            doc_step4: "Complete API Reference (Parameters)",
+            doc_step5: "Backend Validation (PHP/Server)",
+            doc_step5_desc:
+              "The best security doesn't rely solely on the frontend. Send the token received upon onSuccess to your backend system to secure the form or login process.",
+          },
+          es: {
+            nav_docs: "Documentación",
+            hero_badge: "API v1.0.0 Publicada",
+            hero_title:
+              "Verificación Anti-Bot con <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Lógica Matemática Dinámica.</span>",
+            hero_desc:
+              "Olvídate de adivinar aburridas imágenes de autobuses. MathCAPTCHA genera preguntas procedimentales en tiempo real, escala automáticamente y ofrece callbacks JSON profesionales.",
+            hero_os: "Código Abierto en GitHub",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> Configuración de la API",
+            conf_mode: "Tema del Widget",
+            conf_lvl: "Nivel de Dificultad",
+            conf_lang: "Idioma de la Interfaz",
+            conf_att: "Intentos Máximos",
+            conf_btn: "Aplicar y Regenerar",
+            live_prev: "Vista previa en vivo",
+            term_out: "Salida JSON de la Terminal",
+            gen_code_title: "HTML + JS Generado",
+            doc_title: "Cómo instalar la API",
+            doc_desc:
+              "Implementación limpia basada en clases de Vanilla JavaScript (ES6). Sin dependencias externas, segura con campos privados (#).",
+            doc_step1: "IMPORTANTE: Usar Doctype",
+            doc_step1_desc:
+              "Esta API requiere el estándar HTML5. Asegúrate de que la primera línea de tu archivo HTML incluya la etiqueta doctype, de lo contrario las funciones matemáticas no se cargarán correctamente.",
+            doc_step2: "Inicialización Rápida",
+            doc_step2_desc:
+              "Prepara un contenedor vacío y llama al script de la API MathCAPTCHA.",
+            doc_step3: "Estructura de Salida JSON",
+            doc_step3_desc:
+              "A continuación se explica la salida recibida a través de las funciones callback cuando los usuarios interactúan.",
+            doc_step4: "Referencia Completa de la API (Parámetros)",
+            doc_step5: "Validación en Backend (PHP/Servidor)",
+            doc_step5_desc:
+              "La mejor seguridad no depende únicamente del frontend. Envía el token recibido en onSuccess a tu sistema backend para asegurar el formulario o el proceso de inicio de sesión.",
+          },
+          zh: {
+            nav_docs: "文档",
+            hero_badge: "API v1.0.0 已发布",
+            hero_title:
+              "基于<br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>动态数学逻辑</span>的防机器人验证。",
+            hero_desc:
+              "告别无聊的公交车图片识别。MathCAPTCHA 能够实时程序化生成问题，支持自动缩放，并提供专业的 JSON 回调系统。",
+            hero_os: "GitHub 开源",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> API 配置",
+            conf_mode: "组件主题",
+            conf_lvl: "难度级别",
+            conf_lang: "界面语言",
+            conf_att: "最大尝试次数",
+            conf_btn: "应用并重新生成",
+            live_prev: "实时预览",
+            term_out: "终端 JSON 输出",
+            gen_code_title: "生成的 HTML + JS",
+            doc_title: "如何安装 API",
+            doc_desc:
+              "基于原生 JavaScript 类 (ES6) 的简洁实现。无外部依赖，使用私有字段 (#) 确保安全。",
+            doc_step1: "重要提示：使用 Doctype",
+            doc_step1_desc:
+              "此 API 需要 HTML5 标准。请确保 HTML 文件的首行包含 doctype 标签，否则数学功能可能无法正常加载。",
+            doc_step2: "快速初始化",
+            doc_step2_desc: "准备一个空容器并调用 MathCAPTCHA API 脚本。",
+            doc_step3: "JSON 输出结构",
+            doc_step3_desc: "以下是用户交互时通过回调函数接收到的输出说明。",
+            doc_step4: "完整 API 参考（参数）",
+            doc_step5: "后端验证 (PHP/服务器)",
+            doc_step5_desc:
+              "最佳的安全策略不仅依赖于前端。请将 onSuccess 时接收到的 token 发送到后端系统，以保障表单或登录流程的安全。",
+          },
+          ja: {
+            nav_docs: "ドキュメント",
+            hero_badge: "API v1.0.0 リリース",
+            hero_title:
+              "<br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>動的数学ロジック</span>によるボット対策検証。",
+            hero_desc:
+              "退屈なバスの画像当てはもう不要です。MathCAPTCHA はリアルタイムで問題を自動生成し、自動スケーリングとプロ仕様の JSON コールバックを提供します。",
+            hero_os: "GitHub でオープンソース公開中",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> API 設定",
+            conf_mode: "ウィジェットテーマ",
+            conf_lvl: "難易度レベル",
+            conf_lang: "UI 言語",
+            conf_att: "最大試行回数",
+            conf_btn: "適用して再生成",
+            live_prev: "ライブプレビュー",
+            term_out: "ターミナル JSON 出力",
+            gen_code_title: "生成された HTML + JS",
+            doc_title: "API の導入方法",
+            doc_desc:
+              "バニラ JavaScript クラス (ES6) に基づくクリーンな実装。外部ライブラリ不要、プライベートフィールド (#) で安全。",
+            doc_step1: "重要: Doctype を使用してください",
+            doc_step1_desc:
+              "この API には HTML5 標準が必要です。HTML ファイルの 1 行目に doctype タグが含まれていることを確認してください。そうしないと数学機能が正しく読み込まれない可能性があります。",
+            doc_step2: "クイック初期化",
+            doc_step2_desc:
+              "空のコンテナを用意し、MathCAPTCHA API スクリプトを呼び出します。",
+            doc_step3: "JSON 出力構造",
+            doc_step3_desc:
+              "以下は、ユーザー操作時にコールバック関数を通じて受け取る出力の説明です。",
+            doc_step4: "完全な API リファレンス (パラメータ)",
+            doc_step5: "バックエンド検証 (PHP/サーバー)",
+            doc_step5_desc:
+              "最高のセキュリティはフロントエンドだけに頼りません。onSuccess 時に受け取ったトークンをバックエンドシステムに送信し、フォームやログインプロセスを保護してください。",
+          },
+          ru: {
+            nav_docs: "Документация",
+            hero_badge: "Релиз API v1.0.0",
+            hero_title:
+              "Защита от ботов с помощью <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Динамической Математической Логики.</span>",
+            hero_desc:
+              "Забудьте о скучном угадывании картинок с автобусами. MathCAPTCHA генерирует задачи в реальном времени, поддерживает автомасштабирование и профессиональные callback-уведомления в JSON.",
+            hero_os: "Open Source на GitHub",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> Конфигурация API",
+            conf_mode: "Тема виджета",
+            conf_lvl: "Уровень сложности",
+            conf_lang: "Язык интерфейса",
+            conf_att: "Макс. количество попыток",
+            conf_btn: "Применить и сгенерировать",
+            live_prev: "Интерактивный предпросмотр",
+            term_out: "JSON-вывод терминала",
+            gen_code_title: "Сгенерированный HTML + JS",
+            doc_title: "Как установить API",
+            doc_desc:
+              "Чистая реализация на классе Vanilla JavaScript (ES6). Без внешних зависимостей, безопасность благодаря приватным полям (#).",
+            doc_step1: "ВАЖНО: Используйте Doctype",
+            doc_step1_desc:
+              "Для этого API требуется стандарт HTML5. Убедитесь, что первая строка вашего HTML-файла содержит тег doctype, иначе математический функционал может загружаться некорректно.",
+            doc_step2: "Быстрая инициализация",
+            doc_step2_desc:
+              "Подготовьте пустой контейнер и подключите скрипт API MathCAPTCHA.",
+            doc_step3: "Структура JSON-вывода",
+            doc_step3_desc:
+              "Ниже приведено описание данных, получаемых через callback-функции при взаимодействии пользователя.",
+            doc_step4: "Полное руководство по API (Параметры)",
+            doc_step5: "Проверка на бэкенде (PHP/Сервер)",
+            doc_step5_desc:
+              "Надежная безопасность не ограничивается клиентом. Отправьте токен, полученный при onSuccess, на ваш бэкенд для защиты формы или процесса авторизации.",
+          },
+          fr: {
+            nav_docs: "Documentation",
+            hero_badge: "API v1.0.0 Sortie",
+            hero_title:
+              "Vérification Anti-Bot avec <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>Logique Mathématique Dynamique.</span>",
+            hero_desc:
+              "Laissez tomber les devinettes d'images de bus ennuyeuses. MathCAPTCHA génère des questions de manière procédurale en temps réel, inclut un redimensionnement automatique et des callbacks JSON professionnels.",
+            hero_os: "Open Source sur GitHub",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> Configuration API",
+            conf_mode: "Thème du Widget",
+            conf_lvl: "Niveau de Difficulté",
+            conf_lang: "Langue de l'UI",
+            conf_att: "Nombre Maximal Tentatives",
+            conf_btn: "Appliquer & Régénérer",
+            live_prev: "Aperçu en Direct",
+            term_out: "Sortie JSON du Terminal",
+            gen_code_title: "Code HTML + JS Généré",
+            doc_title: "Comment Installer l'API",
+            doc_desc:
+              "Implémentation propre basée sur une classe Vanilla JavaScript (ES6). Sans dépendances externes, sécurisée avec des champs privés (#).",
+            doc_step1: "IMPORTANT : Utilisez un Doctype",
+            doc_step1_desc:
+              "Cette API nécessite la norme HTML5. Assurez-vous que la première ligne de votre fichier HTML contient la balise doctype, sinon les fonctionnalités mathématiques ne se chargeront pas correctement.",
+            doc_step2: "Initialisation Rapide",
+            doc_step2_desc:
+              "Préparez un conteneur vide et appelez le script de l'API MathCAPTCHA.",
+            doc_step3: "Structure de la Sortie JSON",
+            doc_step3_desc:
+              "Voici l'explication des données reçues via les fonctions de callback lorsque les utilisateurs interagissent.",
+            doc_step4: "Référence API Complète (Paramètres)",
+            doc_step5: "Validation Backend (PHP/Serveur)",
+            doc_step5_desc:
+              "La meilleure sécurité ne repose pas uniquement sur le frontend. Envoyez le jeton reçu lors de onSuccess à votre système backend pour sécuriser le formulaire ou le processus de connexion.",
+          },
+          ar: {
+            nav_docs: "الوثائق",
+            hero_badge: "تم إصدار API v1.0.0",
+            hero_title:
+              "التحقق من مكافحة الروبوتات باستخدام <br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>المنطق الرياضي الديناميكي.</span>",
+            hero_desc:
+              "اترك التخمين الممل لصور الحافلات جانباً. يقوم MathCAPTCHA بإنشاء أسئلة إجرائية في الوقت الفعلي، وتوسيع نطاق تلقائي، ونظام استدعاء JSON احترافي.",
+            hero_os: "مفتوح المصدر على GitHub",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> إعدادات API",
+            conf_mode: "مظهر أداة التحقق (Theme)",
+            conf_lvl: "مستوى الصعوبة",
+            conf_lang: "لغة الواجهة",
+            conf_att: "الحد الأقصى للمحاولات",
+            conf_btn: "تطبيق وإعادة إنشاء",
+            live_prev: "معاينة مباشرة",
+            term_out: "مخرجات JSON للطرفية",
+            gen_code_title: "كود HTML + JS المنشأ",
+            doc_title: "كيفية تثبيت API",
+            doc_desc:
+              "تطبيق نظيف يعتمد على Vanilla JavaScript Class (ES6). بدون مكتبات خارجية، وآمن باستخدام الحقول الخاصة (#).",
+            doc_step1: "هام: استخدم Doctype",
+            doc_step1_desc:
+              "يتطلب هذا الـ API معيار HTML5. تأكد من أن السطر الأول من ملف HTML الخاص بك يحتوي على علامة doctype، وإلا لن يتم تحميل الميزات الرياضية بشكل صحيح.",
+            doc_step2: "تهيئة سريعة",
+            doc_step2_desc:
+              "قم بإعداد حاوية فارغة واستدعِ نص API MathCAPTCHA البرمجي.",
+            doc_step3: "هيكل مخرجات JSON",
+            doc_step3_desc:
+              "فيما يلي شرح للمخرجات المستلمة عبر دالة الاستدعاء (callback) عند تفاعل المستخدمين.",
+            doc_step4: "مرجع API الكامل (المعلمات)",
+            doc_step5: "التحقق في الخلفية (PHP/الخادم)",
+            doc_step5_desc:
+              "الأمان الأفضل لا يعتمد فقط على الواجهة الأمامية. أرسل الرمز (token) المستلم عند onSuccess إلى نظام الخادم الخاص بك لتأمين النموذج أو عملية تسجيل الدخول.",
+          },
+          hi: {
+            nav_docs: "दस्तावेज़ (Docs)",
+            hero_badge: "API v1.0.0 जारी किया गया",
+            hero_title:
+              "<br class='hidden md:block'/><span class='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500'>डायनेमिक गणितीय तर्क</span> के साथ एंटी-बॉट सत्यापन।",
+            hero_desc:
+              "बस की छवियों का उबाऊ अनुमान लगाना छोड़ें। MathCAPTCHA रियल-टाइम में प्रश्न बनाता है, इसमें ऑटो-स्केलिंग और पेशेवर JSON कॉलबैक सिस्टम शामिल है।",
+            hero_os: "GitHub पर ओपन सोर्स",
+            conf_title:
+              "<i class='fas fa-sliders text-blue-500 mr-2 sm:mr-3'></i> API कॉन्फ़िगरेशन",
+            conf_mode: "विजेट थीम",
+            conf_lvl: "कठिनाई का स्तर",
+            conf_lang: "UI भाषा",
+            conf_att: "अधिकतम प्रयास",
+            conf_btn: "लागू करें और पुनः जनरेट करें",
+            live_prev: "लाइव पूर्वावलोकन",
+            term_out: "टर्मिनल JSON आउटपुट",
+            gen_code_title: "जनरेट किया गया HTML + JS",
+            doc_title: "API को कैसे इंस्टॉल करें",
+            doc_desc:
+              "वैनिला जावास्क्रिप्ट क्लास (ES6) पर आधारित स्वच्छ कार्यान्वयन। बिना किसी बाहरी लाइब्रेरी के, प्राइवेट फील्ड्स (#) के साथ सुरक्षित।",
+            doc_step1: "महत्वपूर्ण: Doctype का उपयोग करें",
+            doc_step1_desc:
+              "इस API के लिए HTML5 मानक की आवश्यकता है। सुनिश्चित करें कि आपकी HTML फ़ाइल की पहली पंक्ति में doctype टैग शामिल है, अन्यथा गणितीय सुविधाएँ ठीक से लोड नहीं होंगी।",
+            doc_step2: "त्वरित इनिशियलाइजेशन",
+            doc_step2_desc:
+              "एक खाली कंटेनर तैयार करें और MathCAPTCHA API स्क्रिप्ट को कॉल करें।",
+            doc_step3: "JSON आउटपुट संरचना",
+            doc_step3_desc:
+              "उपयोगकर्ताओं के इंटरैक्ट करने पर कॉलबैक फ़ंक्शन के माध्यम से प्राप्त आउटपुट का विवरण नीचे दिया गया है।",
+            doc_step4: "पूर्ण API संदर्भ (पैरामीटर)",
+            doc_step5: "बैकएंड सत्यापन (PHP/सर्वर)",
+            doc_step5_desc:
+              "सबसे अच्छी सुरक्षा केवल फ्रंटएंड पर निर्भर नहीं करती है। फॉर्म या लॉगिन प्रक्रिया को सुरक्षित करने के लिए onSuccess पर प्राप्त टोकन को अपने बैकएंड सिस्टम पर भेजें।",
+          },
         };
+        try {
+          const res = await fetch("translate.json");
+          if (res.ok) {
+            pageLangs = await res.json();
+          } else {
+            throw new Error("Gagal fetch JSON");
+          }
+        } catch (e) {
+          console.warn(
+            "Menggunakan dictionary fallback karena file translate.json lokal ditolak oleh sistem keamanan browser (CORS).",
+          );
+          pageLangs = fallbackLangs;
+        }
+      }
 
-        function changeDocsLang(lang) {
-            const btnID = document.getElementById('lang-btn-id');
-            const btnEN = document.getElementById('lang-btn-en');
-            
-            if(lang === 'id') {
-                btnID.className = "px-2 py-1 rounded text-blue-600 bg-white shadow-sm dark:bg-slate-700 dark:text-blue-400 transition-all";
-                btnEN.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all";
-            } else {
-                btnEN.className = "px-2 py-1 rounded text-blue-600 bg-white shadow-sm dark:bg-slate-700 dark:text-blue-400 transition-all";
-                btnID.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-all";
-            }
+      function changeDocsLang(lang) {
+        const translations = pageLangs[lang];
+        if (!translations) return false;
 
-            const translations = pageLangs[lang];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if(translations[key]) el.innerHTML = translations[key];
+        document.querySelectorAll("[data-i18n]").forEach((e) => {
+          const key = e.getAttribute("data-i18n");
+          if (translations[key]) e.innerHTML = translations[key];
+        });
+
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+        showToast("Bahasa UI diperbarui!", "success");
+        return true;
+      }
+
+      function setupCustomDropdowns() {
+        document.querySelectorAll(".custom-dropdown").forEach((e) => {
+          const t = e.querySelector(".dropdown-btn"),
+            a = e.querySelector(".dropdown-menu"),
+            n = e.querySelector(".selected-text"),
+            s = e.querySelector('input[type="hidden"]'),
+            o = e.querySelector(".fa-chevron-down"),
+            r = e.querySelectorAll(".dropdown-menu li");
+          t.addEventListener("click", (ev) => {
+            (ev.stopPropagation(),
+              t.setAttribute("aria-expanded", "true"),
+              document.querySelectorAll(".dropdown-menu").forEach((dm) => {
+                dm !== a &&
+                  (dm.classList.add("hidden"),
+                  dm.previousElementSibling
+                    .querySelector(".fa-chevron-down")
+                    .classList.remove("rotate-180"));
+              }),
+              a.classList.toggle("hidden"),
+              o.classList.toggle("rotate-180"));
+          });
+
+          r.forEach((item) => {
+            item.addEventListener("click", () => {
+              const val = item.getAttribute("data-value");
+
+              if (item.classList.contains("cursor-not-allowed")) {
+                showToast(
+                  "Bahasa belum tersedia (Not available yet)!",
+                  "error",
+                );
+                return;
+              }
+
+              if (s.id === "page-lang") {
+                if (!changeDocsLang(val)) {
+                  showToast("Gagal memuat translasi file JSON", "error");
+                  return;
+                }
+                n.innerHTML = item.getAttribute("data-lang-text");
+              } else {
+                n.innerHTML = item.innerHTML;
+              }
+
+              s.value = val;
+              a.classList.add("hidden");
+              o.classList.remove("rotate-180");
+              t.setAttribute("aria-expanded", "false");
             });
-        }
+          });
+        });
 
-        // 6. Log formatter
-        function updateLog(title, colorHex, data) {
-            const logEl = document.getElementById('playground-log');
-            const logRawEl = document.getElementById('playground-log-raw');
-            const time = new Date().toLocaleTimeString();
-            
-            logRawEl.innerText = JSON.stringify(data, null, 2);
+        document.addEventListener("click", () => {
+          document
+            .querySelectorAll(".dropdown-menu")
+            .forEach((e) => e.classList.add("hidden"));
+          document
+            .querySelectorAll(".fa-chevron-down")
+            .forEach((e) => e.classList.remove("rotate-180"));
+        });
+      }
 
-            const formattedJson = JSON.stringify(data, null, 2)
-                .replace(/"status": "([^"]+)"/g, '"status": <span style="color:#98c379">"$1"</span>')
-                .replace(/"reason": "([^"]+)"/g, '"reason": <span style="color:#e5c07b">"$1"</span>')
-                .replace(/"token": "([^"]+)"/g, '"token": <span style="color:#c678dd">"$1"</span>')
-                .replace(/([0-9]+)/g, '<span style="color:#d19a66">$1</span>')
-                .replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+      window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches &&
+        ((document.getElementById("theme-toggle").checked = !0),
+        document.documentElement.classList.add("dark"));
 
-            logEl.innerHTML = `<span style="color:#64748b">[${time}]</span> <span style="color:${colorHex}; font-weight:700;">${title}</span><br>${formattedJson}`;
-            logEl.scrollTop = logEl.scrollHeight; 
-        }
+      function updateLog(e, t, a) {
+        const n = document.getElementById("playground-log"),
+          s = document.getElementById("playground-log-raw");
+        var o = new Date().toLocaleTimeString();
+        s.innerText = JSON.stringify(a, null, 2);
+        a = JSON.stringify(a, null, 2)
+          .replace(
+            /"status": "([^"]+)"/g,
+            '"status": <span style="color:#98c379">"$1"</span>',
+          )
+          .replace(
+            /"reason": "([^"]+)"/g,
+            '"reason": <span style="color:#e5c07b">"$1"</span>',
+          )
+          .replace(
+            /"token": "([^"]+)"/g,
+            '"token": <span style="color:#c678dd">"$1"</span>',
+          )
+          .replace(/([0-9]+)/g, '<span style="color:#d19a66">$1</span>')
+          .replace(/\n/g, "<br>")
+          .replace(/ /g, "&nbsp;");
+        ((n.innerHTML = `<span style="color:#64748b">[${o}]</span> <span style="color:${t}; font-weight:700;">${e}</span><br>${a}`),
+          (n.scrollTop = n.scrollHeight));
+      }
 
-        // 7. Code Generator Full HTML + JS
-        function updateGeneratedCode(mode, level, lang, attempts) {
-            const levelVal = level === 'random' ? "'random'" : level;
-            const modeVal = mode === 'auto' ? "'auto'" : `'${mode}'`;
-            const codeRaw = `<!-- HTML -->
+      function updateGeneratedCode(e, t, a, n) {
+        const s = `<!-- HTML -->
 <div id="my-captcha-box"></div>
 
 <!-- JS -->
-<script src="https://jproject-1.github.io/captcha-math/api.js"><\/script>
+<script src="https://jproject-1.github.io/captcha-math/api.js"><\\/script>
 <script>
   const myCaptcha = new MathCAPTCHA({
     containerId: 'my-captcha-box',
-    mode: ${modeVal}, // 'light', 'dark', 'auto'
-    language: '${lang}', // 10 Languages supported
-    level: ${levelVal}, // 1-7 or 'random'
-    maxAttempts: ${attempts},
+    mode: ${"auto" === e ? "'auto'" : `'${e}'`}, // 'light', 'dark', 'auto'
+    language: '${a}', // 10 Languages supported
+    level: ${"random" === t ? "'random'" : t}, // 1-7 or 'random'
+    maxAttempts: ${n},
 
     onSuccess: (res) => {
       console.log("Success!", res);
       // Kirim 'res.data.token' ke backend
     }
   });
-<\/script>`;
-            
-            const highlighted = codeRaw
-                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                .replace(/(const|new|let|var|function|return)/g, '<span class="keyword">$1</span>')
-                .replace(/([a-zA-Z0-9_]+)(?=:)/g, '<span class="property">$1</span>')
-                .replace(/('.*?'|".*?")/g, '<span class="string">$1</span>')
-                .replace(/([0-9]+)(?!&)/g, '<span style="color:#d19a66">$1</span>')
-                .replace(/(&lt;!--.*?--&gt;|\/\/.*)/g, '<span class="comment">$1</span>')
-                .replace(/(&lt;\/?script.*?&gt;|&lt;\/?div.*?&gt;)/g, '<span class="tag">$1</span>');
-                
-            const el = document.getElementById('generated-code');
-            el.innerHTML = highlighted;
-            el.dataset.raw = codeRaw.replace(/<\\\/script>/g, '</script>'); 
-        }
-        
-        // 8. Core apply
-        function applySettings() {
-            document.querySelectorAll('[id^="cm-overlay-"]').forEach(el => el.remove());
+<\\/script>`;
 
-            const levelVal = document.getElementById('setting-level').value;
-            const langVal = document.getElementById('setting-lang').value;
-            const modeVal = document.getElementById('setting-mode').value;
-            const attemptVal = parseInt(document.getElementById('setting-attempts').value) || 5;
+        const regexPattern =
+          /(&lt;\/?(?:script|div).*?&gt;|&lt;!--.*?--&gt;|\/\/.*|'.*?'|".*?"|\b(?:const|new|let|var|function|return)\b|[a-zA-Z0-9_]+(?=:)|[0-9]+)/g;
+        let highlighted = s
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(regexPattern, function (e) {
+            return e.startsWith("&lt;!--") || e.startsWith("//")
+              ? `<span class="comment">${e}</span>`
+              : e.startsWith("&lt;")
+                ? `<span class="tag">${e}</span>`
+                : e.startsWith("'") || e.startsWith('"')
+                  ? `<span class="string">${e}</span>`
+                  : [
+                        "const",
+                        "new",
+                        "let",
+                        "var",
+                        "function",
+                        "return",
+                      ].includes(e)
+                    ? `<span class="keyword">${e}</span>`
+                    : /^[0-9]+$/.test(e)
+                      ? `<span style="color:#d19a66">${e}</span>`
+                      : /^[a-zA-Z0-9_]+$/.test(e)
+                        ? `<span class="property">${e}</span>`
+                        : e;
+          });
 
-            document.getElementById('playground-log').innerHTML = '<span style="color:#64748b; font-style:italic;">// Menunggu interaksi...</span>';
-            document.getElementById('playground-log-raw').innerText = '// Menunggu interaksi...';
-            
-            updateGeneratedCode(modeVal, levelVal, langVal, attemptVal);
+        const o = document.getElementById("generated-code");
+        o.innerHTML = highlighted;
+        o.dataset.raw = s.replace(/<\\\/script>/g, "<\/script>");
+      }
 
-            new MathCAPTCHA({
-                containerId: 'captcha-playground',
-                mode: modeVal, 
-                level: levelVal === 'random' ? 'random' : parseInt(levelVal),
-                language: langVal,
-                maxAttempts: attemptVal,
-                
-                onSuccess: (res) => updateLog('[200 OK - VERIFIED]', '#61afef', res),
-                onFail: (res) => updateLog('[403 FORBIDDEN - FAILED ATTEMPT]', '#e5c07b', res),
-                onBlocked: (res) => updateLog('[429 TOO MANY REQUESTS - BLOCKED]', '#e06c75', res)
-            });
+      function applySettings() {
+        document
+          .querySelectorAll('[id^="cm-overlay-"]')
+          .forEach((e) => e.remove());
+        var e = document.getElementById("setting-level").value,
+          t = document.getElementById("setting-lang").value,
+          a = document.getElementById("setting-mode").value,
+          n = parseInt(document.getElementById("setting-attempts").value) || 5;
+        ((document.getElementById("playground-log").innerHTML =
+          '<span style="color:#64748b;font-style:italic">// Menunggu interaksi...</span>'),
+          (document.getElementById("playground-log-raw").innerText =
+            "// Menunggu interaksi..."),
+          updateGeneratedCode(a, e, t, n),
+          new MathCAPTCHA({
+            containerId: "captcha-playground",
+            mode: a,
+            level: "random" === e ? "random" : parseInt(e),
+            language: t,
+            maxAttempts: n,
+            onSuccess: (e) => updateLog("[200 OK - VERIFIED]", "#61afef", e),
+            onFail: (e) =>
+              updateLog("[403 FORBIDDEN - FAILED ATTEMPT]", "#e5c07b", e),
+            onBlocked: (e) =>
+              updateLog("[429 TOO MANY REQUESTS - BLOCKED]", "#e06c75", e),
+          }),
+          showToast("Konfigurasi API berhasil diterapkan!", "info"));
+      }
 
-            showToast("Konfigurasi API berhasil diterapkan!", "info");
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            setupCustomDropdowns();
-            setTimeout(applySettings, 200); 
-        });
+      document.addEventListener("DOMContentLoaded", async () => {
+        await initTranslations();
+        setupCustomDropdowns();
+        setTimeout(applySettings, 200);
+      });
     </script>
-</body>
+  </body>
 </html>
