@@ -36,7 +36,13 @@
     "tbl_desc_3": "Bahasa instruksi UI. Opsi: <code>'id'</code>, <code>'en'</code>, dll, atau <code>'auto-user'</code>.",
     "tbl_desc_4": "Tingkat kesulitan (1 - 7). Gunakan <code>'random'</code> untuk diacak.",
     "tbl_desc_5": "Batas jumlah percobaan gagal sebelum pemblokiran sementara.",
-    "tbl_desc_6": "(Wajib) Callback dieksekusi saat jawaban pengguna valid/benar."
+    "tbl_desc_6": "(Wajib) Callback dieksekusi saat jawaban pengguna valid/benar.",
+    "toast_lang_updated": "Bahasa UI diperbarui!",
+    "toast_lang_unavailable": "Bahasa belum tersedia!",
+    "toast_json_fail": "Gagal memuat translasi file JSON",
+    "toast_copy_success": "Kode berhasil disalin ke clipboard!",
+    "toast_copy_fail": "Gagal menyalin kode.",
+    "toast_config_applied": "Konfigurasi API berhasil diterapkan!"
   },
   "en": {
     "nav_docs": "Documentation",
@@ -75,7 +81,13 @@
     "tbl_desc_3": "UI instruction language. Options: <code>'id'</code>, <code>'en'</code>, etc., or <code>'auto-user'</code>.",
     "tbl_desc_4": "Difficulty level (1 - 7). Use <code>'random'</code> to randomize.",
     "tbl_desc_5": "Maximum number of failed attempts before temporary block.",
-    "tbl_desc_6": "(Required) Callback executed when the user's answer is valid/correct."
+    "tbl_desc_6": "(Required) Callback executed when the user's answer is valid/correct.",
+    "toast_lang_updated": "UI Language updated!",
+    "toast_lang_unavailable": "Language not available yet!",
+    "toast_json_fail": "Failed to load JSON translation file",
+    "toast_copy_success": "Code successfully copied to clipboard!",
+    "toast_copy_fail": "Failed to copy code.",
+    "toast_config_applied": "API Configuration successfully applied!"
   },
   "es": {
     "nav_docs": "Documentación",
@@ -114,7 +126,13 @@
     "tbl_desc_3": "Idioma de las instrucciones de la UI. Opciones: <code>'id'</code>, <code>'en'</code>, etc., o <code>'auto-user'</code>.",
     "tbl_desc_4": "Nivel de dificultad (1 - 7). Usa <code>'random'</code> para aleatorizar.",
     "tbl_desc_5": "Número máximo de intentos fallidos antes del bloqueo temporal.",
-    "tbl_desc_6": "(Requerido) Callback ejecutado cuando la respuesta del usuario es válida/correcta."
+    "tbl_desc_6": "(Requerido) Callback ejecutado cuando la respuesta del usuario es válida/correcta.",
+    "toast_lang_updated": "¡Idioma de la interfaz actualizado!",
+    "toast_lang_unavailable": "¡Idioma aún no disponible!",
+    "toast_json_fail": "Error al cargar el archivo de traducción JSON",
+    "toast_copy_success": "¡Código copiado al portapapeles con éxito!",
+    "toast_copy_fail": "Error al copiar el código.",
+    "toast_config_applied": "¡Configuración de la API aplicada con éxito!"
   },
   "zh": {
     "nav_docs": "文档",
@@ -153,7 +171,13 @@
     "tbl_desc_3": "UI 说明语言。选项: <code>'id'</code>, <code>'en'</code> 等，或 <code>'auto-user'</code>。",
     "tbl_desc_4": "难度级别 (1 - 7)。使用 <code>'random'</code> 进行随机化。",
     "tbl_desc_5": "临时封禁前的最大失败尝试次数。",
-    "tbl_desc_6": "(必填) 当用户答案有效/正确时执行的回调。"
+    "tbl_desc_6": "(必填) 当用户答案有效/正确时执行的回调。",
+    "toast_lang_updated": "界面语言已更新！",
+    "toast_lang_unavailable": "语言尚不可用！",
+    "toast_json_fail": "加载 JSON 翻译文件失败",
+    "toast_copy_success": "代码已成功复制到剪贴板！",
+    "toast_copy_fail": "复制代码失败。",
+    "toast_config_applied": "API 配置已成功应用！"
   },
   "ja": {
     "nav_docs": "ドキュメント",
@@ -192,7 +216,13 @@
     "tbl_desc_3": "UI 指示言語。オプション: <code>'id'</code>, <code>'en'</code> など、または <code>'auto-user'</code>。",
     "tbl_desc_4": "難易度レベル (1 - 7)。ランダム化するには <code>'random'</code> を使用します。",
     "tbl_desc_5": "一時的にブロックされるまでの最大失敗試行回数。",
-    "tbl_desc_6": "(必須) ユーザーの回答が有効/正解のときに実行されるコールバック。"
+    "tbl_desc_6": "(必須) ユーザーの回答が有効/正解のときに実行されるコールバック。",
+    "toast_lang_updated": "UI言語が更新されました！",
+    "toast_lang_unavailable": "言語はまだ利用できません！",
+    "toast_json_fail": "JSON翻訳ファイルの読み込みに失敗しました",
+    "toast_copy_success": "コードがクリップボードに正常にコピーされました！",
+    "toast_copy_fail": "コードのコピーに失敗しました。",
+    "toast_config_applied": "API設定が正常に適用されました！"
   },
   "ru": {
     "nav_docs": "Документация",
@@ -231,7 +261,13 @@
     "tbl_desc_3": "Язык инструкций UI. Варианты: <code>'id'</code>, <code>'en'</code> и т.д., или <code>'auto-user'</code>.",
     "tbl_desc_4": "Уровень сложности (1 - 7). Используйте <code>'random'</code> для случайного выбора.",
     "tbl_desc_5": "Максимальное количество неудачных попыток перед временной блокировкой.",
-    "tbl_desc_6": "(Обязательно) Callback, выполняемый, когда ответ пользователя верен."
+    "tbl_desc_6": "(Обязательно) Callback, выполняемый, когда ответ пользователя верен.",
+    "toast_lang_updated": "Язык интерфейса обновлен!",
+    "toast_lang_unavailable": "Язык еще не доступен!",
+    "toast_json_fail": "Не удалось загрузить файл перевода JSON",
+    "toast_copy_success": "Код успешно скопирован в буфер обмена!",
+    "toast_copy_fail": "Не удалось скопировать код.",
+    "toast_config_applied": "Конфигурация API успешно применена!"
   },
   "fr": {
     "nav_docs": "Documentation",
@@ -270,7 +306,13 @@
     "tbl_desc_3": "Langue des instructions de l'UI. Options : <code>'id'</code>, <code>'en'</code>, etc., ou <code>'auto-user'</code>.",
     "tbl_desc_4": "Niveau de difficulté (1 - 7). Utilisez <code>'random'</code> pour aléatoire.",
     "tbl_desc_5": "Nombre maximum de tentatives échouées avant un blocage temporaire.",
-    "tbl_desc_6": "(Requis) Callback exécuté lorsque la réponse de l'utilisateur est valide/correcte."
+    "tbl_desc_6": "(Requis) Callback exécuté lorsque la réponse de l'utilisateur est valide/correcte.",
+    "toast_lang_updated": "Langue de l'interface mise à jour !",
+    "toast_lang_unavailable": "Langue pas encore disponible !",
+    "toast_json_fail": "Échec du chargement du fichier de traduction JSON",
+    "toast_copy_success": "Code copié dans le presse-papiers avec succès !",
+    "toast_copy_fail": "Échec de la copie du code.",
+    "toast_config_applied": "Configuration de l'API appliquée avec succès !"
   },
   "ar": {
     "nav_docs": "الوثائق",
@@ -309,7 +351,13 @@
     "tbl_desc_3": "لغة تعليمات واجهة المستخدم. الخيارات: <code>'id'</code>, <code>'en'</code>, إلخ، أو <code>'auto-user'</code>.",
     "tbl_desc_4": "مستوى الصعوبة (1 - 7). استخدم <code>'random'</code> للعشوائية.",
     "tbl_desc_5": "الحد الأقصى لعدد المحاولات الفاشلة قبل الحظر المؤقت.",
-    "tbl_desc_6": "(مطلوب) رد النداء (Callback) الذي يتم تنفيذه عندما تكون إجابة المستخدم صالحة/صحيحة."
+    "tbl_desc_6": "(مطلوب) رد النداء (Callback) الذي يتم تنفيذه عندما تكون إجابة المستخدم صالحة/صحيحة.",
+    "toast_lang_updated": "تم تحديث لغة واجهة المستخدم!",
+    "toast_lang_unavailable": "اللغة غير متوفرة بعد!",
+    "toast_json_fail": "فشل تحميل ملف ترجمة JSON",
+    "toast_copy_success": "تم نسخ الكود إلى الحافظة بنجاح!",
+    "toast_copy_fail": "فشل نسخ الكود.",
+    "toast_config_applied": "تم تطبيق تكوين API بنجاح!"
   },
   "hi": {
     "nav_docs": "दस्तावेज़ (Docs)",
@@ -348,6 +396,12 @@
     "tbl_desc_3": "UI निर्देश भाषा। विकल्प: <code>'id'</code>, <code>'en'</code>, आदि, या <code>'auto-user'</code>।",
     "tbl_desc_4": "कठिनाई स्तर (1 - 7)। यादृच्छिक (random) करने के लिए <code>'random'</code> का उपयोग करें।",
     "tbl_desc_5": "अस्थायी ब्लॉक से पहले विफल प्रयासों की अधिकतम संख्या।",
-    "tbl_desc_6": "(आवश्यक) उपयोगकर्ता का उत्तर मान्य/सही होने पर निष्पादित कॉलबैक।"
+    "tbl_desc_6": "(आवश्यक) उपयोगकर्ता का उत्तर मान्य/सही होने पर निष्पादित कॉलबैक।",
+    "toast_lang_updated": "UI भाषा अपडेट की गई!",
+    "toast_lang_unavailable": "भाषा अभी उपलब्ध नहीं है!",
+    "toast_json_fail": "JSON अनुवाद फ़ाइल लोड करने में विफल",
+    "toast_copy_success": "कोड क्लिपबोर्ड पर सफलतापूर्वक कॉपी किया गया!",
+    "toast_copy_fail": "कोड कॉपी करने में विफल।",
+    "toast_config_applied": "API कॉन्फ़िगरेशन सफलतापूर्वक लागू किया गया!"
   }
 }

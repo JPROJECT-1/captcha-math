@@ -1251,6 +1251,12 @@
 
     <script src="https://jproject-1.github.io/captcha-math/api.js"></script>
     <script>
+      function getTrans(key, fallback) {
+        const lang = document.documentElement.lang || "id";
+        return pageLangs && pageLangs[lang] && pageLangs[lang][key]
+          ? pageLangs[lang][key]
+          : fallback;
+      }
       function showToast(e, t = "success") {
         const a = document.getElementById("custom-toast"),
           n = document.getElementById("toast-icon"),
@@ -1284,7 +1290,13 @@
         navigator.clipboard
           .writeText(e)
           .then(() => {
-            showToast("Kode berhasil disalin ke clipboard!", "success");
+            showToast(
+              getTrans(
+                "toast_copy_success",
+                "Kode berhasil disalin ke clipboard!",
+              ),
+              "success",
+            );
             const e = a.querySelector("i"),
               t = e.className;
             ((e.className = "fas fa-check text-green-400 text-xs"),
@@ -1293,7 +1305,10 @@
               }, 2e3));
           })
           .catch((e) => {
-            showToast("Gagal menyalin kode.", "error");
+            showToast(
+              getTrans("toast_copy_fail", "Gagal menyalin kode."),
+              "error",
+            );
           });
       }
 
@@ -1436,7 +1451,10 @@
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
 
-        showToast("Bahasa UI diperbarui!", "success");
+        showToast(
+          getTrans("toast_lang_updated", "Bahasa UI diperbarui!"),
+          "success",
+        );
         return true;
       }
 
@@ -1468,7 +1486,10 @@
 
               if (item.classList.contains("cursor-not-allowed")) {
                 showToast(
-                  "Bahasa belum tersedia (Not available yet)!",
+                  getTrans(
+                    "toast_lang_unavailable",
+                    "Bahasa belum tersedia (Not available yet)!",
+                  ),
                   "error",
                 );
                 return;
@@ -1476,7 +1497,13 @@
 
               if (s.id === "page-lang") {
                 if (!changeDocsLang(val)) {
-                  showToast("Gagal memuat translasi file JSON", "error");
+                  showToast(
+                    getTrans(
+                      "toast_json_fail",
+                      "Gagal memuat translasi file JSON",
+                    ),
+                    "error",
+                  );
                   return;
                 }
                 n.innerHTML = item.getAttribute("data-lang-text");
@@ -1612,7 +1639,13 @@
             onBlocked: (e) =>
               updateLog("[429 TOO MANY REQUESTS - BLOCKED]", "#e06c75", e),
           }),
-          showToast("Konfigurasi API berhasil diterapkan!", "info"));
+          showToast(
+            getTrans(
+              "toast_config_applied",
+              "Konfigurasi API berhasil diterapkan!",
+            ),
+            "info",
+          ));
       }
 
       document.addEventListener("DOMContentLoaded", async () => {
