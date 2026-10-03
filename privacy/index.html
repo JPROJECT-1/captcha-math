@@ -1,0 +1,575 @@
+<!doctype html>
+<html class="scroll-smooth" lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width,initial-scale=1,maximum-scale=5"
+      name="viewport"
+    />
+    <title>Privasi & Ketentuan | MathCAPTCHA</title>
+    <meta
+      content="Kebijakan privasi dan ketentuan penggunaan (MIT License) untuk MathCAPTCHA API."
+      name="description"
+    />
+    <meta content="Jasonpw" name="author" />
+    <link
+      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z'/></svg>"
+      rel="icon"
+      type="image/svg+xml"
+    />
+    <meta content="#3b82f6" name="theme-color" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              mono: ["Fira Code", "monospace"],
+            },
+            animation: {
+              "fade-in-up":
+                "fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              "float-1": "float1 12s ease-in-out infinite",
+              "float-2": "float2 15s ease-in-out infinite alternate",
+              "float-3": "float3 10s ease-in-out infinite",
+            },
+            keyframes: {
+              fadeInUp: {
+                "0%": { opacity: "0", transform: "translateY(30px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              float1: {
+                "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+                "50%": { transform: "translateY(-20px) rotate(10deg)" },
+              },
+              float2: {
+                "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+                "50%": { transform: "translateY(25px) rotate(-15deg)" },
+              },
+              float3: {
+                "0%, 100%": { transform: "translateY(0) scale(1)" },
+                "50%": { transform: "translateY(-15px) scale(1.05)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      ::selection {
+        background: #3b82f6;
+        color: #fff;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      .dark ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+      body,
+      html {
+        overflow-x: hidden;
+      }
+      .dropdown-menu::-webkit-scrollbar {
+        width: 6px;
+      }
+      .dropdown-menu::-webkit-scrollbar-track {
+        background: 0 0;
+      }
+      .dropdown-menu::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .dark .dropdown-menu::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+    </style>
+  </head>
+  <body
+    class="flex transition-colors antialiased bg-slate-50 dark:bg-slate-900 dark:text-slate-200 duration-500 flex-col min-h-screen relative text-slate-800 w-full"
+  >
+    <!-- Background Elements -->
+    <div class="fixed pointer-events-none inset-0 overflow-hidden z-0">
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-1 text-4xl fa-square-root-variable left-[5%] md:left-[10%] md:text-6xl text-blue-500 top-20"
+      ></i>
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-2 bottom-1/4 fa-calculator md:right-[5%] md:text-8xl right-[2%] text-5xl text-indigo-500"
+      ></i>
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-3 fa-plus md:right-[15%] md:text-5xl right-[10%] text-3xl text-blue-400 top-1/3"
+      ></i>
+      <i
+        class="fas absolute dark:opacity-5 opacity-10 animate-float-1 text-4xl bottom-20 fa-divide left-[10%] md:left-[15%] md:text-7xl text-indigo-400"
+      ></i>
+    </div>
+
+    <!-- Header / Nav -->
+    <header
+      class="transition-colors border-b border-slate-200 duration-500 backdrop-blur-lg bg-white/80 dark:bg-slate-900/80 dark:border-slate-800 sticky top-0 z-50"
+    >
+      <div
+        class="px-4 py-3 flex items-center w-full justify-between max-w-7xl mx-auto relative sm:px-6 sm:py-4 z-10"
+      >
+        <a
+          href="index.html"
+          class="flex items-center cursor-pointer gap-2 group sm:gap-3"
+        >
+          <div
+            class="flex items-center bg-gradient-to-br duration-300 from-blue-500 group-hover:scale-105 h-8 justify-center rounded-xl shadow-blue-500/20 shadow-lg sm:h-10 sm:w-10 to-indigo-600 transition-transform w-8"
+          >
+            <svg
+              class="h-4 sm:h-5 sm:w-5 w-4 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                clip-rule="evenodd"
+                d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z"
+                fill-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <span
+            class="font-bold dark:text-white text-slate-900 sm:text-xl text-lg tracking-tight"
+            >Math<span class="text-blue-600 dark:text-blue-400"
+              >CAPTCHA</span
+            ></span
+          >
+        </a>
+        <div class="flex items-center gap-2 sm:gap-6">
+          <!-- Dropdown Bahasa -->
+          <div class="relative custom-dropdown z-50" data-target="page-lang">
+            <input id="page-lang" type="hidden" value="id" />
+            <button
+              class="flex items-center rounded-lg sm:text-sm text-xs bg-slate-100 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-blue-500 dark:text-slate-200 dropdown-btn focus:ring-2 focus:ring-blue-500/50 hover:border-blue-500 justify-between min-w-[60px] outline-none p-1.5 px-3 shadow-sm transition-all"
+              aria-expanded="false"
+              type="button"
+            >
+              <span
+                class="flex items-center font-bold gap-2 dark:text-blue-400 selected-text text-blue-600"
+                >ID</span
+              >
+              <i
+                class="text-[10px] fas text-slate-400 duration-200 fa-chevron-down transition-transform ml-2"
+              ></i>
+            </button>
+            <ul
+              class="sm:text-sm text-xs border bg-white dark:border-slate-600 rounded-xl absolute border-slate-200 dark:bg-slate-800 dropdown-menu hidden max-h-56 mt-1.5 overflow-y-auto shadow-xl right-0 w-40 z-[60]"
+            >
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="id"
+                data-lang-text="ID"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">ID</span>
+                Indonesia
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="en"
+                data-lang-text="EN"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">EN</span>
+                English
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="es"
+                data-lang-text="ES"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">ES</span>
+                Español
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="zh"
+                data-lang-text="ZH"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">ZH</span>
+                中文
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="ja"
+                data-lang-text="JA"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">JA</span>
+                日本語
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="ru"
+                data-lang-text="RU"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">RU</span>
+                Русский
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="fr"
+                data-lang-text="FR"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">FR</span>
+                Français
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="ar"
+                data-lang-text="AR"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">AR</span>
+                العربية
+              </li>
+              <li
+                class="flex items-center hover:text-white cursor-pointer dark:hover:bg-blue-600 hover:bg-blue-500 px-4 py-2.5 transition-colors"
+                data-value="hi"
+                data-lang-text="HI"
+              >
+                <span class="w-6 opacity-70 font-bold text-[10px]">HI</span>
+                हिन्दी
+              </li>
+            </ul>
+          </div>
+          <a
+            class="transition-colors dark:text-slate-400 text-slate-600 dark:hover:text-blue-400 font-medium hidden hover:text-blue-600 md:block text-sm"
+            href="index.html"
+            data-i18n="nav_home"
+            >Beranda</a
+          >
+          <!-- Toggle Tema -->
+          <div
+            class="flex items-center gap-2 sm:gap-3 border-l border-slate-200 dark:border-slate-700 pl-2 sm:pl-6"
+            title="Tema Halaman"
+          >
+            <i class="text-[10px] fas sm:text-sm fa-sun text-amber-500"></i>
+            <label
+              class="flex items-center cursor-pointer relative"
+              for="theme-toggle"
+            >
+              <input
+                id="theme-toggle"
+                type="checkbox"
+                class="sr-only peer"
+                onchange="toggleTheme()"
+              />
+              <div
+                class="rounded-full after:absolute after:bg-white after:border after:border-slate-300 after:content-[''] after:duration-300 after:h-3 after:left-[2px] after:rounded-full after:top-[2px] after:transition-all after:w-3 bg-slate-300 dark:bg-slate-800 dark:border-slate-600 h-4 peer peer-checked:after:border-white peer-checked:after:translate-x-full peer-checked:bg-blue-600 peer-focus:outline-none shadow-inner sm:after:h-5 sm:after:w-5 sm:h-6 sm:w-11 w-8"
+              ></div>
+            </label>
+            <i
+              class="text-[10px] fas text-slate-400 dark:text-blue-300 fa-moon sm:text-sm"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content: Privasi & Ketentuan -->
+    <section
+      class="px-4 w-full mx-auto relative sm:px-6 z-10 animate-fade-in-up opacity-0 max-w-4xl py-12 sm:py-20 mb-10 flex-grow"
+    >
+      <h1
+        class="transition-colors duration-500 mb-10 dark:text-white font-extrabold md:text-5xl sm:text-4xl text-3xl text-slate-900 tracking-tight text-center"
+        data-i18n="priv_title"
+      >
+        Kebijakan Privasi & Ketentuan
+      </h1>
+
+      <!-- Disclaimer Box -->
+      <div
+        class="bg-red-50/80 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-2xl p-6 sm:p-8 mb-8 backdrop-blur-sm shadow-sm"
+      >
+        <h3
+          class="flex items-center text-red-600 dark:text-red-400 font-bold mb-3 sm:text-lg"
+        >
+          <i class="fas fa-exclamation-triangle mr-2"></i>
+          <span data-i18n="priv_warning_title"
+            >PERINGATAN PENTING (DISCLAIMER)</span
+          >
+        </h3>
+        <p
+          class="text-sm sm:text-base text-red-700 dark:text-red-300 leading-relaxed"
+          data-i18n="priv_warning_desc"
+        >
+          MathCAPTCHA dibuat semata-mata untuk tujuan lucu-lucuan, hiburan, dan
+          sarana mengasah otak. Proyek ini TIDAK DISARANKAN untuk digunakan pada
+          website besar, situs resmi, atau sistem produksi yang membutuhkan
+          tingkat keamanan anti-bot yang ketat. Seluruh risiko yang timbul
+          akibat implementasi sistem ini sepenuhnya berada di tangan pengguna.
+        </p>
+      </div>
+
+      <!-- Privacy Policy -->
+      <div
+        class="backdrop-blur-xl bg-white/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 sm:p-10 mb-8 shadow-xl transition-colors duration-500"
+      >
+        <h2
+          class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-slate-700 pb-4 flex items-center"
+        >
+          <i class="fas fa-shield-alt text-blue-500 mr-3"></i>
+          <span data-i18n="priv_policy_title">KEBIJAKAN PRIVASI</span>
+        </h2>
+        <div class="space-y-6">
+          <div>
+            <h3
+              class="font-bold text-slate-800 dark:text-slate-200 text-base sm:text-lg mb-2"
+              data-i18n="priv_p1_title"
+            >
+              1. Pengumpulan Data Pribadi
+            </h3>
+            <p
+              class="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed"
+              data-i18n="priv_p1_desc"
+            >
+              MathCAPTCHA tidak mengumpulkan, menyimpan, melacak, atau
+              membagikan data pribadi pengguna seperti alamat IP, lokasi,
+              profil, atau riwayat penelusuran.
+            </p>
+          </div>
+          <div>
+            <h3
+              class="font-bold text-slate-800 dark:text-slate-200 text-base sm:text-lg mb-2"
+              data-i18n="priv_p2_title"
+            >
+              2. Cara Kerja Sistem
+            </h3>
+            <p
+              class="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed"
+              data-i18n="priv_p2_desc"
+            >
+              Sistem verifikasi ini beroperasi menggunakan logika matematika
+              dinamis. Proses pengacakan soal dan validasi jawaban dilakukan
+              secara langsung tanpa mengirimkan log aktivitas pengguna ke server
+              pihak ketiga untuk tujuan analitik atau pemasaran.
+            </p>
+          </div>
+          <div>
+            <h3
+              class="font-bold text-slate-800 dark:text-slate-200 text-base sm:text-lg mb-2"
+              data-i18n="priv_p3_title"
+            >
+              3. Cookie dan Penyimpanan
+            </h3>
+            <p
+              class="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed"
+              data-i18n="priv_p3_desc"
+            >
+              Widget ini tidak menggunakan cookie pelacakan (tracking cookies).
+              Setiap penyimpanan sementara yang mungkin terjadi di sisi klien
+              (browser) hanya digunakan murni untuk keperluan fungsionalitas
+              verifikasi selama sesi tersebut berlangsung.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms of Use -->
+      <div
+        class="backdrop-blur-xl bg-white/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 sm:p-10 shadow-xl transition-colors duration-500"
+      >
+        <h2
+          class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6 border-b border-slate-200 dark:border-slate-700 pb-4 flex items-center"
+        >
+          <i class="fas fa-gavel text-indigo-500 mr-3"></i>
+          <span data-i18n="term_title">KETENTUAN PENGGUNAAN (LISENSI MIT)</span>
+        </h2>
+        <div
+          class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-mono leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-5 rounded-xl border border-slate-100 dark:border-slate-700/50"
+        >
+          <p data-i18n="term_desc_1">Copyright (c) 2026 Jasonpw</p>
+          <p data-i18n="term_desc_2">
+            Dengan ini diberikan izin, secara gratis, kepada siapa pun yang
+            mendapatkan salinan perangkat lunak ini dan file dokumentasi terkait
+            ("Perangkat Lunak"), untuk menggunakan Perangkat Lunak tanpa
+            batasan. Hal ini mencakup, namun tidak terbatas pada, hak untuk
+            menggunakan, menyalin, memodifikasi, menggabungkan, menerbitkan,
+            mendistribusikan, mensublisensikan, dan/atau menjual salinan
+            Perangkat Lunak, serta mengizinkan pihak lain yang menerima
+            Perangkat Lunak ini untuk melakukan hal yang sama, dengan tunduk
+            pada kondisi berikut:
+          </p>
+          <p data-i18n="term_desc_3">
+            Pemberitahuan hak cipta di atas dan pemberitahuan izin ini harus
+            disertakan dalam semua salinan atau bagian penting dari Perangkat
+            Lunak.
+          </p>
+          <p data-i18n="term_desc_4" class="uppercase">
+            Perangkat lunak ini disediakan "sebagaimana adanya", tanpa jaminan
+            dalam bentuk apa pun, baik tersurat maupun tersirat, termasuk namun
+            tidak terbatas pada jaminan kelayakan untuk diperdagangkan,
+            kesesuaian untuk tujuan tertentu, dan tidak adanya pelanggaran.
+            Dalam keadaan apa pun, penulis atau pemegang hak cipta tidak
+            bertanggung jawab atas klaim, kerusakan, atau kewajiban lainnya,
+            baik dalam tindakan kontrak, pelanggaran hukum, atau lainnya, yang
+            timbul dari, akibat, atau sehubungan dengan perangkat lunak atau
+            penggunaan maupun transaksi lain dalam perangkat lunak ini.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer
+      class="transition-colors duration-500 border-slate-200 backdrop-blur-md relative bg-white/50 border-t dark:bg-slate-950/50 dark:border-slate-800 mt-auto z-10"
+    >
+      <div
+        class="px-4 items-center flex justify-between max-w-7xl mx-auto sm:px-6 flex-col gap-4 md:flex-row md:text-left py-6 sm:py-8 text-center"
+      >
+        <div
+          class="flex items-center gap-2 hover:opacity-100 opacity-80 transition-opacity"
+        >
+          <svg
+            class="text-blue-500 h-4 sm:h-5 sm:w-5 w-4"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z"
+              fill-rule="evenodd"
+            />
+          </svg>
+          <span
+            class="sm:text-sm text-xs font-semibold dark:text-white text-slate-900"
+            >MathCAPTCHA API v1.0.0</span
+          >
+        </div>
+        <div
+          class="text-[10px] sm:text-xs dark:text-slate-400 font-medium leading-relaxed text-slate-500"
+        >
+          © 2026
+          <a
+            class="transition-colors dark:hover:text-blue-400 hover:text-blue-600 dark:text-slate-300 text-slate-700"
+            href="https://jasonpw.web.id/"
+            target="_blank"
+            >Jasonpw</a
+          >
+          • <span data-i18n="footer_managed">Dikelola oleh</span>
+          <a
+            class="transition-colors text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hover:text-blue-800"
+            href="https://ycylstudio.web.id/"
+            target="_blank"
+            >YCYL STUDIO</a
+          >.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts Khusus Halaman Privasi -->
+    <script>
+      let pageLangs = {};
+
+      async function initTranslations() {
+        try {
+          const e = await fetch("../translate-privacyterm.json");
+          if (!e.ok) throw new Error("Gagal fetch JSON");
+          pageLangs = await e.json();
+        } catch (e) {
+          console.warn(
+            "File translate-privacyterm.json gagal dimuat. Menggunakan default teks pada HTML.",
+          );
+        }
+      }
+
+      function changeDocsLang(e) {
+        const t = pageLangs[e];
+        if (!t) return false;
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          var key = el.getAttribute("data-i18n");
+          if (t[key]) el.innerHTML = t[key];
+        });
+
+        document.documentElement.lang = e;
+        document.documentElement.dir = "ar" === e ? "rtl" : "ltr";
+        return true;
+      }
+
+      function toggleTheme() {
+        const e = document.documentElement;
+        document.getElementById("theme-toggle").checked
+          ? e.classList.add("dark")
+          : e.classList.remove("dark");
+      }
+
+      function setupCustomDropdowns() {
+        document.querySelectorAll(".custom-dropdown").forEach((e) => {
+          const t = e.querySelector(".dropdown-btn"),
+            n = e.querySelector(".dropdown-menu"),
+            s = e.querySelector(".selected-text"),
+            o = e.querySelector('input[type="hidden"]'),
+            r = e.querySelector(".fa-chevron-down"),
+            a = e.querySelectorAll(".dropdown-menu li");
+          t.addEventListener("click", (e) => {
+            e.stopPropagation();
+            t.setAttribute("aria-expanded", "true");
+            document.querySelectorAll(".dropdown-menu").forEach((e) => {
+              e !== n &&
+                (e.classList.add("hidden"),
+                e.previousElementSibling
+                  .querySelector(".fa-chevron-down")
+                  .classList.remove("rotate-180"));
+            });
+            n.classList.toggle("hidden");
+            r.classList.toggle("rotate-180");
+          });
+          a.forEach((a) => {
+            a.addEventListener("click", () => {
+              var val = a.getAttribute("data-value");
+              if ("page-lang" === o.id) {
+                if (!changeDocsLang(val)) return;
+                s.innerHTML = a.getAttribute("data-lang-text");
+              }
+              o.value = val;
+              n.classList.add("hidden");
+              r.classList.remove("rotate-180");
+              t.setAttribute("aria-expanded", "false");
+            });
+          });
+        });
+        document.addEventListener("click", () => {
+          document
+            .querySelectorAll(".dropdown-menu")
+            .forEach((e) => e.classList.add("hidden"));
+          document
+            .querySelectorAll(".fa-chevron-down")
+            .forEach((e) => e.classList.remove("rotate-180"));
+        });
+      }
+
+      window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches &&
+        ((document.getElementById("theme-toggle").checked = !0),
+        document.documentElement.classList.add("dark"));
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        await initTranslations();
+        setupCustomDropdowns();
+      });
+    </script>
+  </body>
+</html>
