@@ -774,7 +774,9 @@
                   onclick="copyCode(this, 'playground-log-raw')"
                 >
                   <i class="fas fa-copy text-xs"></i
-                  ><span class="text-[10px] font-semibold tracking-wide"
+                  ><span
+                    class="text-[10px] font-semibold tracking-wide"
+                    data-i18n="btn_copy"
                     >Salin</span
                   >
                 </button>
@@ -814,7 +816,9 @@
                   onclick="copyCode(this, 'generated-code')"
                 >
                   <i class="fas fa-copy text-xs"></i
-                  ><span class="text-[10px] font-semibold tracking-wide"
+                  ><span
+                    class="text-[10px] font-semibold tracking-wide"
+                    data-i18n="btn_copy"
                     >Salin</span
                   >
                 </button>
@@ -889,7 +893,9 @@
               onclick="copyCode(this, 'code-step1')"
             >
               <i class="fas fa-copy text-xs"></i
-              ><span class="text-[10px] font-semibold tracking-wide"
+              ><span
+                class="text-[10px] font-semibold tracking-wide"
+                data-i18n="btn_copy"
                 >Salin</span
               >
             </button>
@@ -926,17 +932,19 @@
               onclick="copyCode(this, 'code-step2')"
             >
               <i class="fas fa-copy text-xs"></i
-              ><span class="text-[10px] font-semibold tracking-wide"
+              ><span
+                class="text-[10px] font-semibold tracking-wide"
+                data-i18n="btn_copy"
                 >Salin</span
               >
             </button>
             <pre
               class="text-[10px] sm:text-xs pr-20 pt-12"
               id="code-step2"
-            ><code><span class="comment">&lt;!-- Letakkan di dalam form Anda --&gt;</span>
+            ><code><span class="comment">&lt;!-- Place inside your form --&gt;</span>
 <span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="string">"my-captcha-box"</span><span class="tag">&gt;&lt;/div&gt;</span>
 
-<span class="comment">&lt;!-- Masukkan Script di bawah form --&gt;</span>
+<span class="comment">&lt;!-- Place Script below the form --&gt;</span>
 <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="string">"https://jproject-1.github.io/captcha-math/api.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
 <span class="tag">&lt;script&gt;</span>
   <span class="keyword">const</span> myCaptcha = <span class="keyword">new</span> <span class="function">MathCAPTCHA</span>({
@@ -947,8 +955,8 @@
     <span class="property">maxAttempts</span>: <span class="property">5</span>,
 
     <span class="function">onSuccess</span>: (<span class="property">response</span>) =&gt; {
-        console.<span class="function">log</span>(<span class="string">"Sukses!"</span>, response);
-        <span class="comment">// Kirim 'response.data.token' ke backend untuk validasi akhir</span>
+        console.<span class="function">log</span>(<span class="string">"Success!"</span>, response);
+        <span class="comment">// Send 'response.data.token' to backend for final validation</span>
     }
   });
 <span class="tag">&lt;/script&gt;</span></code></pre>
@@ -1021,8 +1029,8 @@
                 class="text-[9px] sm:text-xs pr-16 pt-12"
                 id="code-step3-2"
               ><code>{
-  <span class="property">"status"</span>: <span class="string">"failed"</span>, <span class="comment">// أو "blocked"</span>
-  <span class="property">"reason"</span>: <span class="string">"wrong_answer"</span>, <span class="comment">// "closed_by_user"</span>
+  <span class="property">"status"</span>: <span class="string">"failed"</span>, <span class="comment">// or "blocked"</span>
+  <span class="property">"reason"</span>: <span class="string">"wrong_answer"</span>, <span class="comment">// or "closed_by_user"</span>
   <span class="property">"attemptsUsed"</span>: <span class="property">1</span>,
   <span class="property">"maxAttempts"</span>: <span class="property">5</span>,
   <span class="property">"levelPlayed"</span>: <span class="property">4</span>,
@@ -1057,21 +1065,25 @@
                 <tr>
                   <th
                     class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                    data-i18n="tbl_param"
                   >
                     Parameter
                   </th>
                   <th
                     class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                    data-i18n="tbl_type"
                   >
                     Tipe Data
                   </th>
                   <th
                     class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                    data-i18n="tbl_default"
                   >
                     Default
                   </th>
                   <th
                     class="px-4 py-3 border-b border-slate-200 dark:border-slate-700"
+                    data-i18n="tbl_desc"
                   >
                     Deskripsi Singkat
                   </th>
@@ -1090,7 +1102,7 @@
                   </td>
                   <td class="px-4 py-3">String</td>
                   <td class="px-4 py-3 text-slate-400 italic">null</td>
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-i18n="tbl_desc_1">
                     (Wajib) ID elemen div tempat CAPTCHA di-render.
                   </td>
                 </tr>
@@ -1108,7 +1120,7 @@
                   >
                     auto
                   </td>
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-i18n="tbl_desc_2">
                     Menentukan tema antarmuka. Opsi: <code>'light'</code>,
                     <code>'dark'</code>, <code>'auto'</code>.
                   </td>
@@ -1127,7 +1139,7 @@
                   >
                     auto-web
                   </td>
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-i18n="tbl_desc_3">
                     Bahasa instruksi UI. Opsi: <code>'id'</code>,
                     <code>'en'</code>, dll, atau <code>'auto-user'</code>.
                   </td>
@@ -1146,7 +1158,7 @@
                   >
                     random
                   </td>
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-i18n="tbl_desc_4">
                     Tingkat kesulitan (1 - 7). Gunakan
                     <code>'random'</code> untuk diacak.
                   </td>
@@ -1165,7 +1177,7 @@
                   >
                     5
                   </td>
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-i18n="tbl_desc_5">
                     Batas jumlah percobaan gagal قبل pemblokiran sementara.
                   </td>
                 </tr>
@@ -1179,7 +1191,7 @@
                   </td>
                   <td class="px-4 py-3">Function</td>
                   <td class="px-4 py-3 text-slate-400 italic">void</td>
-                  <td class="px-4 py-3">
+                  <td class="px-4 py-3" data-i18n="tbl_desc_6">
                     (Wajib) Callback dieksekusi saat jawaban pengguna
                     valid/benar.
                   </td>
@@ -1226,7 +1238,7 @@
             target="_blank"
             >Jasonpw</a
           >
-          • Dikelola oleh
+          • <span data-i18n="footer_managed">Dikelola oleh</span>
           <a
             class="transition-colors dark:text-blue-400 text-blue-600 dark:hover:text-blue-300 hover:text-blue-800"
             href="https://ycylstudio.web.id/"
@@ -1536,7 +1548,7 @@
 
     onSuccess: (res) => {
       console.log("Success!", res);
-      // Kirim 'res.data.token' ke backend
+      // Send 'res.data.token' to backend
     }
   });
 <\\/script>`;
@@ -1584,9 +1596,9 @@
           a = document.getElementById("setting-mode").value,
           n = parseInt(document.getElementById("setting-attempts").value) || 5;
         ((document.getElementById("playground-log").innerHTML =
-          '<span style="color:#64748b;font-style:italic">// Menunggu interaksi...</span>'),
+          '<span style="color:#64748b;font-style:italic">// Awaiting interaction...</span>'),
           (document.getElementById("playground-log-raw").innerText =
-            "// Menunggu interaksi..."),
+            "// Awaiting interaction..."),
           updateGeneratedCode(a, e, t, n),
           new MathCAPTCHA({
             containerId: "captcha-playground",
