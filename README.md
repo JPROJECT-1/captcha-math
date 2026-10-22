@@ -73,13 +73,9 @@ The following is a **design concept for documentation layout**, not a screenshot
 <p align="center">
   <img src="demo-preview-concept.png" alt="Illustrative MathCAPTCHA interface concept; not a screenshot of the live widget" width="92%" />
 </p>
-
-To add a genuine screenshot:
-
-1. Open the [live demo](https://jproject-1.github.io/captcha-math/) in a browser.
-2. Capture the widget in a representative state (ideally show the challenge, answer field, and verification control).
-3. Save the image as `demo-screenshot.png`.
-4. Replace the concept image above with `demo-screenshot.png` and remove the concept disclaimer.
+<p align="center">
+  <img src="demo-preview-concept2.png" alt="Illustrative MathCAPTCHA interface concept; not a screenshot of the live widget" width="92%" />
+</p>
 
 ## Important Security Disclaimer
 
