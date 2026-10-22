@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="readme-banner.png" alt="MathCAPTCHA — Smart Math Challenges. Simple Human Verification." width="100%" />
+  <img src="assets/readme-banner.png" alt="MathCAPTCHA — Smart Math Challenges. Simple Human Verification." width="100%" />
 
   <p><strong>A modern, dynamic, multilingual math-based CAPTCHA widget for the web.</strong></p>
 
@@ -69,10 +69,10 @@ Built with **Vanilla JavaScript (ES6)**, MathCAPTCHA can be integrated into a st
 ## Interface Preview
 
 <p align="center">
-  <img src="demo-preview-concept.png" alt="Screenshot of MathCAPTCHA" width="92%" />
+  <img src="assets/demo-preview-concept.png" alt="Screenshot of MathCAPTCHA" width="92%" />
 </p>
 <p align="center">
-  <img src="demo-preview-concept-2.png" alt="Screenshot of MathCAPTCHA" width="92%" />
+  <img src="assets/demo-preview-concept-2.png" alt="Screenshot of MathCAPTCHA" width="92%" />
 </p>
 
 ## Important Security Disclaimer
