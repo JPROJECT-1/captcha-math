@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320">
+<defs><linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#76D2FF"/><stop offset="1" stop-color="#3478F6"/></linearGradient><linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132744"/><stop offset="1" stop-color="#091426"/></linearGradient></defs>
+<g transform="translate(35,28)"><rect width="264" height="264" rx="58" fill="url(#tile)" stroke="#243D5E" stroke-width="3"/><circle cx="132" cy="132" r="94" fill="#10213A" stroke="#244A78" stroke-width="2"/><path d="M132 50 L192 73 V123 C192 165 166 193 132 213 C98 193 72 165 72 123 V73 Z" fill="#0A172A" stroke="url(#blue)" stroke-width="7" stroke-linejoin="round"/><path d="M89 130 H110 L125 158 L151 96 H177" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M151 169 L166 184 L190 157" fill="none" stroke="#72C7FF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="345" y="145" font-family="Inter,Manrope,Arial,sans-serif" font-size="82" font-weight="750" letter-spacing="-2" fill="#10213A">Math<tspan fill="#3478F6">CAPTCHA</tspan></text>
+<text x="350" y="202" font-family="Inter,Manrope,Arial,sans-serif" font-size="26" font-weight="500" letter-spacing="2.3" fill="#526883">SMART MATH. SIMPLE VERIFICATION.</text>
+<path d="M350 231 H755" stroke="#B9D9FF" stroke-width="5" stroke-linecap="round"/><circle cx="775" cy="231" r="5" fill="#3478F6"/>
+</svg>
