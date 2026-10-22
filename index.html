@@ -19,33 +19,59 @@
     />
     <meta name="author" content="Jasonpw" />
 
-    <!-- Favicon SVG (Shield Icon) langsung dirender oleh browser -->
+    <!-- assets: keep these files in assets/ -->
     <link
       rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z'/></svg>"
+      type="image/png"
+      sizes="512x512"
+      href="./assets/favicon.png"
     />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <link rel="apple-touch-icon" href="./assets/favicon.png" />
+    <link rel="canonical" href="https://jproject-1.github.io/captcha-math/" />
 
     <meta
       property="og:title"
-      content="MathCAPTCHA v1.0.0 | Secure & Dynamic Anti-Bot"
+      content="MathCAPTCHA v1.0.0 | Interactive Demo & API Documentation"
     />
     <meta
       property="og:description"
-      content="Tinggalkan tebak-tebakan gambar bus yang membosankan. Verifikasi dengan Logika Matematika Dinamis."
+      content="Jelajahi demo MathCAPTCHA: CAPTCHA berbasis matematika dengan 7 tingkat kesulitan, 9 bahasa, pilihan tema, dan callback JavaScript."
     />
-    <!-- og:image menggunakan emoji perisai CDN agar terbaca oleh web scraper -->
     <meta
       property="og:image"
-      content="https://placehold.co/1200x630/0f172a/3b82f6?text=MathCAPTCHA+API"
+      content="https://jproject-1.github.io/captcha-math/assets/readme-banner.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="MathCAPTCHA — demo verifikasi manusia berbasis tantangan matematika"
     />
     <meta
       property="og:url"
       content="https://jproject-1.github.io/captcha-math/"
     />
+    <meta property="og:site_name" content="MathCAPTCHA" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#3b82f6" />
+    <meta
+      name="twitter:title"
+      content="MathCAPTCHA v1.0.0 | Interactive Demo & API Documentation"
+    />
+    <meta
+      name="twitter:description"
+      content="Coba CAPTCHA matematika yang ringan, multibahasa, dan mudah diintegrasikan dengan Vanilla JavaScript."
+    />
+    <meta
+      name="twitter:image"
+      content="https://jproject-1.github.io/captcha-math/assets/readme-banner.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="MathCAPTCHA — demo verifikasi manusia berbasis tantangan matematika"
+    />
+    <meta name="theme-color" content="#0b1220" />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
@@ -244,29 +270,24 @@
       <div
         class="flex items-center px-4 justify-between max-w-7xl mx-auto sm:px-6 py-3 relative sm:py-4 w-full z-10"
       >
-        <div class="flex items-center gap-2 sm:gap-3 cursor-pointer group">
-          <div
-            class="flex items-center bg-gradient-to-br duration-300 from-blue-500 group-hover:scale-105 h-8 justify-center rounded-xl shadow-blue-500/20 shadow-lg sm:h-10 sm:w-10 to-indigo-600 transition-transform w-8"
-          >
-            <svg
-              class="h-4 sm:h-5 sm:w-5 w-4 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                clip-rule="evenodd"
-                d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z"
-                fill-rule="evenodd"
-              />
-            </svg>
-          </div>
+        <a
+          href="#top"
+          aria-label="MathCAPTCHA — kembali ke atas"
+          class="flex items-center gap-2 sm:gap-3 group"
+        >
+          <img
+            src="./assets/favicon.png"
+            alt=""
+            width="40"
+            height="40"
+            class="h-8 w-8 sm:h-10 sm:w-10 rounded-xl shadow-blue-500/20 shadow-lg transition-transform duration-300 group-hover:scale-105"
+          />
           <span
             class="text-lg sm:text-xl dark:text-white font-bold text-slate-900 tracking-tight"
-            >Math<span class="text-blue-600 dark:text-blue-400"
-              >CAPTCHA</span
-            ></span
           >
-        </div>
+            Math<span class="text-blue-600 dark:text-blue-400">CAPTCHA</span>
+          </span>
+        </a>
 
         <div class="flex items-center gap-2 sm:gap-6">
           <!-- DROPDOWN BAHASA SUDAH DIBUKA (UNLOCKED) -->
@@ -1210,23 +1231,26 @@
         class="flex items-center px-4 justify-between max-w-7xl mx-auto sm:px-6 flex-col gap-4 md:flex-row md:text-left py-6 sm:py-8 text-center"
       >
         <div
-          class="flex items-center gap-2 hover:opacity-100 opacity-80 transition-opacity"
+          class="flex items-center gap-3 transition-opacity hover:opacity-100 opacity-90"
         >
-          <svg
-            class="text-blue-500 h-4 sm:h-5 sm:w-5 w-4"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 00-7.877 3.08.75.75 0 00-.222.58A12.97 12.97 0 005.88 17.5a11.2 11.2 0 006.12 4.41c.18.06.38.06.56 0 2.45-.81 4.6-2.3 6.12-4.41a12.97 12.97 0 002.495-11.668.75.75 0 00-.222-.58 11.209 11.209 0 00-7.877-3.08zM12 4.3v16.14c-2-.66-3.8-1.92-5.12-3.66A11.47 11.47 0 014.88 6.55 9.71 9.71 0 0112 4.3z"
-              fill-rule="evenodd"
-            />
-          </svg>
-          <span
-            class="sm:text-sm text-xs dark:text-white font-semibold text-slate-900"
-            >MathCAPTCHA API v1.0.0</span
-          >
+          <img
+            src="./assets/logo.png"
+            alt="MathCAPTCHA — Smart Math. Simple Verification."
+            width="240"
+            height="64"
+            loading="lazy"
+            class="h-auto w-36 sm:w-44 dark:hidden"
+          />
+          <img
+            src="./assets/logo-dark.png"
+            alt=""
+            aria-hidden="true"
+            width="240"
+            height="64"
+            loading="lazy"
+            class="hidden h-auto w-36 sm:w-44 dark:block"
+          />
+          <span class="sr-only">API v1.0.0</span>
         </div>
         <div
           class="text-[10px] sm:text-xs dark:text-slate-400 font-medium leading-relaxed text-slate-500"
@@ -1425,7 +1449,7 @@
           },
         };
         try {
-          const res = await fetch("translate.json");
+          const res = await fetch("assets/translate.json");
           if (res.ok) {
             pageLangs = await res.json();
           } else {
