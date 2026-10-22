@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/readme-banner.png" alt="MathCAPTCHA — Smart Math Challenges. Simple Human Verification." width="100%" />
+  <img src="readme-banner.png" alt="MathCAPTCHA — Smart Math Challenges. Simple Human Verification." width="100%" />
 
   <p><strong>A modern, dynamic, multilingual math-based CAPTCHA widget for the web.</strong></p>
 
@@ -71,15 +71,15 @@ Built with **Vanilla JavaScript (ES6)**, MathCAPTCHA can be integrated into a st
 The following is a **design concept for documentation layout**, not a screenshot captured from the live widget. Replace it with a genuine screenshot of the deployed demo when the demo is accessible.
 
 <p align="center">
-  <img src="assets/demo-preview-concept.png" alt="Illustrative MathCAPTCHA interface concept; not a screenshot of the live widget" width="92%" />
+  <img src="demo-preview-concept.png" alt="Illustrative MathCAPTCHA interface concept; not a screenshot of the live widget" width="92%" />
 </p>
 
 To add a genuine screenshot:
 
 1. Open the [live demo](https://jproject-1.github.io/captcha-math/) in a browser.
 2. Capture the widget in a representative state (ideally show the challenge, answer field, and verification control).
-3. Save the image as `assets/demo-screenshot.png`.
-4. Replace the concept image above with `assets/demo-screenshot.png` and remove the concept disclaimer.
+3. Save the image as `demo-screenshot.png`.
+4. Replace the concept image above with `demo-screenshot.png` and remove the concept disclaimer.
 
 ## Important Security Disclaimer
 
