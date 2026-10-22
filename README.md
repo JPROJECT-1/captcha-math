@@ -68,13 +68,11 @@ Built with **Vanilla JavaScript (ES6)**, MathCAPTCHA can be integrated into a st
 
 ## Interface Preview
 
-The following is a **design concept for documentation layout**, not a screenshot captured from the live widget. Replace it with a genuine screenshot of the deployed demo when the demo is accessible.
-
 <p align="center">
-  <img src="demo-preview-concept.png" alt="Illustrative MathCAPTCHA interface concept; not a screenshot of the live widget" width="92%" />
+  <img src="demo-preview-concept.png" alt="Screenshot of MathCAPTCHA" width="92%" />
 </p>
 <p align="center">
-  <img src="demo-preview-concept2.png" alt="Illustrative MathCAPTCHA interface concept; not a screenshot of the live widget" width="92%" />
+  <img src="demo-preview-concept-2.png" alt="Screenshot of MathCAPTCHA" width="92%" />
 </p>
 
 ## Important Security Disclaimer
